@@ -31,26 +31,40 @@ export const HowItWorks = () => {
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section className="section-padding bg-charcoal-light relative overflow-hidden">
-      {/* Background gradient accent */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+    <section className="section-padding bg-secondary relative overflow-hidden">
+      {/* Decorative background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5 }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-radial from-primary/5 via-transparent to-transparent rounded-full"
+        />
+      </div>
 
       <div className="container-wide relative z-10">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto mb-16 md:mb-20"
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-2xl mx-auto mb-20"
         >
-          <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="inline-block text-primary font-medium text-sm tracking-wider uppercase mb-6"
+          >
             Ons Proces
-          </span>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+          </motion.span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             Hoe Werkt Het?
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg md:text-xl">
             In vier eenvoudige stappen naar uw droomkeuken of -interieur.
           </p>
         </motion.div>
@@ -60,40 +74,50 @@ export const HowItWorks = () => {
           {steps.map((step, index) => (
             <motion.div
               key={step.title}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 80 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{
-                duration: 0.6,
+                duration: 0.8,
                 delay: index * 0.15,
-                ease: [0.25, 0.46, 0.45, 0.94],
+                ease: [0.16, 1, 0.3, 1],
               }}
               className="relative group"
             >
-              {/* Connector Line (except last) */}
+              {/* Connector Line */}
               {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-[60%] w-full h-px bg-gradient-to-r from-border to-transparent" />
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={isInView ? { scaleX: 1 } : {}}
+                  transition={{ duration: 0.8, delay: 0.5 + index * 0.15 }}
+                  className="hidden lg:block absolute top-14 left-[60%] w-full h-px bg-gradient-to-r from-primary/30 to-transparent origin-left"
+                />
               )}
 
-              <div className="relative p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-500 group-hover:shadow-gold">
+              <div className="relative p-8 rounded-3xl bg-card border border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-500">
                 {/* Step Number */}
-                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-display font-bold text-sm">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={isInView ? { scale: 1 } : {}}
+                  transition={{ duration: 0.5, delay: 0.3 + index * 0.15, type: "spring" }}
+                  className="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-display font-bold shadow-primary"
+                >
                   {index + 1}
-                </div>
+                </motion.div>
 
                 {/* Icon */}
                 <motion.div
-                  initial={{ scale: 1 }}
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5"
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6"
                 >
-                  <step.icon className="w-7 h-7 text-primary" />
+                  <step.icon className="w-8 h-8 text-primary" />
                 </motion.div>
 
                 {/* Content */}
-                <h3 className="font-display text-xl font-semibold mb-3">
+                <h3 className="font-display text-xl font-semibold mb-3 text-foreground">
                   {step.title}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>
               </div>
