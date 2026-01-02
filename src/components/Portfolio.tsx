@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import kitchenAfterMatched from "@/assets/kitchen-after-matched.jpg";
 
 const portfolioItems = [
   {
@@ -62,9 +63,17 @@ export const Portfolio = () => {
       : portfolioItems.filter((item) => item.category === activeCategory);
 
   return (
-    <div className="w-full py-16 md:py-24 bg-background relative overflow-hidden">
-      {/* Subtle background texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.03),transparent_50%)]" />
+    <div className="w-full py-16 md:py-24 relative overflow-hidden min-h-screen flex items-center">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src={kitchenAfterMatched} 
+          alt="Portfolio keuken projecten" 
+          className="w-full h-full object-cover"
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-foreground/60" />
+      </div>
       
       <div className="container-wide relative z-10">
         {/* Section Header */}
@@ -84,10 +93,10 @@ export const Portfolio = () => {
           >
             Portfolio
           </motion.span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white drop-shadow-lg">
             Recente Projecten
           </h2>
-          <p className="text-muted-foreground text-lg md:text-xl">
+          <p className="text-white/90 text-lg md:text-xl drop-shadow-md">
             Bekijk onze meest recente transformaties en laat u inspireren.
           </p>
         </motion.div>

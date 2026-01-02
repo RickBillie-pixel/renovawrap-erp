@@ -2,41 +2,45 @@ import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef } from "react";
 import { CalendarCheck, Brush, Hammer, Star, ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import inmeten from "@/assets/inmeten.webp";
+import manWrapsBlue from "@/assets/man wraps blue.webp";
+import manWraps2 from "@/assets/man wraps 2.webp";
+import manWraps3 from "@/assets/man wraps 3.webp";
 
 const steps = [
   {
     icon: CalendarCheck,
     title: "Gratis Inmeting",
-    description: "Wij komen vrijblijvend langs om uw keuken of interieur op te meten en uw wensen te bespreken.",
+    description: "Wij komen vrijblijvend langs om uw keuken of interieur op te meten en uw wensen te bespreken. Tijdens deze persoonlijke afspraak bespreken we alle mogelijkheden, beantwoorden we uw vragen en geven we professioneel advies op maat. U ontvangt direct een gedetailleerde offerte zonder verplichtingen.",
     detail: "Binnen 48 uur contact",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800",
+    image: inmeten,
     gradientFrom: "from-amber-400",
     gradientTo: "to-orange-500",
   },
   {
     icon: Brush,
     title: "Kleur & Design",
-    description: "Kies uit honderden kleuren en texturen. Van mat wit tot houtlook of marmeren afwerking.",
+    description: "Kies uit honderden kleuren en texturen. Van mat wit tot houtlook of marmeren afwerking. Onze uitgebreide collectie premium wrap-folie van 3M en Avery biedt u eindeloze mogelijkheden. Samen met onze design experts selecteert u de perfecte kleur en textuur die bij uw stijl en interieur past.",
     detail: "500+ kleuren beschikbaar",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800",
+    image: manWraps2,
     gradientFrom: "from-rose-400",
     gradientTo: "to-pink-500",
   },
   {
     icon: Hammer,
     title: "Vakkundige Montage",
-    description: "Onze specialisten wrappen uw keuken of meubels met precisie. Meestal binnen één dag klaar.",
+    description: "Onze specialisten wrappen uw keuken of meubels met precisie. Meestal binnen één dag klaar. Met jarenlange ervaring en de nieuwste technieken zorgen we voor een perfecte afwerking zonder rommel of overlast. Uw ruimte blijft tijdens het proces volledig bruikbaar.",
     detail: "Gemiddeld 1 werkdag",
-    image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=800",
+    image: manWraps3,
     gradientFrom: "from-emerald-400",
     gradientTo: "to-teal-500",
   },
   {
     icon: Star,
     title: "Genieten",
-    description: "Geniet van uw volledig getransformeerde ruimte met 5 jaar garantie op al ons werk.",
+    description: "Geniet van uw volledig getransformeerde ruimte met 5 jaar garantie op al ons werk. Uw keuken of interieur ziet er uit als nieuw, maar dan voor een fractie van de kosten van een volledige renovatie. Onze premium materialen zijn krasvast, makkelijk te onderhouden en gaan jarenlang mee.",
     detail: "5 jaar garantie",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800",
+    image: manWrapsBlue,
     gradientFrom: "from-violet-400",
     gradientTo: "to-purple-500",
   },
@@ -78,18 +82,17 @@ const StepItem = ({ step, index, isLast }: { step: typeof steps[0]; index: numbe
               animate={isInView ? { scale: 1 } : { scale: 1.1 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             />
-            {/* Gradient overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${step.gradientFrom}/20 ${step.gradientTo}/10 mix-blend-overlay`} />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+            {/* Subtle overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
             
             {/* Step badge on image */}
             <motion.div
               initial={{ scale: 0 }}
               animate={isInView ? { scale: 1 } : { scale: 0 }}
               transition={{ duration: 0.5, delay: 0.3, type: "spring" }}
-              className={`absolute top-6 ${isEven ? 'left-6' : 'right-6'} px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20`}
+              className={`absolute top-6 ${isEven ? 'left-6' : 'right-6'} px-5 py-2.5 rounded-xl bg-background/95 backdrop-blur-xl border-2 border-primary/30 shadow-elegant`}
             >
-              <span className="text-white font-medium text-sm">Stap {index + 1}</span>
+              <span className="text-foreground font-display font-bold text-base tracking-wide">Stap {index + 1}</span>
             </motion.div>
           </div>
         </motion.div>
@@ -101,31 +104,34 @@ const StepItem = ({ step, index, isLast }: { step: typeof steps[0]; index: numbe
           transition={{ duration: 0.8, delay: 0.2 }}
           className={`flex-1 w-full ${isEven ? 'lg:text-left' : 'lg:text-right'}`}
         >
-          {/* Icon */}
-          <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0.8, rotate: -90 }}
-            transition={{ duration: 0.6, delay: 0.3, type: "spring" }}
-            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg mb-6`}
-          >
-            <Icon className="w-7 h-7 text-primary" strokeWidth={1.5} />
-          </motion.div>
+          {/* Icon and Detail tag on same line */}
+          <div className={`flex items-center gap-6 mb-12 ${isEven ? 'justify-start' : 'justify-end lg:flex-row-reverse'}`}>
+            {/* Icon */}
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0.8, rotate: -90 }}
+              transition={{ duration: 0.6, delay: 0.3, type: "spring" }}
+              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg flex-shrink-0"
+            >
+              <Icon className="w-7 h-7 text-primary" strokeWidth={1.5} />
+            </motion.div>
 
-          {/* Detail tag */}
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className={`inline-block px-4 py-1.5 rounded-full bg-gradient-to-r ${step.gradientFrom}/10 ${step.gradientTo}/10 text-foreground/70 text-xs font-medium tracking-wide uppercase mb-4`}
-          >
-            {step.detail}
-          </motion.span>
+            {/* Detail tag */}
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="inline-block px-5 py-2 rounded-full bg-primary/10 backdrop-blur-sm border border-primary/20 text-primary text-sm font-semibold tracking-wide uppercase"
+            >
+              {step.detail}
+            </motion.span>
+          </div>
 
-          <h3 className="font-display text-3xl md:text-4xl font-bold mb-4 text-foreground">
+          <h3 className="font-display text-3xl md:text-4xl font-bold mb-12 text-foreground">
             {step.title}
           </h3>
           
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
+          <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
             {step.description}
           </p>
         </motion.div>
@@ -145,10 +151,7 @@ export const HowItWorks = () => {
   const progressHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <div ref={containerRef} className="w-full py-24 md:py-32 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-card via-background to-card" />
-      
+    <div ref={containerRef} className="w-full py-24 md:py-32 relative overflow-hidden min-h-screen flex items-center bg-background">
       {/* Decorative blurs */}
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-x-1/2" />
       <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl translate-x-1/2" />
@@ -176,7 +179,7 @@ export const HowItWorks = () => {
             Uw Transformatie
           </span>
           
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight text-foreground">
             De Journey Naar Uw
             <br />
             <span className="text-gradient-primary">Droomkeuken</span>

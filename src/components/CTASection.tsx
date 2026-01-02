@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import heroWrapping from "@/assets/hero-wrapping.jpg";
 
 export const CTASection = () => {
   return (
@@ -16,13 +17,14 @@ export const CTASection = () => {
           className="absolute inset-0"
         >
           <img
-            src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=2000"
+            src={heroWrapping}
             alt="Luxe keuken transformatie"
             className="w-full h-full object-cover"
           />
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/60" />
+        <div className="absolute inset-0 bg-foreground/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-background/60 to-background/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/50" />
       </div>
 
       {/* Decorative elements */}

@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CTASection } from "@/components/CTASection";
 import { PageTransition } from "@/components/PageTransition";
+import { SEO } from "@/components/SEO";
 import { Award, Users, Clock, Shield } from "lucide-react";
 
 const stats = [
@@ -15,6 +16,14 @@ const stats = [
 const OverOns = () => {
   return (
     <PageTransition>
+      <SEO
+        title="Over Ons - 10+ Jaar Ervaring in Keuken & Interieur Wrappen | QualityWrap.nl"
+        description="Al meer dan 10 jaar transformeren wij keukens en interieurs door heel Nederland. Gecertificeerde specialisten met premium 3M en Avery materialen. 500+ tevreden klanten."
+        keywords="over qualitywrap, wrap specialist, gecertificeerd wrappen, ervaren wrap bedrijf, 3M gecertificeerd, Avery gecertificeerd"
+        canonical="https://qualitywrap.nl/over-ons"
+        ogTitle="Over Ons - 10+ Jaar Ervaring in Premium Wrappen"
+        ogDescription="Gecertificeerde specialisten met premium materialen. 500+ tevreden klanten, 5 jaar garantie."
+      />
       <main className="min-h-screen bg-background">
         <Navbar />
         

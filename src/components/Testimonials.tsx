@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
+import kitchenAfter from "@/assets/kitchen-after.jpg";
 
 const testimonials = [
   {
@@ -30,7 +31,18 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <div className="w-full py-16 md:py-24 bg-charcoal-dark relative overflow-hidden">
+    <div className="w-full py-16 md:py-24 relative overflow-hidden min-h-screen flex items-center">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src={kitchenAfter} 
+          alt="Tevreden klanten keuken" 
+          className="w-full h-full object-cover"
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-foreground/60" />
+      </div>
+      
       {/* Background accents */}
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
@@ -47,10 +59,10 @@ export const Testimonials = () => {
           <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
             Klantervaringen
           </span>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white drop-shadow-lg">
             Wat Onze Klanten Zeggen
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-white/90 text-lg drop-shadow-md">
             Ontdek waarom honderden tevreden klanten voor QualityWrap kozen.
           </p>
         </motion.div>
@@ -64,7 +76,7 @@ export const Testimonials = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="relative p-8 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all duration-500 group"
+              className="relative p-8 rounded-2xl bg-card/90 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-500 group shadow-elegant"
             >
               {/* Quote Icon */}
               <Quote className="absolute top-6 right-6 w-10 h-10 text-primary/20" />

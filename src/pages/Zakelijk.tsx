@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CTASection } from "@/components/CTASection";
 import { PageTransition } from "@/components/PageTransition";
+import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Building2, Hotel, Store, Briefcase, Check } from "lucide-react";
@@ -42,6 +43,14 @@ const benefits = [
 const Zakelijk = () => {
   return (
     <PageTransition>
+      <SEO
+        title="Zakelijke Wrap Oplossingen - B2B Diensten | QualityWrap.nl"
+        description="Professionele wrap-oplossingen voor bedrijven. Van kantoren tot winkelruimtes - minimale bedrijfsonderbreking, projectmanagement van A tot Z. Vraag zakelijke offerte aan!"
+        keywords="zakelijk wrappen, B2B wrap, kantoor wrappen, winkel wrappen, horeca wrappen, retail wrappen, bedrijfsruimte wrappen"
+        canonical="https://qualitywrap.nl/zakelijk"
+        ogTitle="Zakelijke Wrap Oplossingen - Professionele B2B Diensten"
+        ogDescription="Minimale bedrijfsonderbreking, projectmanagement van A tot Z. Volume kortingen beschikbaar."
+      />
       <main className="min-h-screen bg-background">
         <Navbar />
         

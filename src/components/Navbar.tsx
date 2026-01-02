@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 
 const navLinks = [
   { name: "Home", path: "/" },
-  { name: "Keuken Wrappen", path: "/keuken-wrappen" },
-  { name: "Interieur Wrappen", path: "/interieur-wrappen" },
+  { name: "Diensten", path: "/diensten" },
   { name: "Zakelijk", path: "/zakelijk" },
+  { name: "Configurator", path: "/configurator" },
   { name: "Over Ons", path: "/over-ons" },
   { name: "Contact", path: "/contact" },
 ];

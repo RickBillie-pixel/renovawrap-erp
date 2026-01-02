@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CTASection } from "@/components/CTASection";
 import { PageTransition } from "@/components/PageTransition";
+import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sofa, DoorOpen, Table2, Tv } from "lucide-react";
@@ -33,6 +34,14 @@ const services = [
 const InterieurWrappen = () => {
   return (
     <PageTransition>
+      <SEO
+        title="Interieur Wrappen - Meubels, Deuren & Wandpanelen | QualityWrap.nl"
+        description="Geef elk interieuroppervlak een nieuwe uitstraling met hoogwaardige wrap-folie. Van meubels tot wandpanelen - honderden kleuren beschikbaar. Gratis adviesgesprek!"
+        keywords="interieur wrappen, meubels wrappen, deuren wrappen, wandpanelen wrappen, kozijnen wrappen, interieur folie, meubel renovatie"
+        canonical="https://qualitywrap.nl/interieur-wrappen"
+        ogTitle="Interieur Wrappen - Elk Oppervlak, Elke Stijl"
+        ogDescription="Transformeer uw interieur met premium wrap-folie. Honderden kleuren en texturen beschikbaar."
+      />
       <main className="min-h-screen bg-background">
         <Navbar />
         

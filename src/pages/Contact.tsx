@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ContactWizard } from "@/components/ContactWizard";
 import { PageTransition } from "@/components/PageTransition";
+import { SEO } from "@/components/SEO";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 const contactInfo = [
@@ -33,6 +34,14 @@ const contactInfo = [
 const Contact = () => {
   return (
     <PageTransition>
+      <SEO
+        title="Contact - Gratis Offerte Aanvragen | QualityWrap.nl"
+        description="Vraag een gratis offerte aan voor uw keuken of interieur wrappen. Vul het formulier in en ontvang binnen 24 uur een vrijblijvende offerte op maat. Neem contact met ons op!"
+        keywords="gratis offerte, contact qualitywrap, offerte aanvragen, keuken offerte, interieur offerte, wrap offerte"
+        canonical="https://qualitywrap.nl/contact"
+        ogTitle="Contact - Vraag Gratis Offerte Aan"
+        ogDescription="Ontvang binnen 24 uur een vrijblijvende offerte op maat. Gratis inmeting beschikbaar."
+      />
       <main className="min-h-screen bg-background">
         <Navbar />
         

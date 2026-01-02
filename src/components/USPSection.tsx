@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import kitchenAfter from "@/assets/kitchen-after.jpg";
 
 const usps = [
   "Gratis vrijblijvende offerte",
@@ -14,8 +15,19 @@ const usps = [
 
 export const USPSection = () => {
   return (
-    <div className="w-full py-16 md:py-24 bg-background relative">
-      <div className="container-wide">
+    <div className="w-full py-16 md:py-24 relative min-h-screen flex items-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src={kitchenAfter} 
+          alt="Getransformeerde keuken" 
+          className="w-full h-full object-cover"
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-foreground/60" />
+      </div>
+      
+      <div className="container-wide relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Image Side */}
           <motion.div
@@ -66,14 +78,14 @@ export const USPSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
+            <span className="text-white/90 font-medium text-sm tracking-wider uppercase mb-4 block">
               Waarom QualityWrap?
             </span>
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
               De Slimste Manier Om{" "}
-              <span className="text-gradient-primary">Te Renoveren</span>
+              <span className="text-white">Te Renoveren</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+            <p className="text-white/90 text-lg mb-8 leading-relaxed drop-shadow-md">
               Waarom duizenden euro's uitgeven aan een nieuwe keuken als u het zelfde resultaat kunt bereiken voor een fractie van de prijs? Met onze hoogwaardige wrap-folie transformeren we uw keuken of interieur in slechts één dag.
             </p>
 
@@ -88,16 +100,16 @@ export const USPSection = () => {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   className="flex items-center gap-3"
                 >
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                    <Check className="w-4 h-4 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                    <Check className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-foreground">{usp}</span>
+                  <span className="text-white font-medium">{usp}</span>
                 </motion.div>
               ))}
             </div>
 
             <Link to="/over-ons">
-              <Button variant="premium-outline" size="lg" className="group">
+              <Button variant="premium-outline" size="lg" className="group border-white/30 text-white hover:bg-white/10 hover:border-white/50 bg-white/5 backdrop-blur-sm">
                 Meer Over Ons
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
