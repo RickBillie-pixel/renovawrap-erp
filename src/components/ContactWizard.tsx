@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, ArrowLeft, Check, Upload, Home, Building2, Sofa, Camera } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Upload, Home, Building2, Sofa, Camera, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
 
 type WizardStep = 1 | 2 | 3 | 4;
 
@@ -33,6 +35,7 @@ export const ContactWizard = () => {
     photos: [],
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleTypeSelect = (type: string) => {
     setFormData({ ...formData, type });
@@ -45,10 +48,138 @@ export const ContactWizard = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // Here you would send the form data to your backend
-    console.log("Form submitted:", formData);
-    setIsSubmitted(true);
+  const uploadPhotosToSupabase = async (files: File[]): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+    
+    for (const file of files) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `uploads/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('contact-uploads')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          continue;
+        }
+
+        const { data } = supabase.storage
+          .from('contact-uploads')
+          .getPublicUrl(filePath);
+
+        uploadedUrls.push(data.publicUrl);
+      } catch (error) {
+        console.error('Error uploading photo:', error);
+      }
+    }
+    
+    return uploadedUrls;
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.email) {
+      toast({
+        title: "Vul alle verplichte velden in",
+        description: "Naam en email zijn verplicht",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Ongeldig email adres",
+        description: "Controleer uw email adres",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Upload photos if any
+      let photoUrls: string[] = [];
+      if (formData.photos.length > 0) {
+        toast({
+          title: "Foto's uploaden...",
+          description: "Even geduld, uw foto's worden geüpload.",
+        });
+        photoUrls = await uploadPhotosToSupabase(formData.photos);
+      }
+
+      // Insert contact request into database
+      const { data, error } = await supabase
+        .from('contact_requests')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          type: formData.type,
+          message: formData.message || null,
+          photo_urls: photoUrls,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      // Trigger notification
+      try {
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        
+        await fetch(`${supabaseUrl}/functions/v1/notify-admin`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${anonKey}`,
+          },
+          body: JSON.stringify({
+            source: "contact_form",
+            lead_id: data.id,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            created_at: data.created_at,
+            details: {
+              type: formData.type,
+              message: formData.message,
+              photo_urls: photoUrls,
+            },
+          }),
+        });
+      } catch (notifyError) {
+        console.error("Notification error:", notifyError);
+        // Don't fail the request if notification fails
+      }
+
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      
+      toast({
+        title: "Aanvraag verzonden!",
+        description: "Wij nemen binnen 24 uur contact met u op.",
+      });
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      setIsSubmitting(false);
+      toast({
+        title: "Fout bij verzenden",
+        description: error.message || "Er is iets misgegaan. Probeer het opnieuw.",
+        variant: "destructive",
+      });
+    }
   };
 
   const nextStep = () => {
@@ -268,11 +399,20 @@ export const ContactWizard = () => {
             <Button
               variant="hero"
               onClick={handleSubmit}
-              disabled={!formData.name || !formData.email}
+              disabled={!formData.name || !formData.email || isSubmitting}
               className="group"
             >
-              Verstuur Aanvraag
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Verzenden...
+                </>
+              ) : (
+                <>
+                  Verstuur Aanvraag
+                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                </>
+              )}
             </Button>
           )}
         </div>

@@ -69,22 +69,46 @@ const Configurator = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  // Restore state from localStorage on mount
+  // Restore state from localStorage on mount and check status
   useEffect(() => {
+    const checkStatus = async (id: string) => {
+      const { data, error } = await supabase
+        .from('submissions')
+        .select('result_url')
+        .eq('id', id)
+        .single();
+      
+      if (data?.result_url) {
+        setGeneratedImage(data.result_url);
+        setIsGenerating(false);
+        setSubmissionId(null);
+        localStorage.removeItem('configuratorState');
+        setIsSubmitted(true);
+        
+        toast({
+          title: "Voorbeeld gegenereerd!",
+          description: "Het resultaat is opgehaald.",
+        });
+        return true;
+      }
+      return false;
+    };
+
     const savedState = localStorage.getItem('configuratorState');
     if (savedState) {
       const parsed = JSON.parse(savedState);
-      // Only restore if it's recent (e.g. within 24 hours) and not completed
       const isRecent = new Date().getTime() - parsed.timestamp < 24 * 60 * 60 * 1000;
+      
       if (isRecent && parsed.isGenerating && parsed.submissionId) {
         setSubmissionId(parsed.submissionId);
         setIsGenerating(true);
         setShowContactForm(true);
         setIsSubmitted(true);
         setCustomerData(parsed.customerData);
-        // We can't easily restore the image preview from localstorage if it's large, 
-        // but we can try if it was saved, or just show a loading state.
         if (parsed.uploadedImage) setUploadedImage(parsed.uploadedImage);
+
+        // Check if already completed
+        checkStatus(parsed.submissionId);
       }
     }
   }, []);

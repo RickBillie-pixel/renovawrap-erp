@@ -14,6 +14,8 @@ import Configurator from "./pages/Configurator";
 import OverOns from "./pages/OverOns";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/Admin/Login";
+import AdminDashboard from "./pages/Admin/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,8 @@ const AnimatedRoutes = () => {
         <Route path="/configurator" element={<Configurator />} />
         <Route path="/over-ons" element={<OverOns />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

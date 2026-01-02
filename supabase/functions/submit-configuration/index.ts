@@ -117,6 +117,43 @@ serve(async (req) => {
       // Don't fail the request if webhook fails, just log it
     }
 
+    // Send notification to admin
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+      const notifyUrl = `${supabaseUrl}/functions/v1/notify-admin`;
+      
+      const notificationPayload = {
+        source: "configurator",
+        lead_id: submission.id,
+        name: submissionData.name,
+        email: submissionData.email,
+        created_at: submission.created_at,
+        details: {
+          address: submissionData.address,
+          service_details: submissionData.service_details,
+          color_details: submissionData.color_details,
+          image_url: submissionData.image_url,
+        },
+      };
+
+      const notifyResponse = await fetch(notifyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY") ?? ""}`,
+        },
+        body: JSON.stringify(notificationPayload),
+      });
+
+      if (!notifyResponse.ok) {
+        console.error("Notification error:", await notifyResponse.text());
+        // Don't fail the request if notification fails, just log it
+      }
+    } catch (notifyError) {
+      console.error("Notification request failed:", notifyError);
+      // Don't fail the request if notification fails, just log it
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
