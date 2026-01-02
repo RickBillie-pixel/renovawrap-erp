@@ -119,58 +119,55 @@ export const Hero = () => {
         </div>
       </div>
 
-      {/* Stats bar at bottom */}
+      {/* Refined Stats Bar */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="absolute bottom-0 left-0 right-0 z-10"
       >
         <div className="container-wide">
-          <div className="glass-strong rounded-t-3xl p-8 md:p-10">
-            <div className="grid grid-cols-3 gap-8 max-w-2xl">
-              {[
-                { value: "500+", label: "Projecten" },
-                { value: "10+", label: "Jaar Ervaring" },
-                { value: "100%", label: "Garantie" },
-              ].map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4 + index * 0.1, duration: 0.6 }}
-                  className="text-center md:text-left"
-                >
-                  <div className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
-                    {stat.value}
-                  </div>
-                  <div className="text-muted-foreground text-sm mt-1">
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          <div className="flex items-center gap-12 md:gap-16 py-8 border-t border-border/50">
+            {[
+              { value: "500+", label: "Projecten" },
+              { value: "10+", label: "Jaar Ervaring" },
+              { value: "100%", label: "Garantie" },
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.4 + index * 0.1, duration: 0.6 }}
+                className="flex items-baseline gap-2"
+              >
+                <span className="font-display text-2xl md:text-3xl font-semibold text-foreground">
+                  {stat.value}
+                </span>
+                <span className="text-muted-foreground text-sm tracking-wide uppercase">
+                  {stat.label}
+                </span>
+              </motion.div>
+            ))}
           </div>
         </div>
       </motion.div>
 
-      {/* Scroll Indicator */}
+      {/* Minimal Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 0.8 }}
-        className="absolute bottom-32 right-8 md:right-16 z-10"
+        className="absolute bottom-28 right-8 md:right-16 z-10"
       >
         <motion.div
-          animate={{ y: [0, 12, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-8 h-12 rounded-full border-2 border-primary/40 flex justify-center pt-3"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-2"
         >
-          <motion.div
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-2 h-3 bg-primary rounded-full"
-          />
+          <span className="text-xs tracking-widest uppercase text-muted-foreground rotate-90 origin-center">
+            Scroll
+          </span>
+          <div className="w-px h-12 bg-gradient-to-b from-muted-foreground/50 to-transparent" />
         </motion.div>
       </motion.div>
     </section>
