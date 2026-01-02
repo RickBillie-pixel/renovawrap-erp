@@ -14,7 +14,7 @@ const usps = [
 
 export const USPSection = () => {
   return (
-    <section className="section-padding bg-background relative">
+    <div className="w-full py-16 md:py-24 bg-background relative">
       <div className="container-wide">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Image Side */}
@@ -105,6 +105,6 @@ export const USPSection = () => {
           </motion.div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
