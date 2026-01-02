@@ -63,7 +63,7 @@ export const Testimonials = () => {
             Wat Onze Klanten Zeggen
           </h2>
           <p className="text-white/90 text-lg drop-shadow-md">
-            Ontdek waarom honderden tevreden klanten voor QualityWrap kozen.
+            Ontdek waarom honderden tevreden klanten voor FoxWrap kozen.
           </p>
         </motion.div>
 

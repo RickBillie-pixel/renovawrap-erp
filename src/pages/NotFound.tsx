@@ -12,7 +12,7 @@ const NotFound = () => {
   return (
     <>
       <SEO
-        title="404 - Pagina Niet Gevonden | QualityWrap.nl"
+        title="404 - Pagina Niet Gevonden | FoxWrap.nl"
         description="De pagina die u zoekt bestaat niet. Ga terug naar de homepage of bekijk onze diensten voor keuken en interieur wrappen."
         noindex={true}
       />

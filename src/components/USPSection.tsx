@@ -79,7 +79,7 @@ export const USPSection = () => {
             transition={{ duration: 0.8 }}
           >
             <span className="text-white/90 font-medium text-sm tracking-wider uppercase mb-4 block">
-              Waarom QualityWrap?
+              Waarom FoxWrap?
             </span>
             <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
               De Slimste Manier Om{" "}

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import foxwrapLogo from "@/assets/Ontwerp zonder titel (4).png";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -65,15 +66,24 @@ export const Navbar = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
-              className="font-display text-2xl font-bold tracking-tight"
+              className="flex items-center gap-4 md:gap-5"
             >
-              <span className={`transition-colors duration-300 ${
-                isHomePage && !isScrolled ? "text-white" : "text-foreground"
-              }`}>Quality</span>
-              <span className="text-gradient-primary">Wrap</span>
-              <span className={`text-sm transition-colors duration-300 ${
-                isHomePage && !isScrolled ? "text-white/70" : "text-muted-foreground"
-              }`}>.nl</span>
+              <img
+                src={foxwrapLogo}
+                alt="FoxWrap"
+                className={`h-16 md:h-20 w-auto object-contain transition-all duration-300 ${
+                  isHomePage && !isScrolled 
+                    ? 'brightness-0 invert drop-shadow-lg' 
+                    : 'drop-shadow-sm'
+                }`}
+              />
+              <span className={`font-display text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide transition-colors duration-300 ${
+                isHomePage && !isScrolled 
+                  ? "text-white drop-shadow-lg" 
+                  : "text-foreground"
+              }`}>
+                FoxWraps
+              </span>
             </motion.div>
           </Link>
 

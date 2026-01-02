@@ -17,10 +17,10 @@ const OverOns = () => {
   return (
     <PageTransition>
       <SEO
-        title="Over Ons - 10+ Jaar Ervaring in Keuken & Interieur Wrappen | QualityWrap.nl"
+        title="Over Ons - 10+ Jaar Ervaring in Keuken & Interieur Wrappen | FoxWrap.nl"
         description="Al meer dan 10 jaar transformeren wij keukens en interieurs door heel Nederland. Gecertificeerde specialisten met premium 3M en Avery materialen. 500+ tevreden klanten."
-        keywords="over qualitywrap, wrap specialist, gecertificeerd wrappen, ervaren wrap bedrijf, 3M gecertificeerd, Avery gecertificeerd"
-        canonical="https://qualitywrap.nl/over-ons"
+        keywords="over foxwrap, wrap specialist, gecertificeerd wrappen, ervaren wrap bedrijf, 3M gecertificeerd, Avery gecertificeerd"
+        canonical="https://foxwrap.nl/over-ons"
         ogTitle="Over Ons - 10+ Jaar Ervaring in Premium Wrappen"
         ogDescription="Gecertificeerde specialisten met premium materialen. 500+ tevreden klanten, 5 jaar garantie."
       />
@@ -44,7 +44,7 @@ const OverOns = () => {
                   <span className="text-gradient-primary">Perfectie</span>
                 </h1>
                 <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
-                  QualityWrap is ontstaan uit een passie voor design en vakmanschap. Al meer dan 10 jaar transformeren wij keukens en interieurs door heel Nederland.
+                  FoxWrap is ontstaan uit een passie voor design en vakmanschap. Al meer dan 10 jaar transformeren wij keukens en interieurs door heel Nederland.
                 </p>
                 <p className="text-muted-foreground text-lg leading-relaxed">
                   Ons team van gecertificeerde specialisten werkt uitsluitend met premium materialen van 3M en Avery. Wij geloven dat iedereen recht heeft op een prachtig interieur, zonder de hoge kosten van een volledige renovatie.

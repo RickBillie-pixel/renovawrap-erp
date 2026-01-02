@@ -218,7 +218,7 @@ const Configurator = () => {
   const handleDownload = () => {
     if (generatedImage) {
       const link = document.createElement("a");
-      link.download = `qualitywrap-preview-${Date.now()}.jpg`;
+      link.download = `foxwrap-preview-${Date.now()}.jpg`;
       link.href = generatedImage;
       link.click();
     }
@@ -229,10 +229,10 @@ const Configurator = () => {
   return (
     <PageTransition>
       <SEO
-        title="AI Configurator - Zie Uw Droomproject Voor U | QualityWrap.nl"
+        title="AI Configurator - Zie Uw Droomproject Voor U | FoxWrap.nl"
         description="Upload een foto en laat AI een realistisch voorbeeld genereren van uw keuken of interieur met wrap-folie. Ontvang het resultaat direct per email. Probeer nu gratis!"
         keywords="wrap configurator, AI configurator, keuken visualisatie, interieur visualisatie, wrap voorbeeld, AI voorbeeld"
-        canonical="https://qualitywrap.nl/configurator"
+        canonical="https://foxwrap.nl/configurator"
         ogTitle="AI Configurator - Zie Uw Droomproject Voor U"
         ogDescription="Upload een foto en ontvang een realistisch AI-voorbeeld direct per email. Gratis te gebruiken!"
       />

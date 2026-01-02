@@ -22,10 +22,10 @@ const KeukenWrappen = () => {
   return (
     <PageTransition>
       <SEO
-        title="Keuken Wrappen - Tot 70% Goedkoper | QualityWrap.nl"
+        title="Keuken Wrappen - Tot 70% Goedkoper | FoxWrap.nl"
         description="Transformeer uw verouderde keuken naar een moderne uitstraling zonder de kosten van een complete renovatie. Klaar binnen 1 dag, 5 jaar garantie. Gratis offerte!"
         keywords="keuken wrappen, keuken renovatie, keuken transformatie, kastdeuren wrappen, werkblad wrappen, goedkope keuken renovatie, keuken folie"
-        canonical="https://qualitywrap.nl/keuken-wrappen"
+        canonical="https://foxwrap.nl/keuken-wrappen"
         ogTitle="Keuken Wrappen - Tot 70% Goedkoper Dan Nieuwe Keuken"
         ogDescription="Transformeer uw keuken in slechts één dag. Premium kwaliteit, 5 jaar garantie, geen rommel."
       />

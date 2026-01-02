@@ -35,10 +35,10 @@ const InterieurWrappen = () => {
   return (
     <PageTransition>
       <SEO
-        title="Interieur Wrappen - Meubels, Deuren & Wandpanelen | QualityWrap.nl"
+        title="Interieur Wrappen - Meubels, Deuren & Wandpanelen | FoxWrap.nl"
         description="Geef elk interieuroppervlak een nieuwe uitstraling met hoogwaardige wrap-folie. Van meubels tot wandpanelen - honderden kleuren beschikbaar. Gratis adviesgesprek!"
         keywords="interieur wrappen, meubels wrappen, deuren wrappen, wandpanelen wrappen, kozijnen wrappen, interieur folie, meubel renovatie"
-        canonical="https://qualitywrap.nl/interieur-wrappen"
+        canonical="https://foxwrap.nl/interieur-wrappen"
         ogTitle="Interieur Wrappen - Elk Oppervlak, Elke Stijl"
         ogDescription="Transformeer uw interieur met premium wrap-folie. Honderden kleuren en texturen beschikbaar."
       />

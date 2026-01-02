@@ -44,10 +44,10 @@ const Zakelijk = () => {
   return (
     <PageTransition>
       <SEO
-        title="Zakelijke Wrap Oplossingen - B2B Diensten | QualityWrap.nl"
+        title="Zakelijke Wrap Oplossingen - B2B Diensten | FoxWrap.nl"
         description="Professionele wrap-oplossingen voor bedrijven. Van kantoren tot winkelruimtes - minimale bedrijfsonderbreking, projectmanagement van A tot Z. Vraag zakelijke offerte aan!"
         keywords="zakelijk wrappen, B2B wrap, kantoor wrappen, winkel wrappen, horeca wrappen, retail wrappen, bedrijfsruimte wrappen"
-        canonical="https://qualitywrap.nl/zakelijk"
+        canonical="https://foxwrap.nl/zakelijk"
         ogTitle="Zakelijke Wrap Oplossingen - Professionele B2B Diensten"
         ogDescription="Minimale bedrijfsonderbreking, projectmanagement van A tot Z. Volume kortingen beschikbaar."
       />
