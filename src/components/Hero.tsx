@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
-import heroVideo from "@/assets/kitchen-wrap-hero-v2.mp4";
+import heroVideo from "@/assets/kitchen-wrap-hero-v3.mp4";
 
 export const Hero = () => {
   const containerVariants = {
