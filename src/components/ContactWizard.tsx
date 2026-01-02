@@ -117,18 +117,21 @@ export const ContactWizard = () => {
       }
 
       // Insert contact request into database
-      const { data, error } = await supabase
+      const submissionId = crypto.randomUUID();
+      const submissionDate = new Date().toISOString();
+
+      const { error } = await supabase
         .from('contact_requests')
         .insert({
+          id: submissionId,
+          created_at: submissionDate,
           name: formData.name,
           email: formData.email,
           phone: formData.phone || null,
           type: formData.type,
           message: formData.message || null,
           photo_urls: photoUrls,
-        })
-        .select()
-        .single();
+        });
 
       if (error) {
         throw error;
@@ -147,11 +150,11 @@ export const ContactWizard = () => {
           },
           body: JSON.stringify({
             source: "contact_form",
-            lead_id: data.id,
+            lead_id: submissionId,
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
-            created_at: data.created_at,
+            created_at: submissionDate,
             details: {
               type: formData.type,
               message: formData.message,
@@ -211,7 +214,7 @@ export const ContactWizard = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto relative">
       {/* Progress Bar */}
       <div className="flex items-center justify-between mb-10">
         {[1, 2, 3, 4].map((s) => (
