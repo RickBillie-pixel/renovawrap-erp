@@ -23,7 +23,7 @@ export const Footer = () => {
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
               <div className="font-display text-2xl font-bold tracking-tight">
-                <span className="text-foreground">Quality</span>
+                <span className="text-foreground">Fox</span>
                 <span className="text-gradient-gold">Wrap</span>
                 <span className="text-muted-foreground text-sm">.nl</span>
               </div>
@@ -101,8 +101,8 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground text-sm">
                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                <a href="mailto:info@qualitywrap.nl" className="hover:text-primary transition-colors">
-                  info@qualitywrap.nl
+                <a href="mailto:info@foxwrap.nl" className="hover:text-primary transition-colors">
+                  info@foxwrap.nl
                 </a>
               </li>
             </ul>
@@ -112,7 +112,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} QualityWrap.nl. Alle rechten voorbehouden.
+            © {new Date().getFullYear()} FoxWrap.nl. Alle rechten voorbehouden.
           </p>
           <div className="flex gap-6 text-sm">
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">

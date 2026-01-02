@@ -21,8 +21,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: "E-mail",
-    content: "info@qualitywrap.nl",
-    href: "mailto:info@qualitywrap.nl",
+    content: "info@foxwrap.nl",
+    href: "mailto:info@foxwrap.nl",
   },
   {
     icon: Clock,
@@ -35,10 +35,10 @@ const Contact = () => {
   return (
     <PageTransition>
       <SEO
-        title="Contact - Gratis Offerte Aanvragen | QualityWrap.nl"
+        title="Contact - Gratis Offerte Aanvragen | FoxWrap.nl"
         description="Vraag een gratis offerte aan voor uw keuken of interieur wrappen. Vul het formulier in en ontvang binnen 24 uur een vrijblijvende offerte op maat. Neem contact met ons op!"
-        keywords="gratis offerte, contact qualitywrap, offerte aanvragen, keuken offerte, interieur offerte, wrap offerte"
-        canonical="https://qualitywrap.nl/contact"
+        keywords="gratis offerte, contact foxwrap, offerte aanvragen, keuken offerte, interieur offerte, wrap offerte"
+        canonical="https://foxwrap.nl/contact"
         ogTitle="Contact - Vraag Gratis Offerte Aan"
         ogDescription="Ontvang binnen 24 uur een vrijblijvende offerte op maat. Gratis inmeting beschikbaar."
       />

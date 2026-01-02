@@ -54,10 +54,10 @@ const Diensten = () => {
   return (
     <PageTransition>
       <SEO
-        title="Onze Diensten - Keuken, Interieur & Zakelijk Wrappen | QualityWrap.nl"
+        title="Onze Diensten - Keuken, Interieur & Zakelijk Wrappen | FoxWrap.nl"
         description="Complete wrap-oplossingen voor elk oppervlak. Van keukens tot interieurs en zakelijke ruimtes - wij bieden professionele wrap-diensten met premium materialen. Bekijk alle diensten!"
         keywords="wrap diensten, keuken wrappen, interieur wrappen, zakelijk wrappen, wrap oplossingen, alle diensten"
-        canonical="https://qualitywrap.nl/diensten"
+        canonical="https://foxwrap.nl/diensten"
         ogTitle="Onze Diensten - Complete Wrap Oplossingen"
         ogDescription="Van keukens tot interieurs en zakelijke ruimtes - professionele wrap-diensten voor elk oppervlak."
       />
