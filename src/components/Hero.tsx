@@ -41,81 +41,102 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-soft">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden">
+      {/* Full-screen background image */}
+      <div className="absolute inset-0">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.4, scale: 1 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          className="absolute -top-1/2 -right-1/4 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.3, scale: 1 }}
-          transition={{ duration: 2, delay: 0.3, ease: "easeOut" }}
-          className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-secondary to-transparent blur-3xl"
-        />
+          initial={{ scale: 1.2, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=2000&auto=format&fit=crop"
+            alt="Luxe keuken"
+            className="w-full h-full object-cover"
+          />
+        </motion.div>
+        {/* Elegant light overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
       </div>
 
+      {/* Decorative accent lines */}
+      <motion.div
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute left-8 md:left-16 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/30 to-transparent origin-top"
+      />
+
       {/* Content */}
-      <div className="relative z-10 container-wide py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Text Content */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {/* Badge */}
-            <motion.div variants={itemVariants} className="mb-8">
-              <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
-                <Sparkles className="w-4 h-4" />
-                Premium Keuken & Interieur Wrappen
-              </span>
-            </motion.div>
-
-            {/* Headline */}
-            <motion.h1
-              variants={itemVariants}
-              className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-8 text-foreground"
-            >
-              Transformeer Uw Keuken{" "}
-              <span className="text-gradient-primary">Zonder Verbouwing</span>
-            </motion.h1>
-
-            {/* Subheadline */}
-            <motion.p
-              variants={itemVariants}
-              className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-12 max-w-xl"
-            >
-              Geef uw keuken of interieur een complete metamorfose met hoogwaardige wrap-folie. Professioneel resultaat in slechts één dag.
-            </motion.p>
-
-            {/* CTA Buttons */}
+      <div className="relative z-10 min-h-screen flex items-center">
+        <div className="container-wide py-32">
+          <div className="max-w-3xl">
             <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
             >
-              <Link to="/contact">
-                <Button variant="hero" size="xl" className="group">
-                  Vraag Offerte Aan
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                </Button>
-              </Link>
-              <Link to="/keuken-wrappen">
-                <Button variant="outline" size="xl" className="group">
-                  <Play className="w-5 h-5" />
-                  Bekijk Resultaten
-                </Button>
-              </Link>
-            </motion.div>
+              {/* Badge */}
+              <motion.div variants={itemVariants} className="mb-8">
+                <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-card/80 backdrop-blur-sm border border-border text-primary text-sm font-medium shadow-soft">
+                  <Sparkles className="w-4 h-4" />
+                  Premium Keuken & Interieur Wrappen
+                </span>
+              </motion.div>
 
-            {/* Stats */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-16 grid grid-cols-3 gap-8 max-w-md"
-            >
+              {/* Headline */}
+              <motion.div variants={itemVariants} className="overflow-hidden mb-8">
+                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight text-foreground">
+                  Transformeer
+                  <br />
+                  <span className="text-gradient-primary">Uw Keuken</span>
+                </h1>
+              </motion.div>
+
+              {/* Subheadline */}
+              <motion.p
+                variants={itemVariants}
+                className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-12 max-w-xl"
+              >
+                Geef uw keuken of interieur een complete metamorfose met hoogwaardige wrap-folie. 
+                Professioneel resultaat in slechts één dag.
+              </motion.p>
+
+              {/* CTA Buttons */}
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row gap-4"
+              >
+                <Link to="/contact">
+                  <Button variant="hero" size="xl" className="group shadow-primary">
+                    Vraag Offerte Aan
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                  </Button>
+                </Link>
+                <Link to="/keuken-wrappen">
+                  <Button variant="outline" size="xl" className="group bg-card/50 backdrop-blur-sm border-border hover:bg-card">
+                    <Play className="w-5 h-5" />
+                    Bekijk Resultaten
+                  </Button>
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats bar at bottom */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute bottom-0 left-0 right-0 z-10"
+      >
+        <div className="container-wide">
+          <div className="glass-strong rounded-t-3xl p-8 md:p-10">
+            <div className="grid grid-cols-3 gap-8 max-w-2xl">
               {[
                 { value: "500+", label: "Projecten" },
                 { value: "10+", label: "Jaar Ervaring" },
@@ -125,9 +146,10 @@ export const Hero = () => {
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.2 + index * 0.1, duration: 0.6 }}
+                  transition={{ delay: 1.4 + index * 0.1, duration: 0.6 }}
+                  className="text-center md:text-left"
                 >
-                  <div className="font-display text-3xl md:text-4xl font-bold text-primary">
+                  <div className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
                     {stat.value}
                   </div>
                   <div className="text-muted-foreground text-sm mt-1">
@@ -135,75 +157,22 @@ export const Hero = () => {
                   </div>
                 </motion.div>
               ))}
-            </motion.div>
-          </motion.div>
-
-          {/* Image */}
-          <motion.div
-            variants={imageVariants}
-            initial="hidden"
-            animate="visible"
-            className="relative"
-          >
-            <div className="relative rounded-3xl overflow-hidden shadow-elegant">
-              <motion.img
-                src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1200&auto=format&fit=crop"
-                alt="Moderne keuken met wrap"
-                className="w-full aspect-[4/5] object-cover"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              />
-              {/* Floating card */}
-              <motion.div
-                initial={{ opacity: 0, y: 30, x: -30 }}
-                animate={{ opacity: 1, y: 0, x: 0 }}
-                transition={{ delay: 1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute bottom-8 left-8 right-8 p-6 glass rounded-2xl"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center">
-                    <Sparkles className="w-7 h-7 text-primary-foreground" />
-                  </div>
-                  <div>
-                    <div className="text-foreground font-display font-semibold text-lg">
-                      Kwaliteit Gegarandeerd
-                    </div>
-                    <div className="text-muted-foreground text-sm">
-                      Premium 3M & Avery materialen
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
             </div>
-
-            {/* Decorative elements */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6, duration: 1 }}
-              className="absolute -z-10 -bottom-8 -right-8 w-full h-full rounded-3xl bg-primary/10"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8, duration: 1 }}
-              className="absolute -z-20 -bottom-16 -right-16 w-full h-full rounded-3xl bg-secondary"
-            />
-          </motion.div>
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll Indicator */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.8, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 0.8 }}
+        className="absolute bottom-32 right-8 md:right-16 z-10"
       >
         <motion.div
           animate={{ y: [0, 12, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-8 h-12 rounded-full border-2 border-primary/30 flex justify-center pt-3"
+          className="w-8 h-12 rounded-full border-2 border-primary/40 flex justify-center pt-3"
         >
           <motion.div
             animate={{ opacity: [1, 0.3, 1] }}
