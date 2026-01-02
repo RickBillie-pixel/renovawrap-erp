@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
+import heroVideo from "@/assets/kitchen-wrap-hero.mp4";
 
 export const Hero = () => {
   const containerVariants = {
@@ -27,22 +28,9 @@ export const Hero = () => {
     },
   };
 
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 1.1, y: 40 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: {
-        duration: 1.4,
-        ease: [0.16, 1, 0.3, 1] as const,
-      },
-    },
-  };
-
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Full-screen background image */}
+      {/* Full-screen video background */}
       <div className="absolute inset-0">
         <motion.div
           initial={{ scale: 1.2, opacity: 0 }}
@@ -50,11 +38,15 @@ export const Hero = () => {
           transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0"
         >
-          <img
-            src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=2000&auto=format&fit=crop"
-            alt="Luxe keuken"
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
             className="w-full h-full object-cover"
-          />
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
         </motion.div>
         {/* Elegant light overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent" />
