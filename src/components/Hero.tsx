@@ -5,59 +5,47 @@ import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { BeforeAfterSlider } from "./BeforeAfterSlider";
 import kitchenBefore from "@/assets/kitchen-before.jpg";
 import kitchenAfter from "@/assets/kitchen-after-matched.jpg";
-
 export const Hero = () => {
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: {
+      opacity: 0
+    },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
+        delayChildren: 0.3
+      }
+    }
   };
-
   const itemVariants = {
-    hidden: { opacity: 0, y: 80 },
+    hidden: {
+      opacity: 0,
+      y: 80
+    },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 1,
-        ease: [0.16, 1, 0.3, 1] as const,
-      },
-    },
+        ease: [0.16, 1, 0.3, 1] as const
+      }
+    }
   };
-
-  return (
-    <section className="relative min-h-screen overflow-hidden flex items-center">
+  return <section className="relative min-h-screen overflow-hidden flex items-center">
       {/* Full-screen before/after slider background */}
       <div className="absolute inset-0">
-        <BeforeAfterSlider
-          beforeImage={kitchenBefore}
-          afterImage={kitchenAfter}
-          beforeLabel="Voor"
-          afterLabel="Na"
-        />
+        <BeforeAfterSlider beforeImage={kitchenBefore} afterImage={kitchenAfter} beforeLabel="Voor" afterLabel="Na" />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-foreground/50 pointer-events-none" />
       </div>
 
       {/* Content - Centered */}
       <div className="relative z-10 container-wide text-center">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="max-w-4xl mx-auto"
-        >
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-4xl mx-auto">
           {/* Badge */}
           <motion.div variants={itemVariants} className="mb-8">
-            <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-background/10 backdrop-blur-md border border-background/20 text-background text-sm font-medium">
-              <Sparkles className="w-4 h-4" />
-              Premium Keuken & Interieur Wrappen
-            </span>
+            
           </motion.div>
 
           {/* Headline */}
@@ -70,19 +58,13 @@ export const Hero = () => {
           </motion.div>
 
           {/* Subheadline */}
-          <motion.p
-            variants={itemVariants}
-            className="text-lg md:text-xl text-background/80 leading-relaxed mb-12 max-w-2xl mx-auto"
-          >
+          <motion.p variants={itemVariants} className="text-lg md:text-xl text-background/80 leading-relaxed mb-12 max-w-2xl mx-auto">
             Geef uw keuken of interieur een complete metamorfose met hoogwaardige wrap-folie. 
             Professioneel resultaat in slechts één dag.
           </motion.p>
 
           {/* CTA Buttons */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/contact">
               <Button variant="hero" size="xl" className="group">
                 Vraag Offerte Aan
@@ -98,16 +80,17 @@ export const Hero = () => {
           </motion.div>
 
           {/* Slider hint */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
-            className="mt-16 text-background/60 text-sm"
-          >
+          <motion.p initial={{
+          opacity: 0
+        }} animate={{
+          opacity: 1
+        }} transition={{
+          delay: 1.5,
+          duration: 0.8
+        }} className="mt-16 text-background/60 text-sm">
             ← Sleep om het verschil te zien →
           </motion.p>
         </motion.div>
       </div>
-    </section>
-  );
+    </section>;
 };
