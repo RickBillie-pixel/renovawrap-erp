@@ -1,6 +1,7 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { useRef } from "react";
 import { CalendarCheck, Brush, Hammer, Star, ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const steps = [
   {
@@ -9,9 +10,8 @@ const steps = [
     description: "Wij komen vrijblijvend langs om uw keuken of interieur op te meten en uw wensen te bespreken.",
     detail: "Binnen 48 uur contact",
     image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800",
-    gradientFrom: "from-amber-400/30",
-    gradientTo: "to-orange-600/10",
-    iconBg: "bg-gradient-to-br from-amber-400 to-orange-500",
+    gradientFrom: "from-amber-400",
+    gradientTo: "to-orange-500",
   },
   {
     icon: Brush,
@@ -19,9 +19,8 @@ const steps = [
     description: "Kies uit honderden kleuren en texturen. Van mat wit tot houtlook of marmeren afwerking.",
     detail: "500+ kleuren beschikbaar",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800",
-    gradientFrom: "from-rose-400/30",
-    gradientTo: "to-pink-600/10",
-    iconBg: "bg-gradient-to-br from-rose-400 to-pink-500",
+    gradientFrom: "from-rose-400",
+    gradientTo: "to-pink-500",
   },
   {
     icon: Hammer,
@@ -29,9 +28,8 @@ const steps = [
     description: "Onze specialisten wrappen uw keuken of meubels met precisie. Meestal binnen één dag klaar.",
     detail: "Gemiddeld 1 werkdag",
     image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=800",
-    gradientFrom: "from-emerald-400/30",
-    gradientTo: "to-teal-600/10",
-    iconBg: "bg-gradient-to-br from-emerald-400 to-teal-500",
+    gradientFrom: "from-emerald-400",
+    gradientTo: "to-teal-500",
   },
   {
     icon: Star,
@@ -39,144 +37,121 @@ const steps = [
     description: "Geniet van uw volledig getransformeerde ruimte met 5 jaar garantie op al ons werk.",
     detail: "5 jaar garantie",
     image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800",
-    gradientFrom: "from-violet-400/30",
-    gradientTo: "to-purple-600/10",
-    iconBg: "bg-gradient-to-br from-violet-400 to-purple-500",
+    gradientFrom: "from-violet-400",
+    gradientTo: "to-purple-500",
   },
 ];
 
-const StepCard = ({ step, index, isActive, onClick }: { 
-  step: typeof steps[0]; 
-  index: number; 
-  isActive: boolean;
-  onClick: () => void;
-}) => {
+const StepItem = ({ step, index, isLast }: { step: typeof steps[0]; index: number; isLast: boolean }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.5 });
   const Icon = step.icon;
-  
+  const isEven = index % 2 === 0;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-      onClick={onClick}
-      className="cursor-pointer group"
-    >
+    <div ref={ref} className="relative">
+      {/* Connector Line to next step */}
+      {!isLast && (
+        <div className="absolute left-1/2 top-full w-px h-24 -translate-x-1/2 bg-gradient-to-b from-border to-transparent z-0" />
+      )}
+
       <motion.div
-        whileHover={{ scale: 1.02, y: -8 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`relative overflow-hidden rounded-3xl transition-all duration-500 ${
-          isActive 
-            ? "ring-2 ring-primary shadow-elegant" 
-            : "ring-1 ring-border/50 hover:ring-primary/30"
+        initial={{ opacity: 0, y: 80 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.3, y: 40 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${
+          isEven ? "" : "lg:flex-row-reverse"
         }`}
       >
-        {/* Image Background */}
-        <div className="relative h-64 overflow-hidden">
-          <motion.img
-            src={step.image}
-            alt={step.title}
-            className="w-full h-full object-cover"
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          />
-          {/* Gradient Overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${step.gradientFrom} ${step.gradientTo}`} />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent" />
-          
-          {/* Step Number */}
+        {/* Image Side */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0.5, scale: 0.95 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="flex-1 w-full"
+        >
+          <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-elegant">
+            <motion.img
+              src={step.image}
+              alt={step.title}
+              className="w-full h-full object-cover"
+              animate={isInView ? { scale: 1 } : { scale: 1.1 }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            />
+            {/* Gradient overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${step.gradientFrom}/20 ${step.gradientTo}/10 mix-blend-overlay`} />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+            
+            {/* Step badge on image */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={isInView ? { scale: 1 } : { scale: 0 }}
+              transition={{ duration: 0.5, delay: 0.3, type: "spring" }}
+              className={`absolute top-6 ${isEven ? 'left-6' : 'right-6'} px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20`}
+            >
+              <span className="text-white font-medium text-sm">Stap {index + 1}</span>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Content Side */}
+        <motion.div
+          initial={{ opacity: 0, x: isEven ? 40 : -40 }}
+          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0.5, x: isEven ? 20 : -20 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className={`flex-1 w-full ${isEven ? 'lg:text-left' : 'lg:text-right'}`}
+        >
+          {/* Icon */}
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
-            whileInView={{ scale: 1, rotate: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 + index * 0.1, type: "spring" }}
-            className="absolute top-4 left-4 w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
+            animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0.8, rotate: -90 }}
+            transition={{ duration: 0.6, delay: 0.3, type: "spring" }}
+            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${step.gradientFrom} ${step.gradientTo} shadow-lg mb-6`}
           >
-            <span className="font-display text-xl font-bold text-white">
-              {String(index + 1).padStart(2, '0')}
-            </span>
+            <Icon className="w-7 h-7 text-white" strokeWidth={1.5} />
           </motion.div>
 
-          {/* Icon Badge */}
-          <motion.div
-            whileHover={{ rotate: 12, scale: 1.1 }}
-            className={`absolute top-4 right-4 w-14 h-14 rounded-2xl ${step.iconBg} flex items-center justify-center shadow-lg`}
+          {/* Detail tag */}
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className={`inline-block px-4 py-1.5 rounded-full bg-gradient-to-r ${step.gradientFrom}/10 ${step.gradientTo}/10 text-foreground/70 text-xs font-medium tracking-wide uppercase mb-4`}
           >
-            <Icon className="w-6 h-6 text-white" strokeWidth={1.5} />
-          </motion.div>
+            {step.detail}
+          </motion.span>
 
-          {/* Content Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-              className="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/80 text-xs font-medium mb-3"
-            >
-              {step.detail}
-            </motion.span>
-            <h3 className="font-display text-2xl font-bold text-white mb-2">
-              {step.title}
-            </h3>
-          </div>
-        </div>
-
-        {/* Content Section */}
-        <div className="p-6 bg-card">
-          <p className="text-muted-foreground leading-relaxed mb-4">
+          <h3 className="font-display text-3xl md:text-4xl font-bold mb-4 text-foreground">
+            {step.title}
+          </h3>
+          
+          <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
             {step.description}
           </p>
-          
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: isActive ? 1 : 0.6, x: isActive ? 0 : -10 }}
-            className="flex items-center gap-2 text-primary font-medium text-sm group-hover:gap-3 transition-all"
-          >
-            <span>Meer informatie</span>
-            <ArrowRight className="w-4 h-4" />
-          </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 
 export const HowItWorks = () => {
-  const containerRef = useRef(null);
-  const [activeStep, setActiveStep] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start center", "end center"]
   });
   
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const progressHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <div ref={containerRef} className="w-full py-24 md:py-32 relative overflow-hidden">
-      {/* Rich Background */}
+      {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-card via-background to-card" />
       
-      {/* Animated Background Elements */}
-      <motion.div 
-        style={{ y: backgroundY }}
-        className="absolute inset-0 pointer-events-none"
-      >
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
-      </motion.div>
-
-      {/* Decorative Grid Pattern */}
-      <div className="absolute inset-0 opacity-[0.03]">
-        <div 
-          className="absolute inset-0" 
-          style={{
-            backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px'
-          }} 
-        />
-      </div>
+      {/* Decorative blurs */}
+      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-x-1/2" />
+      <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl translate-x-1/2" />
 
       <div className="container-wide relative z-10">
         {/* Section Header */}
@@ -188,24 +163,18 @@ export const HowItWorks = () => {
           className="text-center max-w-3xl mx-auto mb-20"
         >
           <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            whileInView={{ scale: 1, rotate: 0 }}
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, type: "spring" }}
+            transition={{ duration: 0.6, type: "spring" }}
             className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-8"
           >
             <Sparkles className="w-8 h-8 text-primary" strokeWidth={1.5} />
           </motion.div>
           
-          <motion.span
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-block text-primary font-medium text-sm tracking-[0.2em] uppercase mb-4"
-          >
+          <span className="inline-block text-primary font-medium text-sm tracking-[0.2em] uppercase mb-4">
             Uw Transformatie
-          </motion.span>
+          </span>
           
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
             De Journey Naar Uw
@@ -214,42 +183,33 @@ export const HowItWorks = () => {
           </h2>
           
           <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto">
-            Van eerste contact tot uw droomkeuken — in vier doordachte stappen naar een complete transformatie.
+            Van eerste contact tot uw droomkeuken — in vier doordachte stappen.
           </p>
         </motion.div>
 
-        {/* Progress Indicator */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex justify-center gap-3 mb-16"
-        >
-          {steps.map((_, index) => (
-            <motion.button
-              key={index}
-              onClick={() => setActiveStep(index)}
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-              className={`relative h-2 rounded-full transition-all duration-500 ${
-                index === activeStep 
-                  ? "w-12 bg-gradient-to-r from-primary to-primary/60" 
-                  : "w-2 bg-border/50 hover:bg-primary/30"
-              }`}
+        {/* Progress Bar - Fixed on left side */}
+        <div className="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 z-50">
+          <div className="relative h-48 w-1 bg-border/30 rounded-full overflow-hidden">
+            <motion.div
+              style={{ height: progressHeight }}
+              className="absolute top-0 left-0 w-full bg-gradient-to-b from-primary via-primary to-primary/60 rounded-full"
             />
-          ))}
-        </motion.div>
+          </div>
+          <div className="mt-4 text-xs text-muted-foreground font-medium tracking-wider uppercase">
+            <motion.span style={{ opacity: scrollYProgress }}>
+              Journey
+            </motion.span>
+          </div>
+        </div>
 
-        {/* Step Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        {/* Steps */}
+        <div className="space-y-32 lg:space-y-48">
           {steps.map((step, index) => (
-            <StepCard 
+            <StepItem 
               key={step.title} 
               step={step} 
-              index={index}
-              isActive={index === activeStep}
-              onClick={() => setActiveStep(index)}
+              index={index} 
+              isLast={index === steps.length - 1}
             />
           ))}
         </div>
@@ -259,20 +219,22 @@ export const HowItWorks = () => {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-center mt-16"
+          transition={{ duration: 0.8 }}
+          className="text-center mt-32"
         >
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-8 text-lg">
             Klaar om te beginnen? Neem vandaag nog contact met ons op.
           </p>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-primary via-primary to-primary/80 text-primary-foreground font-medium shadow-lg cursor-pointer group"
-          >
-            <span>Start Uw Transformatie</span>
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
-          </motion.div>
+          <Link to="/contact">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-full bg-gradient-to-r from-primary via-primary to-primary/80 text-primary-foreground font-medium text-lg shadow-lg cursor-pointer group"
+            >
+              <span>Start Uw Transformatie</span>
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" strokeWidth={1.5} />
+            </motion.div>
+          </Link>
         </motion.div>
       </div>
     </div>
