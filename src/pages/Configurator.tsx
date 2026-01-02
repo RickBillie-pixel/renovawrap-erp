@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, Sparkles, Loader2, Download, X, Check, Search, ChefHat, Square, DoorOpen, Wrench, Box, Mail, User, Send, CheckCircle2 } from "lucide-react";
+import { Upload, Sparkles, Loader2, Download, X, Check, Search, ChefHat, Square, DoorOpen, Wrench, Box, Mail, User, Send, CheckCircle2, Camera, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { getWrapColors, type WrapColor } from "@/lib/wrapColors";
+import { supabase } from "@/lib/supabase";
 
 const applicationTypes = [
   { 
@@ -62,8 +63,10 @@ const Configurator = () => {
   const [showContactForm, setShowContactForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [customerData, setCustomerData] = useState({ name: "", email: "" });
+  const [customerData, setCustomerData] = useState({ name: "", email: "", address: "" });
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   
   // Load all wrap colors dynamically
   const allColors = getWrapColors();
@@ -94,6 +97,7 @@ const Configurator = () => {
         return;
       }
 
+      setUploadedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setUploadedImage(reader.result as string);
@@ -142,35 +146,39 @@ const Configurator = () => {
       return;
     }
 
-    setIsGenerating(true);
+    // Show contact form first
+    setShowContactForm(true);
+    setGeneratedImage(null);
+    setIsSubmitted(false);
+  };
 
-    // Simulate AI generation
-    setTimeout(() => {
-      const canvas = document.createElement("canvas");
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, 0, 0);
-          ctx.globalCompositeOperation = "multiply";
-          ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const uploadImageToSupabase = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
 
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
-          setGeneratedImage(dataUrl);
-          setIsGenerating(false);
-          setShowContactForm(true);
-          
-          toast({
-            title: "Voorbeeld gegenereerd!",
-            description: "Vul uw gegevens in om het resultaat per email te ontvangen.",
-          });
-        }
-      };
-      img.src = uploadedImage;
-    }, 3000);
+      const { error: uploadError } = await supabase.storage
+        .from('configurator-uploads')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('configurator-uploads')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
   };
 
   const handleSubmitContact = async (e: React.FormEvent) => {
@@ -197,22 +205,117 @@ const Configurator = () => {
     }
 
     setIsSubmitting(true);
+    setIsGenerating(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      toast({
-        title: "Verzonden!",
-        description: "U ontvangt het resultaat binnenkort per email.",
-      });
+    try {
+      // Upload image to Supabase storage
+      let imageUrl = uploadedImage;
       
-      // In production, this would send the data to your backend
-      console.log("Customer data:", customerData);
-      console.log("Generated image:", generatedImage);
-      console.log("Application:", selectedApplication);
-      console.log("Color:", selectedColor);
-    }, 1500);
+      if (uploadedFile) {
+        toast({
+          title: "Afbeelding uploaden...",
+          description: "Even geduld, uw afbeelding wordt geüpload.",
+        });
+
+        const uploadedUrl = await uploadImageToSupabase(uploadedFile);
+        if (!uploadedUrl) {
+          throw new Error("Kon afbeelding niet uploaden");
+        }
+        imageUrl = uploadedUrl;
+      } else if (!uploadedImage) {
+        throw new Error("Geen afbeelding beschikbaar");
+      }
+
+      // Get selected service details
+      const selectedService = applicationTypes.find(a => a.value === selectedApplication);
+      const serviceDetails = selectedService ? {
+        value: selectedService.value,
+        label: selectedService.label,
+        description: selectedService.description
+      } : null;
+
+      // Get selected color details
+      const selectedColorData = allColors.find(c => c.id === selectedColor);
+      
+      // Ensure color image URL is absolute
+      let colorImageUrl = selectedColorData?.image || '';
+      if (colorImageUrl && !colorImageUrl.startsWith('http')) {
+        // Remove duplicate slashes if any
+        const cleanPath = colorImageUrl.startsWith('/') ? colorImageUrl : `/${colorImageUrl}`;
+        colorImageUrl = `${window.location.origin}${cleanPath}`;
+      }
+
+      const colorDetails = selectedColorData ? {
+        id: selectedColorData.id,
+        name: selectedColorData.name,
+        code: selectedColorData.code,
+        image_url: colorImageUrl
+      } : null;
+
+      // Call edge function with anonymous key for authentication
+      const { data: functionData, error: functionError } = await supabase.functions.invoke(
+        'submit-configuration',
+        {
+          body: {
+            name: customerData.name,
+            email: customerData.email,
+            address: customerData.address || null,
+            service_details: serviceDetails,
+            color_details: colorDetails,
+            image_url: imageUrl
+          }
+        }
+      );
+
+      if (functionError) {
+        throw functionError;
+      }
+
+      setIsSubmitting(false);
+      
+      // Show loading message
+      toast({
+        title: "AI Voorbeeld genereren...",
+        description: "Dit duurt ongeveer 1,5 minuten. U ontvangt het resultaat per email.",
+      });
+
+      // Simulate AI generation (1.5 minutes = 90000ms)
+      setTimeout(() => {
+        const canvas = document.createElement("canvas");
+        const img = new Image();
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0);
+            ctx.globalCompositeOperation = "multiply";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+            setGeneratedImage(dataUrl);
+            setIsGenerating(false);
+            setIsSubmitted(true);
+            
+            toast({
+              title: "Voorbeeld gegenereerd!",
+              description: "Het resultaat is ook naar uw email verzonden.",
+            });
+          }
+        };
+        img.src = uploadedImage;
+      }, 90000); // 1.5 minutes
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      setIsSubmitting(false);
+      setIsGenerating(false);
+      toast({
+        title: "Fout bij verzenden",
+        description: error.message || "Er is iets misgegaan. Probeer het opnieuw.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDownload = () => {
@@ -349,11 +452,15 @@ const Configurator = () => {
                         <button
                           onClick={() => {
                             setUploadedImage(null);
+                            setUploadedFile(null);
                             setGeneratedImage(null);
                             setShowContactForm(false);
                             setIsSubmitted(false);
                             if (fileInputRef.current) {
                               fileInputRef.current.value = "";
+                            }
+                            if (cameraInputRef.current) {
+                              cameraInputRef.current.value = "";
                             }
                           }}
                           className="absolute top-3 right-3 p-2 bg-background/90 backdrop-blur-sm rounded-full hover:bg-background transition-colors shadow-elegant"
@@ -396,6 +503,35 @@ const Configurator = () => {
                       onChange={handleImageUpload}
                       className="hidden"
                     />
+                    <input
+                      ref={cameraInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    
+                    <div className="flex gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex-1"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload Foto
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => cameraInputRef.current?.click()}
+                        className="flex-1"
+                      >
+                        <Camera className="w-4 h-4 mr-2" />
+                        Maak Foto
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
 
@@ -586,32 +722,55 @@ const Configurator = () => {
                   </div>
                 </motion.div>
 
-                {/* Generate Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <Button
-                    onClick={handleGenerate}
-                    disabled={!canGenerate || isGenerating}
-                    variant="hero"
-                    size="xl"
-                    className="w-full h-14 text-lg shadow-elegant hover:shadow-primary"
+                {/* Generate Button - Only show when form is not visible */}
+                {!showContactForm && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
                   >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        AI Voorbeeld Genereren...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-5 h-5 mr-2" />
-                        Genereer AI Voorbeeld
-                      </>
-                    )}
-                  </Button>
-                </motion.div>
+                    <Button
+                      onClick={handleGenerate}
+                      disabled={!canGenerate || isGenerating}
+                      variant="hero"
+                      size="xl"
+                      className="w-full h-14 text-lg shadow-elegant hover:shadow-primary"
+                    >
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Genereer AI Voorbeeld
+                    </Button>
+                  </motion.div>
+                )}
+
+                {/* Loading State during Generation */}
+                <AnimatePresence>
+                  {isGenerating && !generatedImage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-elegant"
+                    >
+                      <div className="text-center space-y-4">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center mx-auto shadow-elegant"
+                        >
+                          <Sparkles className="w-8 h-8 text-primary-foreground" />
+                        </motion.div>
+                        <div>
+                          <h3 className="font-display text-xl font-bold text-foreground mb-2">
+                            AI Voorbeeld Genereren
+                          </h3>
+                          <p className="text-muted-foreground text-sm">
+                            Dit duurt ongeveer 1,5 minuten. U ontvangt het resultaat ook per email op <strong>{customerData.email}</strong>
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Generated Image Preview */}
                 <AnimatePresence>
@@ -662,9 +821,9 @@ const Configurator = () => {
                   )}
                 </AnimatePresence>
 
-                {/* Contact Form */}
+                {/* Contact Form - Show when generate button is clicked */}
                 <AnimatePresence>
-                  {showContactForm && !isSubmitted && (
+                  {showContactForm && !isSubmitted && !isGenerating && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -681,7 +840,7 @@ const Configurator = () => {
                       </div>
                       
                       <p className="text-muted-foreground mb-6 text-sm">
-                        Vul uw gegevens in en ontvang het AI-voorbeeld direct per email.
+                        Vul uw gegevens in om het AI-voorbeeld te genereren. Het resultaat wordt automatisch naar uw email verzonden.
                       </p>
 
                       <form onSubmit={handleSubmitContact} className="space-y-4">
@@ -719,21 +878,41 @@ const Configurator = () => {
                           </div>
                         </div>
 
+                        <div className="space-y-2">
+                          <Label htmlFor="address" className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            Adres (optioneel)
+                          </Label>
+                          <Input
+                            id="address"
+                            type="text"
+                            placeholder="Straat, huisnummer, postcode, plaats"
+                            value={customerData.address}
+                            onChange={(e) => setCustomerData({ ...customerData, address: e.target.value })}
+                            className="h-11"
+                          />
+                        </div>
+
                         <Button
                           type="submit"
-                          disabled={isSubmitting}
+                          disabled={isSubmitting || isGenerating}
                           variant="hero"
                           className="w-full h-11"
                         >
                           {isSubmitting ? (
                             <>
                               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Verzenden...
+                              Gegevens verzenden...
+                            </>
+                          ) : isGenerating ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              AI Voorbeeld genereren (1,5 min)...
                             </>
                           ) : (
                             <>
-                              <Send className="w-4 h-4 mr-2" />
-                              Verstuur Naar Email
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Genereer AI Voorbeeld
                             </>
                           )}
                         </Button>
@@ -758,10 +937,10 @@ const Configurator = () => {
                         </motion.div>
                         <div>
                           <h3 className="font-display text-xl font-bold text-foreground mb-2">
-                            Verzonden!
+                            Voorbeeld gegenereerd!
                           </h3>
                           <p className="text-muted-foreground text-sm">
-                            U ontvangt het AI-voorbeeld binnenkort per email op <strong>{customerData.email}</strong>
+                            Het AI-voorbeeld is gegenereerd en verzonden naar <strong>{customerData.email}</strong>
                           </p>
                         </div>
                       </div>
