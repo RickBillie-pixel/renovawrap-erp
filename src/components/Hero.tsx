@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { BeforeAfterSlider } from "./BeforeAfterSlider";
 import kitchenBefore from "@/assets/kitchen-before.jpg";
-import kitchenAfter from "@/assets/kitchen-after.jpg";
+import kitchenAfter from "@/assets/kitchen-after-matched.jpg";
 
 export const Hero = () => {
   const containerVariants = {
