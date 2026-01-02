@@ -56,13 +56,9 @@ export const BeforeAfterSlider = ({
   }, [isDragging]);
 
   return (
-    <motion.div
+    <div
       ref={containerRef}
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
-      className="relative w-full aspect-[4/3] md:aspect-[16/10] rounded-2xl overflow-hidden cursor-ew-resize shadow-elegant select-none"
+      className="relative w-full h-full cursor-ew-resize select-none"
       onMouseDown={() => setIsDragging(true)}
       onTouchStart={() => setIsDragging(true)}
     >
@@ -74,7 +70,7 @@ export const BeforeAfterSlider = ({
           className="w-full h-full object-cover"
           draggable={false}
         />
-        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-medium">
+        <div className="absolute bottom-8 right-8 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium tracking-wide uppercase">
           {afterLabel}
         </div>
       </div>
@@ -90,21 +86,21 @@ export const BeforeAfterSlider = ({
           className="w-full h-full object-cover"
           draggable={false}
         />
-        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
+        <div className="absolute bottom-8 left-8 px-4 py-2 rounded-full bg-foreground/80 text-background text-sm font-medium tracking-wide uppercase">
           {beforeLabel}
         </div>
       </div>
 
       {/* Slider Handle */}
       <div
-        className="absolute top-0 bottom-0 w-1 bg-foreground shadow-lg"
+        className="absolute top-0 bottom-0 w-0.5 bg-background/90"
         style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
       >
         {/* Handle Circle */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-foreground shadow-gold flex items-center justify-center">
-          <div className="flex items-center gap-1">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-background shadow-elegant flex items-center justify-center">
+          <div className="flex items-center gap-0.5">
             <svg
-              className="w-3 h-3 text-background rotate-180"
+              className="w-4 h-4 text-foreground rotate-180"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -112,12 +108,12 @@ export const BeforeAfterSlider = ({
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={3}
+                strokeWidth={2}
                 d="M9 5l7 7-7 7"
               />
             </svg>
             <svg
-              className="w-3 h-3 text-background"
+              className="w-4 h-4 text-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -125,25 +121,13 @@ export const BeforeAfterSlider = ({
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={3}
+                strokeWidth={2}
                 d="M9 5l7 7-7 7"
               />
             </svg>
           </div>
         </div>
       </div>
-
-      {/* Hint overlay on first load */}
-      <motion.div
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 0 }}
-        transition={{ delay: 2, duration: 0.5 }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-      >
-        <div className="px-4 py-2 rounded-full glass text-foreground text-sm font-medium">
-          ← Sleep om te vergelijken →
-        </div>
-      </motion.div>
-    </motion.div>
+    </div>
   );
 };
