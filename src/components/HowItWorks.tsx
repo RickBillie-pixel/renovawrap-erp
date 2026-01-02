@@ -106,9 +106,9 @@ const StepItem = ({ step, index, isLast }: { step: typeof steps[0]; index: numbe
             initial={{ scale: 0, rotate: -180 }}
             animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0.8, rotate: -90 }}
             transition={{ duration: 0.6, delay: 0.3, type: "spring" }}
-            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${step.gradientFrom} ${step.gradientTo} shadow-lg mb-6`}
+            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg mb-6`}
           >
-            <Icon className="w-7 h-7 text-white" strokeWidth={1.5} />
+            <Icon className="w-7 h-7 text-primary" strokeWidth={1.5} />
           </motion.div>
 
           {/* Detail tag */}
