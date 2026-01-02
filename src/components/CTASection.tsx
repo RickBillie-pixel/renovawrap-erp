@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 
 export const CTASection = () => {
   return (
-    <section className="relative min-h-[80vh] flex items-center overflow-hidden">
+    <div className="relative min-h-screen flex items-center overflow-hidden">
       {/* Full-screen background */}
       <div className="absolute inset-0">
         <motion.div
@@ -95,6 +95,6 @@ export const CTASection = () => {
           </motion.div>
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 };

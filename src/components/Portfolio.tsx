@@ -62,7 +62,7 @@ export const Portfolio = () => {
       : portfolioItems.filter((item) => item.category === activeCategory);
 
   return (
-    <section className="section-padding bg-background relative overflow-hidden">
+    <div className="w-full py-16 md:py-24 bg-background relative overflow-hidden">
       {/* Subtle background texture */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.03),transparent_50%)]" />
       
@@ -152,6 +152,6 @@ export const Portfolio = () => {
           ))}
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 };

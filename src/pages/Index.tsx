@@ -11,15 +11,29 @@ import { PageTransition } from "@/components/PageTransition";
 const Index = () => {
   return (
     <PageTransition>
-      <main className="min-h-screen bg-background">
+      <main className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth">
         <Navbar />
-        <Hero />
-        <USPSection />
-        <HowItWorks />
-        <Portfolio />
-        <Testimonials />
-        <CTASection />
-        <Footer />
+        <section className="snap-start snap-always">
+          <Hero />
+        </section>
+        <section className="snap-start snap-always min-h-screen flex items-center">
+          <USPSection />
+        </section>
+        <section className="snap-start snap-always min-h-screen flex items-center">
+          <HowItWorks />
+        </section>
+        <section className="snap-start snap-always min-h-screen flex items-center">
+          <Portfolio />
+        </section>
+        <section className="snap-start snap-always min-h-screen flex items-center">
+          <Testimonials />
+        </section>
+        <section className="snap-start snap-always">
+          <CTASection />
+        </section>
+        <section className="snap-start snap-always">
+          <Footer />
+        </section>
       </main>
     </PageTransition>
   );

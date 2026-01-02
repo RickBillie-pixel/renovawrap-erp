@@ -35,7 +35,7 @@ export const HowItWorks = () => {
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section className="section-padding bg-background relative overflow-hidden">
+    <div className="w-full py-16 md:py-24 bg-background relative overflow-hidden">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-[0.02]">
         <div className="absolute inset-0" style={{
@@ -154,6 +154,6 @@ export const HowItWorks = () => {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
