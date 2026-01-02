@@ -2,7 +2,9 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
-import heroVideo from "@/assets/kitchen-wrap-hero-v4.mp4";
+import { BeforeAfterSlider } from "./BeforeAfterSlider";
+import kitchenBefore from "@/assets/kitchen-before.jpg";
+import kitchenAfter from "@/assets/kitchen-after.jpg";
 
 export const Hero = () => {
   const containerVariants = {
@@ -29,27 +31,17 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden flex items-center justify-center">
-      {/* Full-screen video background */}
+    <section className="relative min-h-screen overflow-hidden flex items-center">
+      {/* Full-screen before/after slider background */}
       <div className="absolute inset-0">
-        <motion.div
-          initial={{ scale: 1.2, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0"
-        >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-          >
-            <source src={heroVideo} type="video/mp4" />
-          </video>
-        </motion.div>
+        <BeforeAfterSlider
+          beforeImage={kitchenBefore}
+          afterImage={kitchenAfter}
+          beforeLabel="Voor"
+          afterLabel="Na"
+        />
         {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-foreground/60" />
+        <div className="absolute inset-0 bg-foreground/50 pointer-events-none" />
       </div>
 
       {/* Content - Centered */}
@@ -104,6 +96,16 @@ export const Hero = () => {
               </Button>
             </Link>
           </motion.div>
+
+          {/* Slider hint */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
+            className="mt-16 text-background/60 text-sm"
+          >
+            ← Sleep om het verschil te zien →
+          </motion.p>
         </motion.div>
       </div>
     </section>
