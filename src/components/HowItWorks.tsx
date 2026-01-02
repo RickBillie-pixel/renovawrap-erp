@@ -1,39 +1,47 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
-import { ClipboardCheck, Palette, Wrench, Sparkles, ArrowRight } from "lucide-react";
+import { CalendarCheck, Brush, Hammer, Star, ArrowRight, Sparkles } from "lucide-react";
 
 const steps = [
   {
-    icon: ClipboardCheck,
+    icon: CalendarCheck,
     title: "Gratis Inmeting",
     description: "Wij komen vrijblijvend langs om uw keuken of interieur op te meten en uw wensen te bespreken.",
     detail: "Binnen 48 uur contact",
     image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800",
-    accent: "from-amber-500/20 to-orange-500/20",
+    gradientFrom: "from-amber-400/30",
+    gradientTo: "to-orange-600/10",
+    iconBg: "bg-gradient-to-br from-amber-400 to-orange-500",
   },
   {
-    icon: Palette,
+    icon: Brush,
     title: "Kleur & Design",
     description: "Kies uit honderden kleuren en texturen. Van mat wit tot houtlook of marmeren afwerking.",
     detail: "500+ kleuren beschikbaar",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800",
-    accent: "from-rose-500/20 to-pink-500/20",
+    gradientFrom: "from-rose-400/30",
+    gradientTo: "to-pink-600/10",
+    iconBg: "bg-gradient-to-br from-rose-400 to-pink-500",
   },
   {
-    icon: Wrench,
+    icon: Hammer,
     title: "Vakkundige Montage",
     description: "Onze specialisten wrappen uw keuken of meubels met precisie. Meestal binnen één dag klaar.",
     detail: "Gemiddeld 1 werkdag",
     image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=800",
-    accent: "from-emerald-500/20 to-teal-500/20",
+    gradientFrom: "from-emerald-400/30",
+    gradientTo: "to-teal-600/10",
+    iconBg: "bg-gradient-to-br from-emerald-400 to-teal-500",
   },
   {
-    icon: Sparkles,
+    icon: Star,
     title: "Genieten",
     description: "Geniet van uw volledig getransformeerde ruimte met 5 jaar garantie op al ons werk.",
     detail: "5 jaar garantie",
     image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800",
-    accent: "from-violet-500/20 to-purple-500/20",
+    gradientFrom: "from-violet-400/30",
+    gradientTo: "to-purple-600/10",
+    iconBg: "bg-gradient-to-br from-violet-400 to-purple-500",
   },
 ];
 
@@ -73,8 +81,8 @@ const StepCard = ({ step, index, isActive, onClick }: {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           />
           {/* Gradient Overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-t ${step.accent} mix-blend-multiply`} />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
+          <div className={`absolute inset-0 bg-gradient-to-br ${step.gradientFrom} ${step.gradientTo}`} />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent" />
           
           {/* Step Number */}
           <motion.div
@@ -91,10 +99,10 @@ const StepCard = ({ step, index, isActive, onClick }: {
 
           {/* Icon Badge */}
           <motion.div
-            whileHover={{ rotate: 12 }}
-            className="absolute top-4 right-4 w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-primary"
+            whileHover={{ rotate: 12, scale: 1.1 }}
+            className={`absolute top-4 right-4 w-14 h-14 rounded-2xl ${step.iconBg} flex items-center justify-center shadow-lg`}
           >
-            <Icon className="w-6 h-6 text-primary-foreground" />
+            <Icon className="w-6 h-6 text-white" strokeWidth={1.5} />
           </motion.div>
 
           {/* Content Overlay */}
@@ -184,9 +192,9 @@ export const HowItWorks = () => {
             whileInView={{ scale: 1, rotate: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, type: "spring" }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-8"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-8"
           >
-            <Sparkles className="w-8 h-8 text-primary" />
+            <Sparkles className="w-8 h-8 text-primary" strokeWidth={1.5} />
           </motion.div>
           
           <motion.span
@@ -226,8 +234,8 @@ export const HowItWorks = () => {
               whileTap={{ scale: 0.9 }}
               className={`relative h-2 rounded-full transition-all duration-500 ${
                 index === activeStep 
-                  ? "w-12 bg-primary" 
-                  : "w-2 bg-border hover:bg-primary/50"
+                  ? "w-12 bg-gradient-to-r from-primary to-primary/60" 
+                  : "w-2 bg-border/50 hover:bg-primary/30"
               }`}
             />
           ))}
@@ -260,10 +268,10 @@ export const HowItWorks = () => {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-foreground font-medium shadow-primary cursor-pointer group"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-primary via-primary to-primary/80 text-primary-foreground font-medium shadow-lg cursor-pointer group"
           >
             <span>Start Uw Transformatie</span>
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
           </motion.div>
         </motion.div>
       </div>
