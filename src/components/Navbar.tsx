@@ -17,14 +17,31 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  
+  // Check if we're on the homepage (hero has dark background)
+  const isHomePage = location.pathname === "/";
 
   useEffect(() => {
+    const mainElement = document.querySelector('main');
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const scrollY = mainElement ? mainElement.scrollTop : window.scrollY;
+      setIsScrolled(scrollY > 50);
     };
+    
+    // Listen to scroll on main element (for snap scroll) and window
+    if (mainElement) {
+      mainElement.addEventListener("scroll", handleScroll);
+    }
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    
+    return () => {
+      if (mainElement) {
+        mainElement.removeEventListener("scroll", handleScroll);
+      }
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [location]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -50,9 +67,13 @@ export const Navbar = () => {
               transition={{ duration: 0.3 }}
               className="font-display text-2xl font-bold tracking-tight"
             >
-              <span className="text-foreground">Quality</span>
+              <span className={`transition-colors duration-300 ${
+                isHomePage && !isScrolled ? "text-white" : "text-foreground"
+              }`}>Quality</span>
               <span className="text-gradient-primary">Wrap</span>
-              <span className="text-muted-foreground text-sm">.nl</span>
+              <span className={`text-sm transition-colors duration-300 ${
+                isHomePage && !isScrolled ? "text-white/70" : "text-muted-foreground"
+              }`}>.nl</span>
             </motion.div>
           </Link>
 
@@ -65,7 +86,9 @@ export const Navbar = () => {
                 className={`relative font-medium text-sm tracking-wide transition-colors duration-300 ${
                   location.pathname === link.path
                     ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    : isHomePage && !isScrolled
+                      ? "text-white/90 hover:text-white"
+                      : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {link.name}
@@ -95,9 +118,13 @@ export const Navbar = () => {
             className="lg:hidden relative z-10 p-2"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-foreground" />
+              <X className={`w-6 h-6 transition-colors duration-300 ${
+                isHomePage && !isScrolled ? "text-white" : "text-foreground"
+              }`} />
             ) : (
-              <Menu className="w-6 h-6 text-foreground" />
+              <Menu className={`w-6 h-6 transition-colors duration-300 ${
+                isHomePage && !isScrolled ? "text-white" : "text-foreground"
+              }`} />
             )}
           </button>
         </div>
