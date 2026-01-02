@@ -65,8 +65,67 @@ const Configurator = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [customerData, setCustomerData] = useState({ name: "", email: "", address: "" });
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  // Restore state from localStorage on mount
+  useEffect(() => {
+    const savedState = localStorage.getItem('configuratorState');
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      // Only restore if it's recent (e.g. within 24 hours) and not completed
+      const isRecent = new Date().getTime() - parsed.timestamp < 24 * 60 * 60 * 1000;
+      if (isRecent && parsed.isGenerating && parsed.submissionId) {
+        setSubmissionId(parsed.submissionId);
+        setIsGenerating(true);
+        setShowContactForm(true);
+        setIsSubmitted(true);
+        setCustomerData(parsed.customerData);
+        // We can't easily restore the image preview from localstorage if it's large, 
+        // but we can try if it was saved, or just show a loading state.
+        if (parsed.uploadedImage) setUploadedImage(parsed.uploadedImage);
+      }
+    }
+  }, []);
+
+  // Subscribe to realtime updates for the submission
+  useEffect(() => {
+    if (!submissionId) return;
+
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'submissions',
+          filter: `id=eq.${submissionId}`,
+        },
+        (payload) => {
+          console.log('Received update:', payload);
+          const newData = payload.new as any;
+          if (newData.result_url) {
+            setGeneratedImage(newData.result_url);
+            setIsGenerating(false);
+            setSubmissionId(null); // Stop listening
+            localStorage.removeItem('configuratorState'); // Clear saved state
+            
+            toast({
+              title: "Voorbeeld gegenereerd!",
+              description: "Het resultaat is klaar en naar uw email verzonden.",
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [submissionId]);
+
   
   // Load all wrap colors dynamically
   const allColors = getWrapColors();
@@ -271,41 +330,29 @@ const Configurator = () => {
         throw functionError;
       }
 
+      const newSubmissionId = functionData.submission_id;
+      setSubmissionId(newSubmissionId);
+
+      // Save state to localStorage
+      localStorage.setItem('configuratorState', JSON.stringify({
+        submissionId: newSubmissionId,
+        isGenerating: true,
+        timestamp: new Date().getTime(),
+        customerData,
+        uploadedImage // Warning: this might be large if base64
+      }));
+
       setIsSubmitting(false);
       
       // Show loading message
       toast({
         title: "AI Voorbeeld genereren...",
-        description: "Dit duurt ongeveer 1,5 minuten. U ontvangt het resultaat per email.",
+        description: "Dit duurt ongeveer 1,5 minuten. U ontvangt het resultaat per email. U kunt deze pagina open laten staan.",
       });
 
-      // Simulate AI generation (1.5 minutes = 90000ms)
-      setTimeout(() => {
-        const canvas = document.createElement("canvas");
-        const img = new Image();
-        img.onload = () => {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            ctx.drawImage(img, 0, 0);
-            ctx.globalCompositeOperation = "multiply";
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
-            setGeneratedImage(dataUrl);
-            setIsGenerating(false);
-            setIsSubmitted(true);
-            
-            toast({
-              title: "Voorbeeld gegenereerd!",
-              description: "Het resultaat is ook naar uw email verzonden.",
-            });
-          }
-        };
-        img.src = uploadedImage;
-      }, 90000); // 1.5 minutes
+      // We remove the setTimeout simulation because we now wait for the webhook/realtime update
+      // But we keep a fallback timeout just in case realtime fails or takes too long (optional)
+      
     } catch (error: any) {
       console.error("Submission error:", error);
       setIsSubmitting(false);
