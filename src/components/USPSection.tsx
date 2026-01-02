@@ -71,7 +71,7 @@ export const USPSection = () => {
             </span>
             <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
               De Slimste Manier Om{" "}
-              <span className="text-gradient-gold">Te Renoveren</span>
+              <span className="text-gradient-primary">Te Renoveren</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
               Waarom duizenden euro's uitgeven aan een nieuwe keuken als u het zelfde resultaat kunt bereiken voor een fractie van de prijs? Met onze hoogwaardige wrap-folie transformeren we uw keuken of interieur in slechts één dag.
@@ -97,7 +97,7 @@ export const USPSection = () => {
             </div>
 
             <Link to="/over-ons">
-              <Button variant="gold-outline" size="lg" className="group">
+              <Button variant="premium-outline" size="lg" className="group">
                 Meer Over Ons
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>

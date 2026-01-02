@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -33,12 +33,12 @@ export const Navbar = () => {
   return (
     <>
       <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? "glass-strong py-3"
+            ? "glass-strong py-4"
             : "bg-transparent py-6"
         }`}
       >
@@ -47,10 +47,11 @@ export const Navbar = () => {
           <Link to="/" className="relative z-10">
             <motion.div
               whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
               className="font-display text-2xl font-bold tracking-tight"
             >
               <span className="text-foreground">Quality</span>
-              <span className="text-gradient-gold">Wrap</span>
+              <span className="text-gradient-primary">Wrap</span>
               <span className="text-muted-foreground text-sm">.nl</span>
             </motion.div>
           </Link>
@@ -71,7 +72,8 @@ export const Navbar = () => {
                 {location.pathname === link.path && (
                   <motion.div
                     layoutId="navbar-indicator"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-gold"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full"
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   />
                 )}
               </Link>
@@ -81,7 +83,7 @@ export const Navbar = () => {
           {/* CTA Button */}
           <div className="hidden lg:block">
             <Link to="/contact">
-              <Button variant="gold" size="default">
+              <Button variant="premium" size="default">
                 Offerte Aanvragen
               </Button>
             </Link>
@@ -108,36 +110,38 @@ export const Navbar = () => {
           opacity: isMobileMenuOpen ? 1 : 0,
           pointerEvents: isMobileMenuOpen ? "auto" : "none",
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.4 }}
         className="fixed inset-0 z-40 lg:hidden"
       >
-        <div
-          className="absolute inset-0 bg-background/95 backdrop-blur-xl"
+        <motion.div
+          initial={false}
+          animate={{ opacity: isMobileMenuOpen ? 1 : 0 }}
+          className="absolute inset-0 bg-background/98 backdrop-blur-xl"
           onClick={() => setIsMobileMenuOpen(false)}
         />
         <motion.div
           initial={false}
           animate={{
-            y: isMobileMenuOpen ? 0 : -20,
+            y: isMobileMenuOpen ? 0 : -30,
             opacity: isMobileMenuOpen ? 1 : 0,
           }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-          className="relative pt-24 px-6"
+          transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="relative pt-28 px-6"
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {navLinks.map((link, index) => (
               <motion.div
                 key={link.path}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -40 }}
                 animate={{
                   opacity: isMobileMenuOpen ? 1 : 0,
-                  x: isMobileMenuOpen ? 0 : -20,
+                  x: isMobileMenuOpen ? 0 : -40,
                 }}
-                transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
+                transition={{ duration: 0.4, delay: 0.15 + index * 0.05, ease: [0.16, 1, 0.3, 1] }}
               >
                 <Link
                   to={link.path}
-                  className={`block font-display text-2xl font-semibold py-3 transition-colors ${
+                  className={`block font-display text-3xl font-semibold py-4 transition-colors ${
                     location.pathname === link.path
                       ? "text-primary"
                       : "text-foreground"
@@ -148,13 +152,13 @@ export const Navbar = () => {
               </motion.div>
             ))}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{
                 opacity: isMobileMenuOpen ? 1 : 0,
-                y: isMobileMenuOpen ? 0 : 20,
+                y: isMobileMenuOpen ? 0 : 30,
               }}
-              transition={{ duration: 0.3, delay: 0.4 }}
-              className="pt-6"
+              transition={{ duration: 0.4, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="pt-8"
             >
               <Link to="/contact">
                 <Button variant="hero" className="w-full">
