@@ -53,7 +53,7 @@ export const Hero = () => {
 
           {/* Headline */}
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight text-[#F5F0E8]">
+            <h1 className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
               Transformeer
               <br />
               Uw Keuken
