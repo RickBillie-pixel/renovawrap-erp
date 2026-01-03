@@ -46,7 +46,7 @@ const Contact = () => {
         <Navbar />
         
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-soft">
+        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 bg-gradient-soft">
           <div className="container-wide">
             <motion.div
               initial={{ opacity: 0, y: 60 }}
@@ -57,17 +57,17 @@ const Contact = () => {
               <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
                 Contact
               </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
                 Vraag Een{" "}
                 <span className="text-gradient-primary">Gratis Offerte</span> Aan
               </h1>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-base sm:text-lg">
                 Vul het formulier in en ontvang binnen 24 uur een vrijblijvende offerte op maat.
               </p>
             </motion.div>
 
             {/* Contact Info Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-12 md:mb-16">
               {contactInfo.map((info, index) => (
                 <motion.div
                   key={info.title}
@@ -75,7 +75,7 @@ const Contact = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  className="p-6 rounded-xl bg-card border border-border text-center shadow-soft hover:shadow-elegant transition-all"
+                  className="p-4 sm:p-6 rounded-xl bg-card border border-border text-center shadow-soft hover:shadow-elegant transition-all"
                 >
                   <motion.div
                     whileHover={{ scale: 1.1, rotate: 5 }}
@@ -105,7 +105,7 @@ const Contact = () => {
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-elegant"
+              className="bg-card border border-border rounded-3xl p-6 sm:p-8 md:p-12 shadow-elegant"
             >
               <ContactWizard />
             </motion.div>

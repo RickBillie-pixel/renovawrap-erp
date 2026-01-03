@@ -15,7 +15,7 @@ const usps = [
 
 export const USPSection = () => {
   return (
-    <div className="w-full py-16 md:py-24 relative min-h-screen flex items-center overflow-hidden">
+    <div className="w-full py-12 md:py-16 lg:py-24 relative min-h-screen md:min-h-screen flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
@@ -81,11 +81,11 @@ export const USPSection = () => {
             <span className="text-white/90 font-medium text-sm tracking-wider uppercase mb-4 block">
               Waarom FoxWrap?
             </span>
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight text-white drop-shadow-lg">
               De Slimste Manier Om{" "}
               <span className="text-white">Te Renoveren</span>
             </h2>
-            <p className="text-white/90 text-lg mb-8 leading-relaxed drop-shadow-md">
+            <p className="text-white/90 text-base sm:text-lg mb-6 md:mb-8 leading-relaxed drop-shadow-md">
               Waarom duizenden euro's uitgeven aan een nieuwe keuken als u het zelfde resultaat kunt bereiken voor een fractie van de prijs? Met onze hoogwaardige wrap-folie transformeren we uw keuken of interieur in slechts één dag.
             </p>
 

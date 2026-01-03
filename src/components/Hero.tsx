@@ -52,8 +52,8 @@ export const Hero = () => {
           </motion.div>
 
           {/* Headline */}
-          <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
+          <motion.div variants={itemVariants} className="mb-6 md:mb-8">
+            <h1 className="font-sans text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.95] tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
               Transformeer
               <br />
               Uw Keuken
@@ -61,21 +61,21 @@ export const Hero = () => {
           </motion.div>
 
           {/* Subheadline */}
-          <motion.p variants={itemVariants} className="text-lg md:text-xl text-background/80 leading-relaxed mb-12 max-w-2xl mx-auto">
+          <motion.p variants={itemVariants} className="text-base sm:text-lg md:text-xl text-background/80 leading-relaxed mb-8 md:mb-12 max-w-2xl mx-auto px-4">
             Geef uw keuken of interieur een complete metamorfose met hoogwaardige wrap-folie. 
             Professioneel resultaat in slechts één dag.
           </motion.p>
 
           {/* CTA Buttons */}
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/contact">
-              <Button variant="hero" size="xl" className="group">
+          <motion.div variants={itemVariants} className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center px-4">
+            <Link to="/contact" className="w-full sm:w-auto">
+              <Button variant="hero" size="xl" className="group w-full sm:w-auto">
                 Vraag Offerte Aan
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
               </Button>
             </Link>
-            <Link to="/keuken-wrappen">
-              <Button variant="outline" size="xl" className="group bg-background/10 backdrop-blur-sm border-background/30 text-background hover:bg-background/20">
+            <Link to="/keuken-wrappen" className="w-full sm:w-auto">
+              <Button variant="outline" size="xl" className="group w-full sm:w-auto bg-background/10 backdrop-blur-sm border-background/30 text-background hover:bg-background/20">
                 <Play className="w-5 h-5" />
                 Bekijk Resultaten
               </Button>

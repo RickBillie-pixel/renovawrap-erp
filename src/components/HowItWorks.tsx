@@ -127,11 +127,11 @@ const StepItem = ({ step, index, isLast }: { step: typeof steps[0]; index: numbe
             </motion.span>
           </div>
 
-          <h3 className="font-display text-3xl md:text-4xl font-bold mb-12 text-foreground">
+          <h3 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-12 text-foreground">
             {step.title}
           </h3>
           
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
+          <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl">
             {step.description}
           </p>
         </motion.div>
@@ -151,7 +151,7 @@ export const HowItWorks = () => {
   const progressHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <div ref={containerRef} className="w-full py-24 md:py-32 relative overflow-hidden min-h-screen flex items-center bg-background">
+    <div ref={containerRef} className="w-full py-12 md:py-24 lg:py-32 relative overflow-hidden min-h-screen md:min-h-screen flex items-center bg-background">
       {/* Decorative blurs */}
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-x-1/2" />
       <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl translate-x-1/2" />
@@ -179,13 +179,13 @@ export const HowItWorks = () => {
             Uw Transformatie
           </span>
           
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight text-foreground">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 tracking-tight text-foreground">
             De Journey Naar Uw
             <br />
             <span className="text-gradient-primary">Droomkeuken</span>
           </h2>
           
-          <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto">
+          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-xl mx-auto">
             Van eerste contact tot uw droomkeuken — in vier doordachte stappen.
           </p>
         </motion.div>

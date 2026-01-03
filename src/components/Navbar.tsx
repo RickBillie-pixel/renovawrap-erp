@@ -71,13 +71,13 @@ export const Navbar = () => {
               <img
                 src={foxwrapLogo}
                 alt="FoxWrap"
-                className={`h-16 md:h-20 w-auto object-contain transition-all duration-300 ${
+                className={`h-12 sm:h-14 md:h-20 w-auto object-contain transition-all duration-300 ${
                   isHomePage && !isScrolled 
                     ? 'brightness-0 invert drop-shadow-lg' 
                     : 'drop-shadow-sm'
                 }`}
               />
-              <span className={`font-display text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide transition-colors duration-300 ${
+              <span className={`font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide transition-colors duration-300 ${
                 isHomePage && !isScrolled 
                   ? "text-white drop-shadow-lg" 
                   : "text-foreground"
@@ -163,9 +163,9 @@ export const Navbar = () => {
             opacity: isMobileMenuOpen ? 1 : 0,
           }}
           transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative pt-28 px-6"
+          className="relative pt-24 sm:pt-28 px-4 sm:px-6"
         >
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1 sm:gap-2">
             {navLinks.map((link, index) => (
               <motion.div
                 key={link.path}
@@ -178,7 +178,7 @@ export const Navbar = () => {
               >
                 <Link
                   to={link.path}
-                  className={`block font-display text-3xl font-semibold py-4 transition-colors ${
+                  className={`block font-display text-2xl sm:text-3xl font-semibold py-3 sm:py-4 transition-colors ${
                     location.pathname === link.path
                       ? "text-primary"
                       : "text-foreground"
@@ -195,10 +195,10 @@ export const Navbar = () => {
                 y: isMobileMenuOpen ? 0 : 30,
               }}
               transition={{ duration: 0.4, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="pt-8"
+              className="pt-6 sm:pt-8"
             >
               <Link to="/contact">
-                <Button variant="hero" className="w-full">
+                <Button variant="hero" className="w-full h-12">
                   Offerte Aanvragen
                 </Button>
               </Link>

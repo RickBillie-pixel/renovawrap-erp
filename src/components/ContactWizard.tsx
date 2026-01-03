@@ -203,10 +203,10 @@ export const ContactWizard = () => {
         <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
           <Check className="w-10 h-10 text-primary" />
         </div>
-        <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">
+        <h3 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-4">
           Bedankt voor uw aanvraag!
         </h3>
-        <p className="text-muted-foreground max-w-md mx-auto">
+        <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
           Wij nemen binnen 24 uur contact met u op om uw project te bespreken.
         </p>
       </motion.div>
@@ -216,21 +216,21 @@ export const ContactWizard = () => {
   return (
     <div className="max-w-2xl mx-auto relative">
       {/* Progress Bar */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-8 sm:mb-10">
         {[1, 2, 3, 4].map((s) => (
           <div key={s} className="flex items-center">
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold transition-all ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-display font-semibold text-sm sm:text-base transition-all ${
                 s <= step
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary text-muted-foreground"
               }`}
             >
-              {s < step ? <Check className="w-5 h-5" /> : s}
+              {s < step ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : s}
             </div>
             {s < 4 && (
               <div
-                className={`w-16 md:w-24 h-1 mx-2 rounded-full transition-colors ${
+                className={`w-12 sm:w-16 md:w-24 h-1 mx-1 sm:mx-2 rounded-full transition-colors ${
                   s < step ? "bg-primary" : "bg-secondary"
                 }`}
               />
@@ -251,27 +251,27 @@ export const ContactWizard = () => {
         {/* Step 1: Choose Type */}
         {step === 1 && (
           <div>
-            <h3 className="font-display text-2xl font-bold mb-2">
+            <h3 className="font-display text-xl sm:text-2xl font-bold mb-2">
               Wat wilt u laten wrappen?
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8">
               Kies het type project waarvoor u een offerte wilt ontvangen.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
               {projectTypes.map((type) => (
                 <motion.button
                   key={type.id}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleTypeSelect(type.id)}
-                  className={`p-6 rounded-xl border-2 transition-all text-left ${
+                  className={`p-5 sm:p-6 rounded-xl border-2 transition-all text-left ${
                     formData.type === type.id
                       ? "border-primary bg-primary/10"
                       : "border-border hover:border-primary/50 bg-card"
                   }`}
                 >
-                  <type.icon className="w-8 h-8 text-primary mb-4" />
-                  <div className="font-display font-semibold">{type.label}</div>
+                  <type.icon className="w-7 h-7 sm:w-8 sm:h-8 text-primary mb-3 sm:mb-4" />
+                  <div className="font-display font-semibold text-sm sm:text-base">{type.label}</div>
                 </motion.button>
               ))}
             </div>
@@ -281,19 +281,19 @@ export const ContactWizard = () => {
         {/* Step 2: Upload Photos */}
         {step === 2 && (
           <div>
-            <h3 className="font-display text-2xl font-bold mb-2">
+            <h3 className="font-display text-xl sm:text-2xl font-bold mb-2">
               Upload foto's (optioneel)
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8">
               Stuur ons foto's van uw huidige situatie voor een nauwkeurige offerte.
             </p>
             <label className="block">
-              <div className="border-2 border-dashed border-border hover:border-primary/50 rounded-xl p-12 text-center cursor-pointer transition-colors bg-card">
-                <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <div className="font-medium mb-2">
+              <div className="border-2 border-dashed border-border hover:border-primary/50 rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-colors bg-card">
+                <Camera className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+                <div className="font-medium text-sm sm:text-base mb-2">
                   Klik om foto's te uploaden
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-xs sm:text-sm text-muted-foreground">
                   Of sleep bestanden hierheen
                 </div>
                 {formData.photos.length > 0 && (
@@ -316,10 +316,10 @@ export const ContactWizard = () => {
         {/* Step 3: Contact Details */}
         {step === 3 && (
           <div>
-            <h3 className="font-display text-2xl font-bold mb-2">
+            <h3 className="font-display text-xl sm:text-2xl font-bold mb-2">
               Uw contactgegevens
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8">
               Vul uw gegevens in zodat wij contact met u kunnen opnemen.
             </p>
             <div className="space-y-4">
@@ -331,7 +331,7 @@ export const ContactWizard = () => {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   placeholder="Uw volledige naam"
-                  className="bg-card border-border"
+                  className="bg-card border-border h-12"
                 />
               </div>
               <div>
@@ -343,7 +343,7 @@ export const ContactWizard = () => {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   placeholder="uw@email.nl"
-                  className="bg-card border-border"
+                  className="bg-card border-border h-12"
                 />
               </div>
               <div>
@@ -357,7 +357,7 @@ export const ContactWizard = () => {
                     setFormData({ ...formData, phone: e.target.value })
                   }
                   placeholder="+31 6 12345678"
-                  className="bg-card border-border"
+                  className="bg-card border-border h-12"
                 />
               </div>
             </div>
@@ -367,10 +367,10 @@ export const ContactWizard = () => {
         {/* Step 4: Message */}
         {step === 4 && (
           <div>
-            <h3 className="font-display text-2xl font-bold mb-2">
+            <h3 className="font-display text-xl sm:text-2xl font-bold mb-2">
               Extra informatie
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8">
               Vertel ons meer over uw project en eventuele specifieke wensen.
             </p>
             <Textarea
@@ -388,13 +388,13 @@ export const ContactWizard = () => {
 
       {/* Navigation Buttons */}
       {step > 1 && (
-        <div className="flex justify-between mt-10">
-          <Button variant="ghost" onClick={prevStep} className="group">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-8 sm:mt-10 mb-6 sm:mb-0">
+          <Button variant="ghost" onClick={prevStep} className="group w-full sm:w-auto h-12">
             <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
             Vorige
           </Button>
           {step < 4 ? (
-            <Button variant="gold" onClick={nextStep} className="group">
+            <Button variant="gold" onClick={nextStep} className="group w-full sm:w-auto h-12">
               Volgende
               <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
@@ -403,7 +403,7 @@ export const ContactWizard = () => {
               variant="hero"
               onClick={handleSubmit}
               disabled={!formData.name || !formData.email || isSubmitting}
-              className="group"
+              className="group w-full sm:w-auto h-12"
             >
               {isSubmitting ? (
                 <>

@@ -28,7 +28,7 @@ const OverOns = () => {
         <Navbar />
         
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-soft">
+        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 bg-gradient-soft">
           <div className="container-wide">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <motion.div
@@ -39,14 +39,14 @@ const OverOns = () => {
                 <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
                   Over Ons
                 </span>
-                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
+                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
                   Passie Voor{" "}
                   <span className="text-gradient-primary">Perfectie</span>
                 </h1>
-                <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                <p className="text-muted-foreground text-base sm:text-lg mb-4 md:mb-6 leading-relaxed">
                   FoxWrap is ontstaan uit een passie voor design en vakmanschap. Al meer dan 10 jaar transformeren wij keukens en interieurs door heel Nederland.
                 </p>
-                <p className="text-muted-foreground text-lg leading-relaxed">
+                <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
                   Ons team van gecertificeerde specialisten werkt uitsluitend met premium materialen van 3M en Avery. Wij geloven dat iedereen recht heeft op een prachtig interieur, zonder de hoge kosten van een volledige renovatie.
                 </p>
               </motion.div>
@@ -80,9 +80,9 @@ const OverOns = () => {
         </section>
 
         {/* Stats Section */}
-        <section className="py-20 bg-secondary">
+        <section className="py-12 md:py-16 lg:py-20 bg-secondary">
           <div className="container-wide">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               {stats.map((stat, index) => (
                 <motion.div
                   key={stat.label}
@@ -96,12 +96,12 @@ const OverOns = () => {
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <stat.icon className="w-12 h-12 text-primary mx-auto mb-4" />
+                    <stat.icon className="w-10 h-10 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
                   </motion.div>
-                  <div className="font-display text-4xl font-bold text-primary mb-2">
+                  <div className="font-display text-3xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">
                     {stat.value}
                   </div>
-                  <div className="text-muted-foreground">{stat.label}</div>
+                  <div className="text-muted-foreground text-sm sm:text-base">{stat.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -118,15 +118,15 @@ const OverOns = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="text-center max-w-2xl mx-auto mb-16"
             >
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-foreground">
                 Onze Waarden
               </h2>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-base sm:text-lg">
                 Deze kernwaarden vormen de basis van alles wat wij doen.
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               {[
                 {
                   title: "Kwaliteit",
@@ -148,12 +148,12 @@ const OverOns = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
                   whileHover={{ y: -10 }}
-                  className="p-8 rounded-2xl bg-card border border-border text-center shadow-soft hover:shadow-elegant transition-all"
+                  className="p-6 sm:p-8 rounded-2xl bg-card border border-border text-center shadow-soft hover:shadow-elegant transition-all"
                 >
-                  <h3 className="font-display text-xl font-semibold mb-4 text-primary">
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-primary">
                     {value.title}
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
                     {value.description}
                   </p>
                 </motion.div>

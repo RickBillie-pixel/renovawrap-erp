@@ -59,7 +59,7 @@ export const CTASection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-[0.95]"
+            className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 md:mb-8 leading-[0.95]"
           >
             Klaar Voor Uw
             <br />
@@ -71,7 +71,7 @@ export const CTASection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-muted-foreground text-lg md:text-xl mb-12 max-w-xl"
+            className="text-muted-foreground text-base sm:text-lg md:text-xl mb-8 md:mb-12 max-w-xl"
           >
             Vraag vandaag nog een gratis offerte aan en ontdek hoe wij uw keuken of interieur kunnen transformeren.
           </motion.p>
@@ -81,16 +81,16 @@ export const CTASection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col gap-3 sm:flex-row sm:gap-4"
           >
-            <Link to="/contact">
-              <Button variant="hero" size="xl" className="group shadow-primary">
+            <Link to="/contact" className="w-full sm:w-auto">
+              <Button variant="hero" size="xl" className="group w-full sm:w-auto shadow-primary">
                 Vraag Offerte Aan
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
               </Button>
             </Link>
-            <Link to="/keuken-wrappen">
-              <Button variant="outline" size="xl" className="bg-card/50 backdrop-blur-sm border-border hover:bg-card">
+            <Link to="/keuken-wrappen" className="w-full sm:w-auto">
+              <Button variant="outline" size="xl" className="w-full sm:w-auto bg-card/50 backdrop-blur-sm border-border hover:bg-card">
                 Bekijk Voorbeelden
               </Button>
             </Link>

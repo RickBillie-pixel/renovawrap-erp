@@ -33,7 +33,7 @@ const KeukenWrappen = () => {
         <Navbar />
         
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-soft">
+        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 bg-gradient-soft">
           <div className="container-wide">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <motion.div
@@ -44,15 +44,15 @@ const KeukenWrappen = () => {
                 <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
                   Keuken Wrappen
                 </span>
-                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
+                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
                   Geef Uw Keuken Een{" "}
                   <span className="text-gradient-primary">Nieuwe Look</span>
                 </h1>
-                <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+                <p className="text-muted-foreground text-base sm:text-lg mb-6 md:mb-8 leading-relaxed">
                   Transformeer uw verouderde keuken naar een moderne uitstraling zonder de kosten en rommel van een complete renovatie. Met hoogwaardige wrap-folie realiseren wij uw droomkeuken in slechts één dag.
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8 md:mb-10">
                   {benefits.map((benefit, index) => (
                     <motion.div
                       key={benefit}
@@ -61,16 +61,16 @@ const KeukenWrappen = () => {
                       transition={{ duration: 0.6, delay: 0.3 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
                       className="flex items-center gap-3"
                     >
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                        <Check className="w-4 h-4 text-primary" />
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
                       </div>
-                      <span className="text-sm text-foreground">{benefit}</span>
+                      <span className="text-xs sm:text-sm text-foreground">{benefit}</span>
                     </motion.div>
                   ))}
                 </div>
 
-                <Link to="/contact">
-                  <Button variant="hero" size="xl">
+                <Link to="/contact" className="inline-block w-full sm:w-auto">
+                  <Button variant="hero" size="xl" className="w-full sm:w-auto h-12">
                     Gratis Offerte Aanvragen
                   </Button>
                 </Link>
@@ -100,15 +100,15 @@ const KeukenWrappen = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="text-center max-w-2xl mx-auto mb-16"
             >
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-foreground">
                 Wat Kunnen Wij Wrappen?
               </h2>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-base sm:text-lg">
                 Van kastdeuren tot werkbladen - vrijwel elk oppervlak kan worden getransformeerd.
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               {[
                 { title: "Kastdeuren & Fronten", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800" },
                 { title: "Werkbladen", image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=800" },
@@ -129,8 +129,8 @@ const KeukenWrappen = () => {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="font-display text-xl font-semibold text-card">{item.title}</h3>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                    <h3 className="font-display text-lg sm:text-xl font-semibold text-card">{item.title}</h3>
                   </div>
                 </motion.div>
               ))}

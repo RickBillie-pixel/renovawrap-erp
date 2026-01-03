@@ -414,7 +414,7 @@ const Configurator = () => {
         <Navbar />
         
         {/* Hero Section with Gradient */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/30" />
           <div className="absolute inset-0 overflow-hidden">
             <motion.div
@@ -451,12 +451,12 @@ const Configurator = () => {
               <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
                 AI Configurator
               </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
                 Zie Uw{" "}
                 <span className="text-gradient-primary">Droomproject</span>{" "}
                 Voor U
               </h1>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-base sm:text-lg">
                 Upload een foto en laat AI een realistisch voorbeeld genereren. Ontvang het resultaat direct per email.
               </p>
             </motion.div>
@@ -496,13 +496,13 @@ const Configurator = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-elegant hover:shadow-primary/10 transition-all"
+                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8 shadow-elegant hover:shadow-primary/10 transition-all"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold">
                       1
                     </div>
-                    <h2 className="font-display text-2xl font-bold text-foreground">
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
                       Upload Uw Afbeelding
                     </h2>
                   </div>
@@ -583,12 +583,12 @@ const Configurator = () => {
                       className="hidden"
                     />
                     
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex-1"
+                        className="flex-1 h-12"
                       >
                         <Upload className="w-4 h-4 mr-2" />
                         Upload Foto
@@ -597,7 +597,7 @@ const Configurator = () => {
                         type="button"
                         variant="outline"
                         onClick={() => cameraInputRef.current?.click()}
-                        className="flex-1"
+                        className="flex-1 h-12"
                       >
                         <Camera className="w-4 h-4 mr-2" />
                         Maak Foto
@@ -611,18 +611,18 @@ const Configurator = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-elegant hover:shadow-primary/10 transition-all"
+                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8 shadow-elegant hover:shadow-primary/10 transition-all"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold">
                       2
                     </div>
-                    <h2 className="font-display text-2xl font-bold text-foreground">
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
                       Wat Wilt U Wrappen?
                     </h2>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {applicationTypes.map((app) => {
                       const Icon = app.icon;
                       const isSelected = selectedApplication === app.value;
@@ -674,13 +674,13 @@ const Configurator = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-elegant hover:shadow-primary/10 transition-all"
+                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8 shadow-elegant hover:shadow-primary/10 transition-all"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold">
                       3
                     </div>
-                    <h2 className="font-display text-2xl font-bold text-foreground">
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
                       Kies Uw Kleur
                     </h2>
                   </div>
@@ -697,7 +697,7 @@ const Configurator = () => {
                   </div>
                   
                   <div className="max-h-96 overflow-y-auto pr-2 custom-scrollbar">
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3">
                       {filteredColors.map((color) => (
                         <motion.button
                           key={color.id}
@@ -762,13 +762,13 @@ const Configurator = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-elegant hover:shadow-primary/10 transition-all"
+                  className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8 shadow-elegant hover:shadow-primary/10 transition-all"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold">
                       4
                     </div>
-                    <h2 className="font-display text-2xl font-bold text-foreground">
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
                       Voorwaarden
                     </h2>
                   </div>
@@ -805,7 +805,7 @@ const Configurator = () => {
                       disabled={!canGenerate || isGenerating}
                       variant="hero"
                       size="xl"
-                      className="w-full h-14 text-lg shadow-elegant hover:shadow-primary"
+                      className="w-full h-12 sm:h-14 text-base sm:text-lg shadow-elegant hover:shadow-primary mb-6 sm:mb-0"
                     >
                       <Sparkles className="w-5 h-5 mr-2" />
                       Genereer AI Voorbeeld
@@ -831,10 +831,10 @@ const Configurator = () => {
                           <Sparkles className="w-8 h-8 text-primary-foreground" />
                         </motion.div>
                         <div>
-                          <h3 className="font-display text-xl font-bold text-foreground mb-2">
-                            AI Voorbeeld Genereren
-                          </h3>
-                          <p className="text-muted-foreground text-sm">
+                        <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
+                          AI Voorbeeld Genereren
+                        </h3>
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                             Dit duurt ongeveer 1,5 minuten. U ontvangt het resultaat ook per email op <strong>{customerData.email}</strong>
                           </p>
                         </div>
@@ -905,12 +905,12 @@ const Configurator = () => {
                         <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
                           <Mail className="w-5 h-5 text-primary-foreground" />
                         </div>
-                        <h2 className="font-display text-2xl font-bold text-foreground">
+                        <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
                           Ontvang Uw Resultaat
                         </h2>
                       </div>
                       
-                      <p className="text-muted-foreground mb-6 text-sm">
+                      <p className="text-muted-foreground mb-6 text-xs sm:text-sm">
                         Vul uw gegevens in om het AI-voorbeeld te genereren. Het resultaat wordt automatisch naar uw email verzonden.
                       </p>
 
@@ -968,7 +968,7 @@ const Configurator = () => {
                           type="submit"
                           disabled={isSubmitting || isGenerating}
                           variant="hero"
-                          className="w-full h-11"
+                          className="w-full h-12 mb-6 sm:mb-0"
                         >
                           {isSubmitting ? (
                             <>
@@ -1007,10 +1007,10 @@ const Configurator = () => {
                           <CheckCircle2 className="w-8 h-8 text-primary-foreground" />
                         </motion.div>
                         <div>
-                          <h3 className="font-display text-xl font-bold text-foreground mb-2">
+                          <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
                             Voorbeeld gegenereerd!
                           </h3>
-                          <p className="text-muted-foreground text-sm">
+                          <p className="text-muted-foreground text-xs sm:text-sm">
                             Het AI-voorbeeld is gegenereerd en verzonden naar <strong>{customerData.email}</strong>
                           </p>
                         </div>
@@ -1033,7 +1033,7 @@ const Configurator = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="max-w-3xl mx-auto text-center"
             >
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-foreground">
                 Hoe Werkt Het?
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
@@ -1065,10 +1065,10 @@ const Configurator = () => {
                     <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center mx-auto mb-4 shadow-elegant">
                       <span className="text-2xl font-bold text-primary-foreground">{item.step}</span>
                     </div>
-                    <h3 className="font-display text-xl font-semibold mb-2 text-foreground">
+                    <h3 className="font-display text-lg sm:text-xl font-semibold mb-2 text-foreground">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{item.description}</p>
                   </motion.div>
                 ))}
               </div>

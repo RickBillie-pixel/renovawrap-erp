@@ -65,7 +65,7 @@ const Diensten = () => {
         <Navbar />
         
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-soft">
+        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 bg-gradient-soft">
           <div className="container-wide">
             <motion.div
               initial={{ opacity: 0, y: 60 }}
@@ -76,11 +76,11 @@ const Diensten = () => {
               <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
                 Onze Diensten
               </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
                 Complete{" "}
                 <span className="text-gradient-primary">Wrap Oplossingen</span>
               </h1>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-base sm:text-lg">
                 Van keukens tot interieurs en zakelijke ruimtes - wij bieden professionele wrap-diensten voor elk oppervlak en elke behoefte.
               </p>
             </motion.div>
@@ -125,10 +125,10 @@ const Diensten = () => {
                     >
                       <service.icon className="w-8 h-8 text-primary" />
                     </motion.div>
-                    <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-foreground">
+                    <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
                       {service.title}
                     </h2>
-                    <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+                    <p className="text-muted-foreground text-base sm:text-lg mb-6 md:mb-8 leading-relaxed">
                       {service.description}
                     </p>
 
@@ -150,8 +150,8 @@ const Diensten = () => {
                       ))}
                     </div>
 
-                    <Link to={service.path}>
-                      <Button variant="hero" size="lg" className="group">
+                    <Link to={service.path} className="inline-block w-full sm:w-auto">
+                      <Button variant="hero" size="lg" className="group w-full sm:w-auto h-12">
                         Meer Informatie
                         <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                       </Button>
@@ -173,20 +173,20 @@ const Diensten = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="text-center max-w-2xl mx-auto"
             >
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-foreground">
                 Klaar Om Te Beginnen?
               </h2>
-              <p className="text-muted-foreground text-lg mb-8">
+              <p className="text-muted-foreground text-base sm:text-lg mb-6 md:mb-8">
                 Vraag een gratis offerte aan en ontdek wat wij voor u kunnen betekenen.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/contact">
-                  <Button variant="hero" size="xl">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
+                <Link to="/contact" className="w-full sm:w-auto">
+                  <Button variant="hero" size="xl" className="w-full sm:w-auto h-12">
                     Gratis Offerte Aanvragen
                   </Button>
                 </Link>
-                <Link to="/configurator">
-                  <Button variant="outline" size="xl">
+                <Link to="/configurator" className="w-full sm:w-auto">
+                  <Button variant="outline" size="xl" className="w-full sm:w-auto h-12">
                     Probeer De Configurator
                   </Button>
                 </Link>

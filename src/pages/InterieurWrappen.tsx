@@ -46,7 +46,7 @@ const InterieurWrappen = () => {
         <Navbar />
         
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden bg-gradient-soft">
+        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 relative overflow-hidden bg-gradient-soft">
           <div className="absolute inset-0 overflow-hidden">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -72,15 +72,15 @@ const InterieurWrappen = () => {
               <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
                 Interieur Wrappen
               </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
                 Elk Oppervlak,{" "}
                 <span className="text-gradient-primary">Elke Stijl</span>
               </h1>
-              <p className="text-muted-foreground text-lg mb-10">
+              <p className="text-muted-foreground text-base sm:text-lg mb-8 md:mb-10">
                 Van meubels tot wandpanelen - wij transformeren elk interieuroppervlak met hoogwaardige wrap-folie. Vernieuw uw ruimte zonder dure vervangingen.
               </p>
-              <Link to="/contact">
-                <Button variant="hero" size="xl">
+              <Link to="/contact" className="inline-block w-full sm:w-auto">
+                <Button variant="hero" size="xl" className="w-full sm:w-auto h-12">
                   Gratis Adviesgesprek
                 </Button>
               </Link>
@@ -95,18 +95,18 @@ const InterieurWrappen = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.3 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   whileHover={{ y: -8, scale: 1.02 }}
-                  className="p-6 rounded-2xl bg-card border border-border hover:border-primary/50 hover:shadow-elegant transition-all group"
+                  className="p-5 sm:p-6 rounded-2xl bg-card border border-border hover:border-primary/50 hover:shadow-elegant transition-all group"
                 >
                   <motion.div
                     whileHover={{ scale: 1.1, rotate: 5 }}
-                    className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5"
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 sm:mb-5"
                   >
-                    <service.icon className="w-7 h-7 text-primary" />
+                    <service.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                   </motion.div>
-                  <h3 className="font-display text-xl font-semibold mb-3 text-foreground">
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">
                     {service.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                     {service.description}
                   </p>
                 </motion.div>
@@ -125,15 +125,15 @@ const InterieurWrappen = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="text-center max-w-2xl mx-auto mb-16"
             >
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-foreground">
                 Inspiratie Galerij
               </h2>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-base sm:text-lg">
                 Bekijk onze recente interieur projecten en laat u inspireren.
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {[
                 "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800",
                 "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=800",

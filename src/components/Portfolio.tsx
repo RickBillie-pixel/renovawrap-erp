@@ -63,7 +63,7 @@ export const Portfolio = () => {
       : portfolioItems.filter((item) => item.category === activeCategory);
 
   return (
-    <div className="w-full py-16 md:py-24 relative overflow-hidden min-h-screen flex items-center">
+    <div className="w-full py-12 md:py-16 lg:py-24 relative overflow-hidden min-h-screen md:min-h-screen flex items-center">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
@@ -93,10 +93,10 @@ export const Portfolio = () => {
           >
             Portfolio
           </motion.span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white drop-shadow-lg">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-white drop-shadow-lg">
             Recente Projecten
           </h2>
-          <p className="text-white/90 text-lg md:text-xl drop-shadow-md">
+          <p className="text-white/90 text-base sm:text-lg md:text-xl drop-shadow-md">
             Bekijk onze meest recente transformaties en laat u inspireren.
           </p>
         </motion.div>

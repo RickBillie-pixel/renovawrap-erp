@@ -20,27 +20,27 @@ const Index = () => {
         ogTitle="FoxWrap.nl - Premium Keuken & Interieur Wrappen"
         ogDescription="Transformeer uw keuken of interieur in slechts één dag. Professioneel resultaat, 5 jaar garantie."
       />
-      <main className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth">
+      <main className="h-screen overflow-y-scroll md:snap-y md:snap-mandatory scroll-smooth">
         <Navbar />
-        <section className="snap-start snap-always">
+        <section className="md:snap-start md:snap-always">
           <Hero />
         </section>
-        <section className="snap-start snap-always min-h-screen flex items-center">
+        <section className="md:snap-start md:snap-always min-h-screen md:min-h-screen flex items-center">
           <USPSection />
         </section>
-        <section className="snap-start snap-always min-h-screen flex items-center">
+        <section className="md:snap-start md:snap-always min-h-screen md:min-h-screen flex items-center">
           <HowItWorks />
         </section>
-        <section className="snap-start snap-always min-h-screen flex items-center">
+        <section className="md:snap-start md:snap-always min-h-screen md:min-h-screen flex items-center">
           <Portfolio />
         </section>
-        <section className="snap-start snap-always min-h-screen flex items-center">
+        <section className="md:snap-start md:snap-always min-h-screen md:min-h-screen flex items-center">
           <Testimonials />
         </section>
-        <section className="snap-start snap-always">
+        <section className="md:snap-start md:snap-always">
           <CTASection />
         </section>
-        <section className="snap-start snap-always">
+        <section className="md:snap-start md:snap-always">
           <Footer />
         </section>
       </main>

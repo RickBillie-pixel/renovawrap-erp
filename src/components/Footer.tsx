@@ -17,8 +17,8 @@ const footerLinks = {
 export const Footer = () => {
   return (
     <footer className="bg-charcoal-dark border-t border-border">
-      <div className="container-wide section-padding">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="container-wide py-12 md:py-16 lg:py-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
@@ -47,10 +47,10 @@ export const Footer = () => {
 
           {/* Services Links */}
           <div>
-            <h4 className="font-display font-semibold text-foreground mb-6">
+            <h4 className="font-display font-semibold text-foreground mb-4 sm:mb-6 text-base sm:text-lg">
               Diensten
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {footerLinks.diensten.map((link) => (
                 <li key={link.path}>
                   <Link
@@ -66,10 +66,10 @@ export const Footer = () => {
 
           {/* Company Links */}
           <div>
-            <h4 className="font-display font-semibold text-foreground mb-6">
+            <h4 className="font-display font-semibold text-foreground mb-4 sm:mb-6 text-base sm:text-lg">
               Bedrijf
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {footerLinks.bedrijf.map((link) => (
                 <li key={link.path}>
                   <Link
@@ -85,10 +85,10 @@ export const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-display font-semibold text-foreground mb-6">
+            <h4 className="font-display font-semibold text-foreground mb-4 sm:mb-6 text-base sm:text-lg">
               Contact
             </h4>
-            <ul className="space-y-4">
+            <ul className="space-y-3 sm:space-y-4">
               <li className="flex items-start gap-3 text-muted-foreground text-sm">
                 <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <span>Amsterdam, Nederland</span>
@@ -110,11 +110,11 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-muted-foreground text-sm">
+        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-muted-foreground text-xs sm:text-sm text-center md:text-left">
             © {new Date().getFullYear()} FoxWrap.nl. Alle rechten voorbehouden.
           </p>
-          <div className="flex gap-6 text-sm">
+          <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm justify-center md:justify-end">
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
               Privacybeleid
             </a>

@@ -31,7 +31,7 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <div className="w-full py-16 md:py-24 relative overflow-hidden min-h-screen flex items-center">
+    <div className="w-full py-12 md:py-16 lg:py-24 relative overflow-hidden min-h-screen md:min-h-screen flex items-center">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
@@ -59,10 +59,10 @@ export const Testimonials = () => {
           <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
             Klantervaringen
           </span>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white drop-shadow-lg">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-white drop-shadow-lg">
             Wat Onze Klanten Zeggen
           </h2>
-          <p className="text-white/90 text-lg drop-shadow-md">
+          <p className="text-white/90 text-base sm:text-lg drop-shadow-md">
             Ontdek waarom honderden tevreden klanten voor FoxWrap kozen.
           </p>
         </motion.div>

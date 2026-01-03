@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { AuthGuard } from "@/components/Admin/AuthGuard";
-import { LogOut, Mail, Phone, MapPin, Calendar, Image as ImageIcon, FileText, Filter, RefreshCw, Eye } from "lucide-react";
+import { AdminConfigurator } from "@/components/Admin/AdminConfigurator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LogOut, Mail, Phone, MapPin, Calendar, Image as ImageIcon, FileText, Filter, RefreshCw, Eye, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale/nl";
 
@@ -52,6 +55,10 @@ const Dashboard = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingLeadId, setDeletingLeadId] = useState<string | null>(null);
 
   const fetchLeads = async () => {
     setIsLoading(true);
@@ -178,6 +185,67 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteClick = (lead: Lead) => {
+    setLeadToDelete(lead);
+    setDeleteDialogOpen(true);
+  };
+
+  const deleteLead = async () => {
+    if (!leadToDelete) return;
+
+    const leadId = leadToDelete.id;
+    setIsDeleting(true);
+    setDeletingLeadId(leadId);
+    
+    // Optimistic update: verwijder direct uit state voor naadloze UI
+    const previousLeads = [...leads];
+    const previousFilteredLeads = [...filteredLeads];
+    
+    setLeads((prev) => prev.filter((lead) => lead.id !== leadId));
+    setFilteredLeads((prev) => prev.filter((lead) => lead.id !== leadId));
+    
+    // Sluit dialogs direct voor betere UX
+    setDeleteDialogOpen(false);
+    // Sluit detail dialog als deze open is voor dezelfde lead
+    if (selectedLead?.id === leadId) {
+      setIsDetailOpen(false);
+      setSelectedLead(null);
+    }
+    const leadToDeleteBackup = leadToDelete;
+    setLeadToDelete(null);
+
+    try {
+      const tableName = leadToDeleteBackup.source === "configurator" ? "submissions" : "contact_requests";
+      
+      const { error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq("id", leadId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Lead verwijderd",
+        description: "De lead is succesvol verwijderd",
+      });
+    } catch (error: any) {
+      console.error("Error deleting lead:", error);
+      
+      // Rollback: herstel de state als het misgaat
+      setLeads(previousLeads);
+      setFilteredLeads(previousFilteredLeads);
+      
+      toast({
+        title: "Fout bij verwijderen",
+        description: error.message || "De lead kon niet worden verwijderd. Probeer het opnieuw.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setDeletingLeadId(null);
+    }
+  };
+
   const openLeadDetail = (lead: Lead) => {
     setSelectedLead(lead);
     setNotes(lead.admin_notes || "");
@@ -242,8 +310,16 @@ const Dashboard = () => {
         </header>
 
         <div className="container-wide py-8">
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+          <Tabs defaultValue="leads" className="w-full">
+            <TabsList className="mb-6">
+              <TabsTrigger value="leads">Leads</TabsTrigger>
+              <TabsTrigger value="configurator">AI Configurator</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="leads">
+              {/* Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -351,11 +427,30 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredLeads.map((lead) => (
-                      <tr
-                        key={lead.id}
-                        className="border-b border-border hover:bg-secondary/30 transition-colors"
-                      >
+                    <AnimatePresence mode="popLayout">
+                      {filteredLeads.map((lead, index) => (
+                        <motion.tr
+                          key={lead.id}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ 
+                            opacity: deletingLeadId === lead.id ? 0 : 1,
+                            x: deletingLeadId === lead.id ? -20 : 0,
+                            scale: deletingLeadId === lead.id ? 0.98 : 1,
+                          }}
+                          exit={{ 
+                            opacity: 0,
+                            x: -100,
+                            scale: 0.95,
+                            transition: { duration: 0.25, ease: "easeInOut" }
+                          }}
+                          transition={{ 
+                            duration: 0.25,
+                            ease: "easeInOut"
+                          }}
+                          className={`border-b border-border hover:bg-secondary/30 transition-colors ${
+                            deletingLeadId === lead.id ? "pointer-events-none" : ""
+                          }`}
+                        >
                         <td className="p-4 text-sm text-muted-foreground">
                           {format(new Date(lead.created_at), "dd MMM yyyy HH:mm", { locale: nl })}
                         </td>
@@ -382,7 +477,7 @@ const Dashboard = () => {
                                 lead.source === "configurator" ? "submissions" : "contact_requests"
                               )
                             }
-                            disabled={updatingStatus === lead.id}
+                            disabled={updatingStatus === lead.id || deletingLeadId === lead.id || isDeleting}
                           >
                             <SelectTrigger className={`w-[160px] h-8 text-xs ${getStatusColor(lead.status)}`}>
                               <SelectValue />
@@ -396,22 +491,53 @@ const Dashboard = () => {
                           </Select>
                         </td>
                         <td className="p-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openLeadDetail(lead)}
-                          >
-                            <Eye className="w-4 h-4 mr-2" />
-                            Details
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openLeadDetail(lead)}
+                              disabled={deletingLeadId === lead.id || isDeleting}
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              Details
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteClick(lead)}
+                              disabled={deletingLeadId === lead.id || isDeleting}
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                            >
+                              {deletingLeadId === lead.id ? (
+                                <RefreshCw className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </div>
                         </td>
-                      </tr>
-                    ))}
+                      </motion.tr>
+                      ))}
+                    </AnimatePresence>
                   </tbody>
                 </table>
               </div>
             )}
           </div>
+          </TabsContent>
+
+          <TabsContent value="configurator">
+            <div className="bg-card border border-border rounded-xl overflow-hidden p-6">
+              <div className="max-w-4xl mx-auto mb-8 text-center">
+                <h2 className="text-2xl font-bold mb-2">Interne Configurator</h2>
+                <p className="text-muted-foreground">
+                  Genereer direct een voorbeeld zonder klantgegevens.
+                </p>
+              </div>
+              <AdminConfigurator />
+            </div>
+          </TabsContent>
+        </Tabs>
         </div>
 
         {/* Lead Detail Dialog */}
@@ -575,6 +701,37 @@ const Dashboard = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Lead Verwijderen</AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className="text-sm text-muted-foreground">
+                  Weet je zeker dat je deze lead wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+                  {leadToDelete && (
+                    <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
+                      <div className="mb-1"><strong>Naam:</strong> {leadToDelete.name}</div>
+                      <div className="mb-1"><strong>Email:</strong> {leadToDelete.email}</div>
+                      <div><strong>Datum:</strong> {format(new Date(leadToDelete.created_at), "dd MMM yyyy HH:mm", { locale: nl })}</div>
+                    </div>
+                  )}
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isDeleting}>Annuleren</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={deleteLead}
+                disabled={isDeleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {isDeleting ? "Verwijderen..." : "Verwijderen"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </AuthGuard>
   );
