@@ -69,6 +69,15 @@ serve(async (req) => {
       );
     }
 
+    // Track usage for cost calculation (append-only, never deleted)
+    await supabaseClient
+      .from("configurator_usage_tracking")
+      .insert({
+        source: 'public',
+        configuration_id: submission.id,
+        cost_eur: 0.15
+      });
+
     // Get webhook URL from secrets
     const webhookUrl = Deno.env.get("WEBHOOK_URL");
     if (!webhookUrl) {

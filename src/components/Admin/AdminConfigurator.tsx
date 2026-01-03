@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Upload, Sparkles, Loader2, Download, X, Check, Search, ChefHat, Square, DoorOpen, Wrench, Box, Camera, CheckCircle2, RefreshCw, Trash2 } from "lucide-react";
+import { Upload, Sparkles, Loader2, Download, X, Check, Search, ChefHat, Square, DoorOpen, Wrench, Box, Camera, CheckCircle2, RefreshCw, Trash2, Maximize2, Clock, Send } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { getWrapColors } from "@/lib/wrapColors";
 import { supabase } from "@/lib/supabase";
@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale/nl";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const applicationTypes = [
   { 
@@ -74,6 +75,11 @@ export const AdminConfigurator = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [creationToDelete, setCreationToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedCreation, setSelectedCreation] = useState<SavedCreation | null>(null);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [loadingStep, setLoadingStep] = useState<string>("");
+  const [activeTab, setActiveTab] = useState("create");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -211,16 +217,28 @@ export const AdminConfigurator = () => {
     }
 
     setIsGenerating(true);
+    setLoadingStep("upload");
 
     try {
       let imageUrl = uploadedImage;
       
+      // Step 1: Upload image
       if (uploadedFile) {
+        setLoadingStep("upload");
+        toast({
+          title: "Afbeelding uploaden...",
+          description: "Uw afbeelding wordt geüpload naar de server.",
+        });
+        
         const uploadedUrl = await uploadImageToSupabase(uploadedFile);
-        if (!uploadedUrl) throw new Error("Kon afbeelding niet uploaden");
+        if (!uploadedUrl) {
+          throw new Error("Kon afbeelding niet uploaden. Probeer het opnieuw.");
+        }
         imageUrl = uploadedUrl;
       }
 
+      // Step 2: Prepare data
+      setLoadingStep("prepare");
       const selectedService = applicationTypes.find(a => a.value === selectedApplication);
       const serviceDetails = selectedService ? {
         value: selectedService.value,
@@ -242,9 +260,13 @@ export const AdminConfigurator = () => {
         image_url: colorImageUrl
       } : null;
 
-      // Call edge function
-      // Note: We don't pass the session explicitly here because supabase.functions.invoke 
-      // automatically adds the Authorization header with the current session token.
+      // Step 3: Send to webhook
+      setLoadingStep("webhook");
+      toast({
+        title: "Verzenden naar AI...",
+        description: "Uw creatie wordt naar de AI service gestuurd.",
+      });
+
       const { data: functionData, error: functionError } = await supabase.functions.invoke(
         'submit-admin-configuration',
         {
@@ -256,16 +278,41 @@ export const AdminConfigurator = () => {
         }
       );
 
-      if (functionError) throw functionError;
+      if (functionError) {
+        // Better error handling - don't show raw Supabase errors
+        const errorMessage = functionError.message || "Er is een fout opgetreden";
+        let userFriendlyMessage = "Er is een fout opgetreden bij het verzenden.";
+        
+        if (errorMessage.includes("401") || errorMessage.includes("unauthorized")) {
+          userFriendlyMessage = "Authenticatie mislukt. Log opnieuw in.";
+        } else if (errorMessage.includes("network") || errorMessage.includes("fetch")) {
+          userFriendlyMessage = "Netwerkfout. Controleer uw internetverbinding.";
+        } else if (errorMessage.includes("timeout")) {
+          userFriendlyMessage = "De aanvraag duurde te lang. Probeer het opnieuw.";
+        }
+        
+        throw new Error(userFriendlyMessage);
+      }
 
+      // Success - show dialog
       setSubmissionId(functionData.submission_id);
+      setLoadingStep("success");
+      setIsGenerating(false);
+      setSuccessDialogOpen(true);
+      
+      toast({
+        title: "Succesvol verzonden!",
+        description: "Uw creatie is naar de AI service gestuurd.",
+      });
       
     } catch (error: any) {
       console.error("Submission error:", error);
       setIsGenerating(false);
+      setLoadingStep("");
+      
       toast({
         title: "Fout bij genereren",
-        description: error.message,
+        description: error.message || "Er is iets misgegaan. Probeer het opnieuw.",
         variant: "destructive",
       });
     }
@@ -279,6 +326,11 @@ export const AdminConfigurator = () => {
       link.target = "_blank";
       link.click();
     }
+  };
+
+  const handleViewCreation = (creation: SavedCreation) => {
+    setSelectedCreation(creation);
+    setViewDialogOpen(true);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -326,7 +378,7 @@ export const AdminConfigurator = () => {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <Tabs defaultValue="create" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="create">Nieuwe Creatie</TabsTrigger>
           <TabsTrigger value="history">Jouw Creaties</TabsTrigger>
@@ -525,7 +577,10 @@ export const AdminConfigurator = () => {
             {isGenerating ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Genereren...
+                {loadingStep === "upload" && "Afbeelding uploaden..."}
+                {loadingStep === "prepare" && "Voorbereiden..."}
+                {loadingStep === "webhook" && "Verzenden naar AI..."}
+                {!loadingStep && "Genereren..."}
               </>
             ) : (
               <>
@@ -534,6 +589,55 @@ export const AdminConfigurator = () => {
               </>
             )}
           </Button>
+
+          {/* Loading State with Progress */}
+          {isGenerating && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-card border border-border rounded-2xl p-6 shadow-sm"
+            >
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center shadow-elegant shrink-0"
+                  >
+                    <Sparkles className="w-6 h-6 text-primary-foreground" />
+                  </motion.div>
+                  <div className="flex-1">
+                    <h3 className="font-display text-lg font-bold text-foreground mb-1">
+                      {loadingStep === "upload" && "Afbeelding uploaden"}
+                      {loadingStep === "prepare" && "Gegevens voorbereiden"}
+                      {loadingStep === "webhook" && "Verzenden naar AI service"}
+                      {loadingStep === "success" && "Succesvol verzonden!"}
+                      {!loadingStep && "Bezig met verwerken..."}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {loadingStep === "upload" && "Uw afbeelding wordt geüpload naar de server..."}
+                      {loadingStep === "prepare" && "Uw selecties worden voorbereid..."}
+                      {loadingStep === "webhook" && "De creatie wordt naar de AI service gestuurd..."}
+                      {loadingStep === "success" && "Uw creatie is succesvol verzonden!"}
+                      {!loadingStep && "Even geduld..."}
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ 
+                      width: loadingStep === "upload" ? "33%" : 
+                              loadingStep === "prepare" ? "66%" : 
+                              loadingStep === "webhook" ? "100%" : "0%"
+                    }}
+                    transition={{ duration: 0.5 }}
+                    className="h-full bg-gradient-primary rounded-full"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Generated Result */}
           <AnimatePresence>
@@ -590,13 +694,16 @@ export const AdminConfigurator = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {savedCreations.map((creation) => (
-                  <div key={creation.id} className="border border-border rounded-xl overflow-hidden bg-background">
-                    <div className="aspect-video relative bg-secondary/20">
+                  <div key={creation.id} className="border border-border rounded-xl overflow-hidden bg-background group">
+                    <div 
+                      className="aspect-video relative bg-secondary/20 cursor-pointer"
+                      onClick={() => creation.result_url && handleViewCreation(creation)}
+                    >
                       {creation.result_url ? (
                         <img 
                           src={creation.result_url} 
                           alt="AI Result" 
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full text-muted-foreground flex-col gap-2">
@@ -607,6 +714,11 @@ export const AdminConfigurator = () => {
                       <div className="absolute top-2 right-2 px-2 py-1 bg-background/80 backdrop-blur rounded text-xs font-medium">
                         {format(new Date(creation.created_at), "dd MMM HH:mm", { locale: nl })}
                       </div>
+                      {creation.result_url && (
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <Maximize2 className="w-8 h-8 text-white drop-shadow-lg" />
+                        </div>
+                      )}
                     </div>
                     <div className="p-4 space-y-3">
                       <div className="flex justify-between text-sm">
@@ -671,6 +783,111 @@ export const AdminConfigurator = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Creatie Details</DialogTitle>
+          </DialogHeader>
+          {selectedCreation && (
+            <div className="space-y-4">
+              <div className="relative w-full rounded-lg overflow-hidden border-2 border-border">
+                {selectedCreation.result_url ? (
+                  <img 
+                    src={selectedCreation.result_url} 
+                    alt="AI Result" 
+                    className="w-full h-auto"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-96 text-muted-foreground flex-col gap-2">
+                    <Loader2 className="w-12 h-12 animate-spin" />
+                    <span>Bezig met genereren...</span>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Service</p>
+                  <p className="font-medium">
+                    {selectedCreation.service_details?.label || selectedCreation.service_details?.value}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Kleur</p>
+                  <p className="font-medium">
+                    {selectedCreation.color_details?.name}
+                    {selectedCreation.color_details?.code && ` (${selectedCreation.color_details.code})`}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Datum</p>
+                  <p className="font-medium">
+                    {format(new Date(selectedCreation.created_at), "dd MMMM yyyy 'om' HH:mm", { locale: nl })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Status</p>
+                  <p className="font-medium capitalize">{selectedCreation.status}</p>
+                </div>
+              </div>
+              {selectedCreation.result_url && (
+                <Button
+                  onClick={() => handleDownload(selectedCreation.result_url!)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Resultaat
+                </Button>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog - "Over 1 minuut is uw creatie klaar" */}
+      <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center mx-auto mb-4 shadow-elegant"
+            >
+              <CheckCircle2 className="w-8 h-8 text-primary-foreground" />
+            </motion.div>
+            <DialogTitle className="text-center text-2xl">Creatie Verzonden!</DialogTitle>
+            <DialogDescription className="text-center text-base pt-2">
+              Uw creatie is succesvol naar de AI service gestuurd.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="flex items-center gap-3 p-4 bg-primary/10 rounded-xl border border-primary/20">
+              <Clock className="w-5 h-5 text-primary shrink-0" />
+              <div>
+                <p className="font-semibold text-foreground">Over ongeveer 1 minuut</p>
+                <p className="text-sm text-muted-foreground">is uw creatie klaar en zichtbaar in "Jouw Creaties"</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Send className="w-4 h-4" />
+              <span>De pagina wordt automatisch bijgewerkt wanneer het resultaat klaar is.</span>
+            </div>
+            <Button
+              onClick={() => {
+                setSuccessDialogOpen(false);
+                setActiveTab("history");
+                fetchSavedCreations();
+              }}
+              variant="hero"
+              className="w-full"
+            >
+              Bekijk Jouw Creaties
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

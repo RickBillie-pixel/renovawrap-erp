@@ -351,7 +351,19 @@ const Configurator = () => {
       );
 
       if (functionError) {
-        throw functionError;
+        // Better error handling - don't show raw Supabase errors
+        const errorMessage = functionError.message || "Er is een fout opgetreden";
+        let userFriendlyMessage = "Er is een fout opgetreden bij het verzenden.";
+        
+        if (errorMessage.includes("401") || errorMessage.includes("unauthorized")) {
+          userFriendlyMessage = "Authenticatie mislukt. Probeer de pagina te verversen.";
+        } else if (errorMessage.includes("network") || errorMessage.includes("fetch")) {
+          userFriendlyMessage = "Netwerkfout. Controleer uw internetverbinding en probeer het opnieuw.";
+        } else if (errorMessage.includes("timeout")) {
+          userFriendlyMessage = "De aanvraag duurde te lang. Probeer het opnieuw.";
+        }
+        
+        throw new Error(userFriendlyMessage);
       }
 
       const newSubmissionId = functionData.submission_id;
@@ -473,7 +485,7 @@ const Configurator = () => {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="space-y-6"
+                className="space-y-6 relative"
               >
                 {/* Progress Indicator */}
                 <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 shadow-soft">
