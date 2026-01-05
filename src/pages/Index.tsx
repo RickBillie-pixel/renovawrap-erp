@@ -5,7 +5,7 @@ import { USPSection } from "@/components/USPSection";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Portfolio } from "@/components/Portfolio";
 import { Testimonials } from "@/components/Testimonials";
-import { CTASection } from "@/components/CTASection";
+
 import { PageTransition } from "@/components/PageTransition";
 import { SEO } from "@/components/SEO";
 
@@ -37,9 +37,7 @@ const Index = () => {
         <section className="md:snap-start md:snap-always min-h-screen md:min-h-screen flex items-center">
           <Testimonials />
         </section>
-        <section className="md:snap-start md:snap-always">
-          <CTASection />
-        </section>
+
         <section className="md:snap-start md:snap-always">
           <Footer />
         </section>

@@ -1,8 +1,11 @@
+
 import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import kitchenAfter from "@/assets/kitchen-after.jpg";
+
+import wrapRollsV2 from "@/assets/wrap-rolls-v2.png";
 
 const usps = [
   "Gratis vrijblijvende offerte",
@@ -18,15 +21,15 @@ export const USPSection = () => {
     <div className="w-full py-12 md:py-16 lg:py-24 relative min-h-screen md:min-h-screen flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img 
-          src={kitchenAfter} 
-          alt="Getransformeerde keuken" 
+        <img
+          src={kitchenAfter}
+          alt="Getransformeerde keuken"
           className="w-full h-full object-cover"
         />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-foreground/60" />
       </div>
-      
+
       <div className="container-wide relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Image Side */}
@@ -39,8 +42,8 @@ export const USPSection = () => {
           >
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
               <img
-                src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1200"
-                alt="Luxe keuken interieur"
+                src={wrapRollsV2}
+                alt="Premium wrap folie in diverse kleuren"
                 className="w-full h-full object-cover"
               />
               {/* Floating card */}

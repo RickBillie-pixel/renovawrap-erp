@@ -1,28 +1,31 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import kitchenAfterMatched from "@/assets/kitchen-after-matched.jpg";
+import wrappedKitchen from "@/assets/wrapped-kitchen.png";
+import wrappedDoors from "@/assets/wrapped-doors.png";
+import wrappedCabinets from "@/assets/wrapped-cabinets.png";
 
 const portfolioItems = [
   {
     id: 1,
     category: "keuken",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800",
-    title: "Moderne Witte Keuken",
+    image: wrappedKitchen,
+    title: "High-End Keuken Wrap",
     location: "Amsterdam",
   },
   {
     id: 2,
-    category: "keuken",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800",
-    title: "Scandinavische Stijl",
+    category: "interieur",
+    image: wrappedDoors,
+    title: "Premium Deur Transformatie",
     location: "Utrecht",
   },
   {
     id: 3,
     category: "interieur",
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800",
-    title: "Luxe Woonkamer",
-    location: "Den Haag",
+    image: wrappedCabinets,
+    title: "Luxe Inbouwkasten",
+    location: "Wassenaar",
   },
   {
     id: 4,
@@ -66,15 +69,15 @@ export const Portfolio = () => {
     <div className="w-full py-12 md:py-16 lg:py-24 relative overflow-hidden min-h-screen md:min-h-screen flex items-center">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img 
-          src={kitchenAfterMatched} 
-          alt="Portfolio keuken projecten" 
+        <img
+          src={kitchenAfterMatched}
+          alt="Portfolio keuken projecten"
           className="w-full h-full object-cover"
         />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-foreground/60" />
       </div>
-      
+
       <div className="container-wide relative z-10">
         {/* Section Header */}
         <motion.div
@@ -115,11 +118,10 @@ export const Portfolio = () => {
               onClick={() => setActiveCategory(category.id)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className={`px-8 py-3 rounded-full font-medium transition-all duration-500 ${
-                activeCategory === category.id
+              className={`px-8 py-3 rounded-full font-medium transition-all duration-500 ${activeCategory === category.id
                   ? "bg-primary text-primary-foreground shadow-primary"
                   : "bg-card border border-border text-foreground hover:border-primary/30"
-              }`}
+                }`}
             >
               {category.label}
             </motion.button>
@@ -147,7 +149,7 @@ export const Portfolio = () => {
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
+
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-8 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                 <span className="text-primary-foreground/80 text-sm font-medium uppercase tracking-wider">

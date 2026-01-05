@@ -165,15 +165,7 @@ export const HowItWorks = () => {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <motion.div
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, type: "spring" }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-8"
-          >
-            <Sparkles className="w-8 h-8 text-primary" strokeWidth={1.5} />
-          </motion.div>
+
           
           <span className="inline-block text-primary font-medium text-sm tracking-[0.2em] uppercase mb-4">
             Uw Transformatie

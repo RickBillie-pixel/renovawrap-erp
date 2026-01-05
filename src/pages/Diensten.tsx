@@ -6,7 +6,13 @@ import { PageTransition } from "@/components/PageTransition";
 import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChefHat, Sofa, Building2, Check, ArrowRight } from "lucide-react";
+import { ChefHat, Sofa, Building2, Check, ArrowRight, Wrench } from "lucide-react";
+
+import serviceKitchen from "@/assets/service-kitchen.png";
+import serviceInterior from "@/assets/service-interior.png";
+import serviceBusiness from "@/assets/service-business.png";
+import serviceFurniture from "@/assets/service-furniture.png";
+import serviceRepair from "@/assets/service-repair.png";
 
 const services = [
   {
@@ -14,7 +20,7 @@ const services = [
     title: "Keuken Wrappen",
     description: "Transformeer uw keuken met premium wrap-folie. Van kastdeuren tot werkbladen - alles kan worden getransformeerd.",
     path: "/keuken-wrappen",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1200",
+    image: serviceKitchen,
     benefits: [
       "Tot 70% goedkoper dan nieuwe keuken",
       "Klaar binnen 1 dag",
@@ -27,7 +33,7 @@ const services = [
     title: "Interieur Wrappen",
     description: "Geef elk interieuroppervlak een nieuwe uitstraling. Van meubels tot wandpanelen - de mogelijkheden zijn eindeloos.",
     path: "/interieur-wrappen",
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200",
+    image: serviceInterior,
     benefits: [
       "Honderden kleuren en texturen",
       "Krasvast en duurzaam",
@@ -40,12 +46,38 @@ const services = [
     title: "Zakelijke Oplossingen",
     description: "Professionele wrap-oplossingen voor bedrijven. Van kantoren tot winkelruimtes - wij bieden op maat gemaakte oplossingen.",
     path: "/zakelijk",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200",
+    image: serviceBusiness,
     benefits: [
       "Minimale bedrijfsonderbreking",
       "Projectmanagement van A tot Z",
       "Volume kortingen",
       "Dedicated accountmanager",
+    ],
+  },
+  {
+    icon: Sofa,
+    title: "Meubels Wrappen",
+    description: "Geef uw geliefde meubelstukken een tweede leven. Van kasten tot tafels en tv-meubels - wij maken ze weer als nieuw.",
+    path: "/meubels-wrappen",
+    image: serviceFurniture,
+    benefits: [
+      "Refurbished look",
+      "Bescherming van origineel hout",
+      "Unieke, persoonlijke stijl",
+      "Duurzame oplossing",
+    ],
+  },
+  {
+    icon: Wrench,
+    title: "Schadeherstel",
+    description: "Professioneel herstel van beschadigde folies, aanrechtbladen of interieurdelen. Wij maken beschadigingen onzichtbaar.",
+    path: "/schadeherstel",
+    image: serviceRepair,
+    benefits: [
+      "Onzichtbare reparaties",
+      "Kostenbesparend",
+      "Snel herstel op locatie",
+      "Voorkomt vervanging",
     ],
   },
 ];
@@ -63,32 +95,32 @@ const Diensten = () => {
       />
       <main className="min-h-screen bg-background">
         <Navbar />
-        
+
         {/* Hero Section */}
-        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 bg-gradient-soft">
+        <section className="pt-24 pb-6 md:pt-32 lg:pt-40 md:pb-10 bg-gradient-soft">
           <div className="container-wide">
             <motion.div
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-center max-w-3xl mx-auto mb-16"
+              className="text-center max-w-3xl mx-auto mb-8"
             >
               <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
-                Onze Diensten
+                Expertise & Vakmanschap
               </span>
               <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
-                Complete{" "}
-                <span className="text-gradient-primary">Wrap Oplossingen</span>
+                Hoogwaardige{" "}
+                <span className="text-gradient-primary">Wrap Finish</span>
               </h1>
               <p className="text-muted-foreground text-base sm:text-lg">
-                Van keukens tot interieurs en zakelijke ruimtes - wij bieden professionele wrap-diensten voor elk oppervlak en elke behoefte.
+                Ontdek de mogelijkheden van premium folie. Wij transformeren en beschermen uw waardevolle bezittingen met oog voor detail en perfectie.
               </p>
             </motion.div>
           </div>
         </section>
 
         {/* Services Grid */}
-        <section className="section-padding bg-background">
+        <section className="py-8 md:py-12 bg-background">
           <div className="container-wide">
             <div className="space-y-24">
               {services.map((service, index) => (
@@ -98,9 +130,8 @@ const Diensten = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: index * 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${
-                    index % 2 === 1 ? "lg:flex-row-reverse" : ""
-                  }`}
+                  className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                    }`}
                 >
                   <motion.div
                     className={index % 2 === 1 ? "lg:order-2" : ""}

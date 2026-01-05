@@ -14,39 +14,39 @@ import { getWrapColors, type WrapColor } from "@/lib/wrapColors";
 import { supabase } from "@/lib/supabase";
 
 const applicationTypes = [
-  { 
-    value: "keukens", 
-    label: "Keukens", 
+  {
+    value: "keukens",
+    label: "Keukens",
     description: "Kastdeuren, fronten en panelen",
     icon: ChefHat,
   },
-  { 
-    value: "aanrechtbladen", 
-    label: "Aanrechtbladen", 
+  {
+    value: "aanrechtbladen",
+    label: "Aanrechtbladen",
     description: "Werkbladen en aanrecht oppervlakken",
     icon: Square,
   },
-  { 
-    value: "kozijnen", 
-    label: "Kozijnen", 
+  {
+    value: "kozijnen",
+    label: "Kozijnen",
     description: "Raam- en deurkozijnen",
     icon: DoorOpen,
   },
-  { 
-    value: "deuren", 
-    label: "Deuren", 
+  {
+    value: "deuren",
+    label: "Deuren",
     description: "Binnen- en buitendeuren",
     icon: DoorOpen,
   },
-  { 
-    value: "schadeherstel", 
-    label: "Schadeherstel", 
+  {
+    value: "schadeherstel",
+    label: "Schadeherstel",
     description: "Reparatie van beschadigde oppervlakken",
     icon: Wrench,
   },
-  { 
-    value: "kasten", 
-    label: "(Inbouw)Kasten", 
+  {
+    value: "kasten",
+    label: "(Inbouw)Kasten",
     description: "Wandkasten, inbouwkasten en meubels",
     icon: Box,
   },
@@ -77,14 +77,14 @@ const Configurator = () => {
         .select('result_url')
         .eq('id', id)
         .single();
-      
+
       if (data?.result_url) {
         setGeneratedImage(data.result_url);
         setIsGenerating(false);
         setSubmissionId(null);
         localStorage.removeItem('configuratorState');
         setIsSubmitted(true);
-        
+
         toast({
           title: "Voorbeeld gegenereerd!",
           description: "Het resultaat is opgehaald.",
@@ -98,7 +98,7 @@ const Configurator = () => {
     if (savedState) {
       const parsed = JSON.parse(savedState);
       const isRecent = new Date().getTime() - parsed.timestamp < 24 * 60 * 60 * 1000;
-      
+
       if (isRecent && parsed.isGenerating && parsed.submissionId) {
         setSubmissionId(parsed.submissionId);
         setIsGenerating(true);
@@ -135,7 +135,7 @@ const Configurator = () => {
             setIsGenerating(false);
             setSubmissionId(null); // Stop listening
             localStorage.removeItem('configuratorState'); // Clear saved state
-            
+
             toast({
               title: "Voorbeeld gegenereerd!",
               description: "Het resultaat is klaar en naar uw email verzonden.",
@@ -150,10 +150,10 @@ const Configurator = () => {
     };
   }, [submissionId]);
 
-  
+
   // Load all wrap colors dynamically
   const allColors = getWrapColors();
-  
+
   // Filter colors based on search
   const filteredColors = allColors.filter(color =>
     color.name.toLowerCase().includes(colorSearch.toLowerCase()) ||
@@ -266,7 +266,7 @@ const Configurator = () => {
 
   const handleSubmitContact = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!customerData.name || !customerData.email) {
       toast({
         title: "Vul alle velden in",
@@ -293,7 +293,7 @@ const Configurator = () => {
     try {
       // Upload image to Supabase storage
       let imageUrl = uploadedImage;
-      
+
       if (uploadedFile) {
         toast({
           title: "Afbeelding uploaden...",
@@ -319,7 +319,7 @@ const Configurator = () => {
 
       // Get selected color details
       const selectedColorData = allColors.find(c => c.id === selectedColor);
-      
+
       // Ensure color image URL is absolute
       let colorImageUrl = selectedColorData?.image || '';
       if (colorImageUrl && !colorImageUrl.startsWith('http')) {
@@ -354,7 +354,7 @@ const Configurator = () => {
         // Better error handling - don't show raw Supabase errors
         const errorMessage = functionError.message || "Er is een fout opgetreden";
         let userFriendlyMessage = "Er is een fout opgetreden bij het verzenden.";
-        
+
         if (errorMessage.includes("401") || errorMessage.includes("unauthorized")) {
           userFriendlyMessage = "Authenticatie mislukt. Probeer de pagina te verversen.";
         } else if (errorMessage.includes("network") || errorMessage.includes("fetch")) {
@@ -362,7 +362,7 @@ const Configurator = () => {
         } else if (errorMessage.includes("timeout")) {
           userFriendlyMessage = "De aanvraag duurde te lang. Probeer het opnieuw.";
         }
-        
+
         throw new Error(userFriendlyMessage);
       }
 
@@ -379,7 +379,7 @@ const Configurator = () => {
       }));
 
       setIsSubmitting(false);
-      
+
       // Show loading message
       toast({
         title: "AI Voorbeeld genereren...",
@@ -388,7 +388,7 @@ const Configurator = () => {
 
       // We remove the setTimeout simulation because we now wait for the webhook/realtime update
       // But we keep a fallback timeout just in case realtime fails or takes too long (optional)
-      
+
     } catch (error: any) {
       console.error("Submission error:", error);
       setIsSubmitting(false);
@@ -424,9 +424,9 @@ const Configurator = () => {
       />
       <main className="min-h-screen bg-background">
         <Navbar />
-        
+
         {/* Hero Section with Gradient */}
-        <section className="pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-20 lg:pb-32 relative overflow-hidden">
+        <section className="pt-24 pb-8 md:pt-32 lg:pt-40 md:pb-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/30" />
           <div className="absolute inset-0 overflow-hidden">
             <motion.div
@@ -442,7 +442,7 @@ const Configurator = () => {
               className="absolute bottom-0 right-0 w-72 h-72 bg-secondary rounded-full blur-3xl"
             />
           </div>
-          
+
           <div className="container-wide relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 60 }}
@@ -450,33 +450,58 @@ const Configurator = () => {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="text-center max-w-3xl mx-auto mb-16"
             >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="inline-block mb-6"
-              >
-                <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-elegant mx-auto">
-                  <Sparkles className="w-10 h-10 text-primary-foreground" />
-                </div>
-              </motion.div>
               <span className="text-primary font-medium text-sm tracking-wider uppercase mb-4 block">
                 AI Configurator
               </span>
-              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-foreground">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-foreground">
                 Zie Uw{" "}
                 <span className="text-gradient-primary">Droomproject</span>{" "}
                 Voor U
               </h1>
-              <p className="text-muted-foreground text-base sm:text-lg">
-                Upload een foto en laat AI een realistisch voorbeeld genereren. Ontvang het resultaat direct per email.
-              </p>
+
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12 mb-0">
+                {[
+                  {
+                    step: "1",
+                    title: "Upload Foto",
+                    desc: "Upload een duidelijke foto van uw keuken, kast of meubel",
+                    icon: Camera
+                  },
+                  {
+                    step: "2",
+                    title: "Kies Opties",
+                    desc: "Selecteer wat u wilt wrappen en uw gewenste kleur",
+                    icon: CheckCircle2
+                  },
+                  {
+                    step: "3",
+                    title: "Ontvang Resultaat",
+                    desc: "AI genereert een voorbeeld en u ontvangt het per email",
+                    icon: Mail
+                  }
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.step}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + (i * 0.1) }}
+                    className="flex flex-col items-center text-center p-4 rounded-xl bg-card/30 backdrop-blur-sm border border-border/50"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                      <item.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="font-display font-bold text-lg mb-1">{item.title}</div>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           </div>
         </section>
 
         {/* Configurator Section */}
-        <section className="section-padding bg-background relative">
+        <section className="py-8 md:py-12 bg-background relative">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/20 to-transparent" />
           <div className="container-wide relative z-10">
             <div className="max-w-4xl mx-auto">
@@ -518,7 +543,7 @@ const Configurator = () => {
                       Upload Uw Afbeelding
                     </h2>
                   </div>
-                  
+
                   <div className="space-y-4">
                     {uploadedImage ? (
                       <motion.div
@@ -578,7 +603,7 @@ const Configurator = () => {
                         </div>
                       </div>
                     )}
-                    
+
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -594,7 +619,7 @@ const Configurator = () => {
                       onChange={handleImageUpload}
                       className="hidden"
                     />
-                    
+
                     <div className="flex flex-col sm:flex-row gap-3">
                       <Button
                         type="button"
@@ -633,7 +658,7 @@ const Configurator = () => {
                       Wat Wilt U Wrappen?
                     </h2>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {applicationTypes.map((app) => {
                       const Icon = app.icon;
@@ -644,11 +669,10 @@ const Configurator = () => {
                           onClick={() => setSelectedApplication(app.value)}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className={`relative p-4 rounded-xl border-2 transition-all text-left group ${
-                            isSelected
-                              ? "border-primary bg-primary/10 shadow-elegant"
-                              : "border-border hover:border-primary/50 bg-background/50"
-                          }`}
+                          className={`relative p-4 rounded-xl border-2 transition-all text-left group ${isSelected
+                            ? "border-primary bg-primary/10 shadow-elegant"
+                            : "border-border hover:border-primary/50 bg-background/50"
+                            }`}
                         >
                           <div className="flex items-start gap-4">
                             <motion.div
@@ -696,7 +720,7 @@ const Configurator = () => {
                       Kies Uw Kleur
                     </h2>
                   </div>
-                  
+
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
@@ -707,7 +731,7 @@ const Configurator = () => {
                       className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-soft"
                     />
                   </div>
-                  
+
                   <div className="max-h-96 overflow-y-auto pr-2 custom-scrollbar">
                     <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3">
                       {filteredColors.map((color) => (
@@ -716,11 +740,10 @@ const Configurator = () => {
                           onClick={() => setSelectedColor(color.id)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className={`group relative aspect-square rounded-xl border-2 overflow-hidden transition-all shadow-soft ${
-                            selectedColor === color.id
-                              ? "border-primary ring-2 ring-primary ring-offset-2 scale-105 shadow-elegant"
-                              : "border-border hover:border-primary/50"
-                          }`}
+                          className={`group relative aspect-square rounded-xl border-2 overflow-hidden transition-all shadow-soft ${selectedColor === color.id
+                            ? "border-primary ring-2 ring-primary ring-offset-2 scale-105 shadow-elegant"
+                            : "border-border hover:border-primary/50"
+                            }`}
                           title={color.name}
                         >
                           <img
@@ -750,7 +773,7 @@ const Configurator = () => {
                       </p>
                     )}
                   </div>
-                  
+
                   {selectedColor && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -784,7 +807,7 @@ const Configurator = () => {
                       Voorwaarden
                     </h2>
                   </div>
-                  
+
                   <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-xl">
                     <Checkbox
                       id="terms"
@@ -843,10 +866,10 @@ const Configurator = () => {
                           <Sparkles className="w-8 h-8 text-primary-foreground" />
                         </motion.div>
                         <div>
-                        <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
-                          AI Voorbeeld Genereren
-                        </h3>
-                        <p className="text-muted-foreground text-xs sm:text-sm">
+                          <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
+                            AI Voorbeeld Genereren
+                          </h3>
+                          <p className="text-muted-foreground text-xs sm:text-sm">
                             Dit duurt ongeveer 1,5 minuten. U ontvangt het resultaat ook per email op <strong>{customerData.email}</strong>
                           </p>
                         </div>
@@ -875,7 +898,7 @@ const Configurator = () => {
                           AI Gegenereerd
                         </div>
                       </div>
-                      
+
                       <div className="flex gap-3">
                         <Button
                           onClick={handleDownload}
@@ -921,7 +944,7 @@ const Configurator = () => {
                           Ontvang Uw Resultaat
                         </h2>
                       </div>
-                      
+
                       <p className="text-muted-foreground mb-6 text-xs sm:text-sm">
                         Vul uw gegevens in om het AI-voorbeeld te genereren. Het resultaat wordt automatisch naar uw email verzonden.
                       </p>
