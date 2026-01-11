@@ -43,18 +43,21 @@ CREATE INDEX IF NOT EXISTS idx_customers_lead_id ON public.customers(lead_id);
 ALTER TABLE public.customers ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow authenticated users (admins) to read all customers
+DROP POLICY IF EXISTS "Allow authenticated read" ON public.customers;
 CREATE POLICY "Allow authenticated read" ON public.customers
   FOR SELECT
   TO authenticated
   USING (true);
 
 -- Policy: Allow authenticated users (admins) to insert customers
+DROP POLICY IF EXISTS "Allow authenticated insert" ON public.customers;
 CREATE POLICY "Allow authenticated insert" ON public.customers
   FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- Policy: Allow authenticated users (admins) to update customers
+DROP POLICY IF EXISTS "Allow authenticated update" ON public.customers;
 CREATE POLICY "Allow authenticated update" ON public.customers
   FOR UPDATE
   TO authenticated
@@ -62,12 +65,14 @@ CREATE POLICY "Allow authenticated update" ON public.customers
   WITH CHECK (true);
 
 -- Policy: Allow authenticated users (admins) to delete customers
+DROP POLICY IF EXISTS "Allow authenticated delete" ON public.customers;
 CREATE POLICY "Allow authenticated delete" ON public.customers
   FOR DELETE
   TO authenticated
   USING (true);
 
 -- Policy: Allow service role to read all customers
+DROP POLICY IF EXISTS "Allow service role read" ON public.customers;
 CREATE POLICY "Allow service role read" ON public.customers
   FOR SELECT
   TO service_role
@@ -83,6 +88,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to automatically update updated_at
+DROP TRIGGER IF EXISTS update_customers_updated_at ON public.customers;
 CREATE TRIGGER update_customers_updated_at
   BEFORE UPDATE ON public.customers
   FOR EACH ROW

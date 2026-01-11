@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Button } from "@/components/ui/button";
 import { AuthGuard } from "@/components/Admin/AuthGuard";
 import {
   Sidebar,
@@ -17,42 +16,51 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { LogOut, Users, Sparkles, Calendar, Clock, Briefcase } from "lucide-react";
+import { LogOut, Users, Sparkles, Calendar, CalendarDays, Briefcase } from "lucide-react";
 import { LeadsPage } from "./pages/LeadsPage";
 import { ConfiguratorPage } from "./pages/ConfiguratorPage";
 import { KlantenPage } from "./pages/KlantenPage";
 import { AfsprakenPage } from "./pages/AfsprakenPage";
-import { FollowUpPage } from "./pages/FollowUpPage";
+import { AgendaPage } from "./pages/AgendaPage";
 
-type Page = "leads" | "configurator" | "klanten" | "afspraken" | "follow-up";
+type Page = "leads" | "configurator" | "klanten" | "agenda" | "afspraken";
 
-const menuItems = [
+interface MenuItem {
+  id: Page;
+  label: string;
+  icon: typeof Briefcase;
+}
+
+interface MenuGroup {
+  label: string;
+  items: MenuItem[];
+}
+
+const menuGroups: MenuGroup[] = [
   {
-    id: "leads" as Page,
-    label: "Leads",
-    icon: Briefcase,
+    label: "CRM",
+    items: [
+      { id: "leads", label: "Leads", icon: Briefcase },
+      { id: "klanten", label: "Klanten", icon: Users },
+    ],
   },
   {
-    id: "configurator" as Page,
-    label: "AI Configurator",
-    icon: Sparkles,
+    label: "Agenda",
+    items: [
+      { id: "agenda", label: "Kalender", icon: CalendarDays },
+      { id: "afspraken", label: "Afspraken", icon: Calendar },
+    ],
   },
   {
-    id: "klanten" as Page,
-    label: "Klanten",
-    icon: Users,
-  },
-  {
-    id: "afspraken" as Page,
-    label: "Afspraken",
-    icon: Calendar,
-  },
-  {
-    id: "follow-up" as Page,
-    label: "Follow-up",
-    icon: Clock,
+    label: "Tools",
+    items: [
+      { id: "configurator", label: "AI Configurator", icon: Sparkles },
+    ],
   },
 ];
+
+// Flatten for easy lookup
+const allMenuItems = menuGroups.flatMap((group) => group.items);
 
 const Dashboard = () => {
   const [activePage, setActivePage] = useState<Page>("leads");
@@ -65,10 +73,10 @@ const Dashboard = () => {
         return <ConfiguratorPage />;
       case "klanten":
         return <KlantenPage />;
+      case "agenda":
+        return <AgendaPage />;
       case "afspraken":
         return <AfsprakenPage />;
-      case "follow-up":
-        return <FollowUpPage />;
       default:
         return <LeadsPage />;
     }
@@ -89,28 +97,30 @@ const Dashboard = () => {
             </div>
           </SidebarHeader>
           <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Navigatie</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {menuItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <SidebarMenuItem key={item.id}>
-                        <SidebarMenuButton
-                          onClick={() => setActivePage(item.id)}
-                          isActive={activePage === item.id}
-                          tooltip={item.label}
-                        >
-                          <Icon className="w-4 h-4" />
-                          <span>{item.label}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+            {menuGroups.map((group) => (
+              <SidebarGroup key={group.label}>
+                <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {group.items.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <SidebarMenuItem key={item.id}>
+                          <SidebarMenuButton
+                            onClick={() => setActivePage(item.id)}
+                            isActive={activePage === item.id}
+                            tooltip={item.label}
+                          >
+                            <Icon className="w-4 h-4" />
+                            <span>{item.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ))}
           </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
@@ -129,7 +139,7 @@ const Dashboard = () => {
               <SidebarTrigger />
               <div className="flex-1">
                 <h1 className="font-display text-xl font-bold text-foreground">
-                  {menuItems.find((item) => item.id === activePage)?.label || "Admin Dashboard"}
+                  {allMenuItems.find((item) => item.id === activePage)?.label || "Admin Dashboard"}
                 </h1>
               </div>
             </div>
@@ -144,4 +154,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
