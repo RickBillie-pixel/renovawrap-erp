@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale/nl";
-import { ChevronRight, Bell, Mail, MoreVertical, X, RefreshCw, Send } from "lucide-react";
+import { ChevronRight, Bell, Mail, MoreVertical, X, RefreshCw, Send, Trash2, Ban } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -15,6 +15,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface AppointmentWithReminders {
   id: string;
@@ -40,6 +50,9 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [sendingReminderId, setSendingReminderId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [selectedReminderId, setSelectedReminderId] = useState<string | null>(null);
 
   const fetchAppointmentsWithReminders = async () => {
     setIsLoading(true);
@@ -164,6 +177,65 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
         description: error.message,
         variant: "destructive",
       });
+    }
+  };
+
+  const handleCancelReminder = async (reminderId: string) => {
+    try {
+      const { error } = await supabase
+        .from("appointment_reminders")
+        .update({ status: "geannuleerd" })
+        .eq("id", reminderId)
+        .eq("status", "gepland");
+
+      if (error) throw error;
+
+      toast({
+        title: "Herinnering geannuleerd",
+        description: "De herinnering is geannuleerd",
+      });
+
+      await fetchAppointmentsWithReminders();
+      onRefresh?.();
+    } catch (error: any) {
+      console.error("Error cancelling reminder:", error);
+      toast({
+        title: "Fout bij annuleren",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setCancelDialogOpen(false);
+      setSelectedReminderId(null);
+    }
+  };
+
+  const handleDeleteReminder = async (reminderId: string) => {
+    try {
+      const { error } = await supabase
+        .from("appointment_reminders")
+        .delete()
+        .eq("id", reminderId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Herinnering verwijderd",
+        description: "De herinnering is permanent verwijderd",
+      });
+
+      await fetchAppointmentsWithReminders();
+      onRefresh?.();
+    } catch (error: any) {
+      console.error("Error deleting reminder:", error);
+      toast({
+        title: "Fout bij verwijderen",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setSelectedReminderId(null);
     }
   };
 
@@ -420,22 +492,57 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
                                       : "-"}
                                   </td>
                                   <td className="py-2 text-right">
-                                    {reminder.status === "gepland" && (
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handleSendNow(reminder.id)}
-                                        disabled={isReminderSending}
-                                        className="h-7 text-xs"
-                                      >
-                                        {isReminderSending ? (
-                                          <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
-                                        ) : (
-                                          <Send className="w-3 h-3 mr-1" />
-                                        )}
-                                        Verstuur Nu
-                                      </Button>
-                                    )}
+                                    <div className="flex items-center justify-end gap-2">
+                                      {reminder.status === "gepland" && (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => handleSendNow(reminder.id)}
+                                          disabled={isReminderSending}
+                                          className="h-7 text-xs"
+                                        >
+                                          {isReminderSending ? (
+                                            <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                                          ) : (
+                                            <Send className="w-3 h-3 mr-1" />
+                                          )}
+                                          Verstuur Nu
+                                        </Button>
+                                      )}
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                            <MoreVertical className="w-3 h-3" />
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                          {reminder.status === "gepland" && (
+                                            <>
+                                              <DropdownMenuItem
+                                                onClick={() => {
+                                                  setSelectedReminderId(reminder.id);
+                                                  setCancelDialogOpen(true);
+                                                }}
+                                              >
+                                                <Ban className="w-4 h-4 mr-2" />
+                                                Annuleren
+                                              </DropdownMenuItem>
+                                              <DropdownMenuSeparator />
+                                            </>
+                                          )}
+                                          <DropdownMenuItem
+                                            onClick={() => {
+                                              setSelectedReminderId(reminder.id);
+                                              setDeleteDialogOpen(true);
+                                            }}
+                                            className="text-destructive focus:text-destructive"
+                                          >
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                            Verwijderen
+                                          </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    </div>
                                   </td>
                                 </tr>
                               );
@@ -451,6 +558,47 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
           })}
         </tbody>
       </table>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Herinnering verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je deze herinnering permanent wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedReminderId && handleDeleteReminder(selectedReminderId)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Cancel Confirmation Dialog */}
+      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Herinnering annuleren?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je deze herinnering wilt annuleren? De herinnering wordt niet meer automatisch verstuurd, maar blijft bewaard in het systeem.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedReminderId && handleCancelReminder(selectedReminderId)}
+            >
+              Annuleren
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
