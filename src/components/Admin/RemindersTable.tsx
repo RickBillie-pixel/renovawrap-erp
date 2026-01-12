@@ -494,54 +494,47 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
                                   <td className="py-2 text-right">
                                     <div className="flex items-center justify-end gap-2">
                                       {reminder.status === "gepland" && (
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() => handleSendNow(reminder.id)}
-                                          disabled={isReminderSending}
-                                          className="h-7 text-xs"
-                                        >
-                                          {isReminderSending ? (
-                                            <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
-                                          ) : (
-                                            <Send className="w-3 h-3 mr-1" />
-                                          )}
-                                          Verstuur Nu
-                                        </Button>
-                                      )}
-                                      <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                                            <MoreVertical className="w-3 h-3" />
+                                        <>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleSendNow(reminder.id)}
+                                            disabled={isReminderSending}
+                                            className="h-7 text-xs"
+                                          >
+                                            {isReminderSending ? (
+                                              <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                                            ) : (
+                                              <Send className="w-3 h-3 mr-1" />
+                                            )}
+                                            Verstuur Nu
                                           </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                          {reminder.status === "gepland" && (
-                                            <>
-                                              <DropdownMenuItem
-                                                onClick={() => {
-                                                  setSelectedReminderId(reminder.id);
-                                                  setCancelDialogOpen(true);
-                                                }}
-                                              >
-                                                <Ban className="w-4 h-4 mr-2" />
-                                                Annuleren
-                                              </DropdownMenuItem>
-                                              <DropdownMenuSeparator />
-                                            </>
-                                          )}
-                                          <DropdownMenuItem
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
                                             onClick={() => {
                                               setSelectedReminderId(reminder.id);
-                                              setDeleteDialogOpen(true);
+                                              setCancelDialogOpen(true);
                                             }}
-                                            className="text-destructive focus:text-destructive"
+                                            className="h-7 text-xs"
                                           >
-                                            <Trash2 className="w-4 h-4 mr-2" />
-                                            Verwijderen
-                                          </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                      </DropdownMenu>
+                                            <Ban className="w-3 h-3 mr-1" />
+                                            Annuleren
+                                          </Button>
+                                        </>
+                                      )}
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          setSelectedReminderId(reminder.id);
+                                          setDeleteDialogOpen(true);
+                                        }}
+                                        className="h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
+                                      >
+                                        <Trash2 className="w-3 h-3 mr-1" />
+                                        Verwijderen
+                                      </Button>
                                     </div>
                                   </td>
                                 </tr>
