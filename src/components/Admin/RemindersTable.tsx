@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale/nl";
-import { ChevronRight, Bell, Mail, MoreVertical, X, RefreshCw } from "lucide-react";
+import { ChevronRight, Bell, Mail, MoreVertical, X, RefreshCw, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -37,6 +38,7 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
   const [appointments, setAppointments] = useState<AppointmentWithReminders[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [sendingReminderId, setSendingReminderId] = useState<string | null>(null);
 
   const fetchAppointmentsWithReminders = async () => {
     setIsLoading(true);
@@ -106,6 +108,37 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
     });
   };
 
+  const handleSendNow = async (reminderId: string) => {
+    setSendingReminderId(reminderId);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-appointment-reminder", {
+        body: { reminder_id: reminderId },
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast({
+          title: "Herinnering verstuurd",
+          description: "De herinnering is succesvol verstuurd",
+        });
+        await fetchAppointmentsWithReminders();
+        onRefresh?.();
+      } else {
+        throw new Error(data?.error || "Onbekende fout");
+      }
+    } catch (error: any) {
+      console.error("Error sending reminder:", error);
+      toast({
+        title: "Fout bij versturen",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSendingReminderId(null);
+    }
+  };
+
   const handleCancelAllReminders = async (appointmentId: string) => {
     try {
       const { error } = await supabase
@@ -128,6 +161,48 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
       toast({
         title: "Fout bij annuleren",
         description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSendAllPlanned = async (appointmentId: string, reminders: { id: string; status: string }[]) => {
+    const plannedReminders = reminders.filter((r) => r.status === "gepland");
+    if (plannedReminders.length === 0) return;
+
+    setSendingReminderId(appointmentId);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const reminder of plannedReminders) {
+      try {
+        const { data, error } = await supabase.functions.invoke("send-appointment-reminder", {
+          body: { reminder_id: reminder.id },
+        });
+
+        if (error || !data?.success) {
+          failCount++;
+        } else {
+          successCount++;
+        }
+      } catch {
+        failCount++;
+      }
+    }
+
+    setSendingReminderId(null);
+
+    if (successCount > 0) {
+      toast({
+        title: "Herinneringen verstuurd",
+        description: `${successCount} herinnering(en) verstuurd${failCount > 0 ? `, ${failCount} mislukt` : ""}`,
+      });
+      await fetchAppointmentsWithReminders();
+      onRefresh?.();
+    } else {
+      toast({
+        title: "Fout bij versturen",
+        description: "Kon geen herinneringen versturen",
         variant: "destructive",
       });
     }
@@ -210,6 +285,7 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
           {appointments.map((appointment) => {
             const isExpanded = expandedRows.has(appointment.id);
             const plannedCount = appointment.reminders.filter((r) => r.status === "gepland").length;
+            const isSending = sendingReminderId === appointment.id;
 
             return (
               <AnimatePresence key={appointment.id}>
@@ -263,11 +339,22 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
                     {plannedCount > 0 && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="w-4 h-4" />
+                          <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isSending}>
+                            {isSending ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <MoreVertical className="w-4 h-4" />
+                            )}
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => handleSendAllPlanned(appointment.id, appointment.reminders)}
+                          >
+                            <Send className="w-4 h-4 mr-2" />
+                            Verstuur alle ({plannedCount})
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => handleCancelAllReminders(appointment.id)}
                             className="text-destructive focus:text-destructive"
@@ -298,36 +385,58 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
                               <th className="text-left pb-2 font-medium">Verzendtijd</th>
                               <th className="text-left pb-2 font-medium">Status</th>
                               <th className="text-left pb-2 font-medium">Verzonden</th>
+                              <th className="text-right pb-2 font-medium">Actie</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {appointment.reminders.map((reminder) => (
-                              <tr key={reminder.id} className="text-sm">
-                                <td className="py-2 text-foreground">
-                                  {format(new Date(reminder.reminder_date), "d MMMM yyyy", {
-                                    locale: nl,
-                                  })}
-                                </td>
-                                <td className="py-2 text-muted-foreground">09:00</td>
-                                <td className="py-2">
-                                  <span
-                                    className={cn(
-                                      "px-2 py-0.5 rounded text-xs font-medium border",
-                                      getStatusBadge(reminder.status)
+                            {appointment.reminders.map((reminder) => {
+                              const isReminderSending = sendingReminderId === reminder.id;
+                              return (
+                                <tr key={reminder.id} className="text-sm">
+                                  <td className="py-2 text-foreground">
+                                    {format(new Date(reminder.reminder_date), "d MMMM yyyy", {
+                                      locale: nl,
+                                    })}
+                                  </td>
+                                  <td className="py-2 text-muted-foreground">09:00</td>
+                                  <td className="py-2">
+                                    <span
+                                      className={cn(
+                                        "px-2 py-0.5 rounded text-xs font-medium border",
+                                        getStatusBadge(reminder.status)
+                                      )}
+                                    >
+                                      {getStatusLabel(reminder.status)}
+                                    </span>
+                                  </td>
+                                  <td className="py-2 text-muted-foreground">
+                                    {reminder.sent_at
+                                      ? format(new Date(reminder.sent_at), "d MMM yyyy HH:mm", {
+                                          locale: nl,
+                                        })
+                                      : "-"}
+                                  </td>
+                                  <td className="py-2 text-right">
+                                    {reminder.status === "gepland" && (
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleSendNow(reminder.id)}
+                                        disabled={isReminderSending}
+                                        className="h-7 text-xs"
+                                      >
+                                        {isReminderSending ? (
+                                          <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                                        ) : (
+                                          <Send className="w-3 h-3 mr-1" />
+                                        )}
+                                        Verstuur Nu
+                                      </Button>
                                     )}
-                                  >
-                                    {getStatusLabel(reminder.status)}
-                                  </span>
-                                </td>
-                                <td className="py-2 text-muted-foreground">
-                                  {reminder.sent_at
-                                    ? format(new Date(reminder.sent_at), "d MMM yyyy HH:mm", {
-                                        locale: nl,
-                                      })
-                                    : "-"}
-                                </td>
-                              </tr>
-                            ))}
+                                  </td>
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
@@ -342,4 +451,3 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
     </div>
   );
 };
-
