@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import React from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -288,9 +289,10 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
             const isSending = sendingReminderId === appointment.id;
 
             return (
-              <AnimatePresence key={appointment.id}>
+              <React.Fragment key={appointment.id}>
                 {/* Main row */}
                 <motion.tr
+                  key={`${appointment.id}-main`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="border-b border-border hover:bg-secondary/30 transition-colors cursor-pointer"
@@ -371,6 +373,7 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
                 {/* Expanded details */}
                 {isExpanded && (
                   <motion.tr
+                    key={`${appointment.id}-expanded`}
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
@@ -443,7 +446,7 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
                     </td>
                   </motion.tr>
                 )}
-              </AnimatePresence>
+              </React.Fragment>
             );
           })}
         </tbody>

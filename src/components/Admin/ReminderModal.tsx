@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
@@ -240,6 +240,9 @@ export const ReminderModal = ({ isOpen, onClose, onSave, appointment }: Reminder
             <Bell className="w-5 h-5" />
             Herinneringen instellen
           </DialogTitle>
+          <DialogDescription>
+            Klik op datums in de kalender om herinneringen in te plannen. Deze worden automatisch om 9:00 verstuurd.
+          </DialogDescription>
         </DialogHeader>
 
         {/* Appointment Info */}
