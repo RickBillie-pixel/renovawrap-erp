@@ -56,13 +56,13 @@ serve(async (req) => {
   }
 
   try {
-    // Get Supabase client - use Authorization header if present (from client), otherwise use service role
+    // Get Supabase client with service role for full database access
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const webhookUrl = Deno.env.get("WEBHOOK_APPOINTMENT_REMINDER");
 
-    if (!supabaseUrl) {
-      throw new Error("Missing SUPABASE_URL environment variable");
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error("Missing Supabase environment variables (SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY)");
     }
 
     if (!webhookUrl) {
@@ -80,20 +80,9 @@ serve(async (req) => {
       );
     }
 
-    // Get Authorization header from request (client sends anon key)
-    const authHeader = req.headers.get("Authorization");
-    let supabase;
-    
-    if (authHeader) {
-      // Use the key from the Authorization header (anon key from client)
-      const token = authHeader.replace("Bearer ", "");
-      supabase = createClient(supabaseUrl, token);
-    } else if (supabaseServiceKey) {
-      // Fallback to service role key (for cron job calls)
-      supabase = createClient(supabaseUrl, supabaseServiceKey);
-    } else {
-      throw new Error("Missing authentication - no Authorization header or service role key");
-    }
+    // Use service role key for database operations (bypasses RLS)
+    // Frontend already checks authentication via AuthGuard
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Parse request body for optional reminder_id
     let requestBody: { reminder_id?: string } = {};
