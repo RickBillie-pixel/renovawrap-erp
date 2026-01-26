@@ -32,6 +32,20 @@ interface ConfiguratorLead {
   source: "configurator";
 }
 
+interface AdSubmissionLead {
+  id: string;
+  created_at: string;
+  name: string;
+  email: string;
+  address?: string;
+  service_details: any;
+  color_details: any;
+  image_url: string;
+  status: string;
+  admin_notes?: string;
+  source: "ad_submission";
+}
+
 interface ContactLead {
   id: string;
   created_at: string;
@@ -46,7 +60,7 @@ interface ContactLead {
   source: "contact_form";
 }
 
-type Lead = ConfiguratorLead | ContactLead;
+type Lead = ConfiguratorLead | AdSubmissionLead | ContactLead;
 
 export const LeadsPage = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -94,6 +108,14 @@ export const LeadsPage = () => {
 
       if (contactsError) throw contactsError;
 
+      // Fetch ad submissions
+      const { data: adSubmissions, error: adSubmissionsError } = await supabase
+        .from("ad_submissions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (adSubmissionsError) throw adSubmissionsError;
+
       // Combine and format leads
       const configuratorLeads: ConfiguratorLead[] = (submissions || []).map((s) => ({
         ...s,
@@ -105,7 +127,12 @@ export const LeadsPage = () => {
         source: "contact_form" as const,
       }));
 
-      const allLeads = [...configuratorLeads, ...contactLeads].sort(
+      const adLeads: AdSubmissionLead[] = (adSubmissions || []).map((a) => ({
+        ...a,
+        source: "ad_submission" as const,
+      }));
+
+      const allLeads = [...configuratorLeads, ...contactLeads, ...adLeads].sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
@@ -206,14 +233,14 @@ export const LeadsPage = () => {
     const leadId = leadToDelete.id;
     setIsDeleting(true);
     setDeletingLeadId(leadId);
-    
+
     // Optimistic update: verwijder direct uit state voor naadloze UI
     const previousLeads = [...leads];
     const previousFilteredLeads = [...filteredLeads];
-    
+
     setLeads((prev) => prev.filter((lead) => lead.id !== leadId));
     setFilteredLeads((prev) => prev.filter((lead) => lead.id !== leadId));
-    
+
     // Sluit dialogs direct voor betere UX
     setDeleteDialogOpen(false);
     // Sluit detail dialog als deze open is voor dezelfde lead
@@ -226,7 +253,7 @@ export const LeadsPage = () => {
 
     try {
       const tableName = leadToDeleteBackup.source === "configurator" ? "submissions" : "contact_requests";
-      
+
       const { error } = await supabase
         .from(tableName)
         .delete()
@@ -240,11 +267,11 @@ export const LeadsPage = () => {
       });
     } catch (error: any) {
       console.error("Error deleting lead:", error);
-      
+
       // Rollback: herstel de state als het misgaat
       setLeads(previousLeads);
       setFilteredLeads(previousFilteredLeads);
-      
+
       toast({
         title: "Fout bij verwijderen",
         description: error.message || "De lead kon niet worden verwijderd. Probeer het opnieuw.",
@@ -363,12 +390,13 @@ export const LeadsPage = () => {
     inProgress: leads.filter((l) => l.status === "in_progress").length,
     configurator: leads.filter((l) => l.source === "configurator").length,
     contact: leads.filter((l) => l.source === "contact_form").length,
+    adSubmission: leads.filter((l) => l.source === "ad_submission").length,
   };
 
   return (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -407,6 +435,15 @@ export const LeadsPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-card border border-border rounded-xl p-4"
+        >
+          <div className="text-2xl font-bold text-teal-600">{stats.adSubmission}</div>
+          <div className="text-sm text-muted-foreground">Ad Aanvragen</div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="bg-card border border-border rounded-xl p-4"
         >
@@ -433,6 +470,7 @@ export const LeadsPage = () => {
               <SelectItem value="all">Alle Bronnen</SelectItem>
               <SelectItem value="configurator">Configurator</SelectItem>
               <SelectItem value="contact_form">Contact Formulier</SelectItem>
+              <SelectItem value="ad_submission">Ad Aanvragen</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -484,24 +522,23 @@ export const LeadsPage = () => {
                     <motion.tr
                       key={lead.id}
                       initial={{ opacity: 0, y: -10 }}
-                      animate={{ 
+                      animate={{
                         opacity: deletingLeadId === lead.id ? 0 : 1,
                         x: deletingLeadId === lead.id ? -20 : 0,
                         scale: deletingLeadId === lead.id ? 0.98 : 1,
                       }}
-                      exit={{ 
+                      exit={{
                         opacity: 0,
                         x: -100,
                         scale: 0.95,
                         transition: { duration: 0.25, ease: "easeInOut" }
                       }}
-                      transition={{ 
+                      transition={{
                         duration: 0.25,
                         ease: "easeInOut"
                       }}
-                      className={`border-b border-border hover:bg-secondary/30 transition-colors ${
-                        deletingLeadId === lead.id ? "pointer-events-none" : ""
-                      }`}
+                      className={`border-b border-border hover:bg-secondary/30 transition-colors ${deletingLeadId === lead.id ? "pointer-events-none" : ""
+                        }`}
                     >
                       <td className="p-4 text-sm text-muted-foreground">
                         {format(new Date(lead.created_at), "dd MMM yyyy HH:mm", { locale: nl })}
@@ -510,11 +547,10 @@ export const LeadsPage = () => {
                       <td className="p-4 text-sm text-muted-foreground">{lead.email}</td>
                       <td className="p-4">
                         <span
-                          className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
-                            lead.source === "configurator"
-                              ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
-                              : "bg-orange-500/10 text-orange-600 border border-orange-500/20"
-                          }`}
+                          className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${lead.source === "configurator"
+                            ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
+                            : "bg-orange-500/10 text-orange-600 border border-orange-500/20"
+                            }`}
                         >
                           {lead.source === "configurator" ? "Configurator" : "Contact"}
                         </span>
@@ -568,7 +604,7 @@ export const LeadsPage = () => {
                                 <Send className="w-4 h-4 mr-2" />
                                 Email verzenden
                               </DropdownMenuItem>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 onClick={() => convertToCustomer(lead)}
                                 disabled={convertingLeadId === lead.id}
                               >
@@ -579,7 +615,7 @@ export const LeadsPage = () => {
                                 )}
                                 Omzetten naar klant
                               </DropdownMenuItem>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 onClick={() => handleDeleteClick(lead)}
                                 className="text-destructive focus:text-destructive"
                               >
@@ -694,8 +730,8 @@ export const LeadsPage = () => {
                         {selectedLead.type === "keuken"
                           ? "Keuken Wrappen"
                           : selectedLead.type === "interieur"
-                          ? "Interieur Wrappen"
-                          : "Zakelijk Project"}
+                            ? "Interieur Wrappen"
+                            : "Zakelijk Project"}
                       </p>
                     </div>
                   )}
