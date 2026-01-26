@@ -264,7 +264,8 @@ export const AfsprakenPage = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -100 }}
-                      className="border-b border-border hover:bg-secondary/30 transition-colors"
+                      className="border-b border-border hover:bg-secondary/30 transition-colors cursor-pointer"
+                      onClick={() => handleEditAppointment(appointment)}
                     >
                       <td className="p-4 text-sm text-muted-foreground">
                         <div>
@@ -298,12 +299,12 @@ export const AfsprakenPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditAppointment(appointment)}>
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEditAppointment(appointment); }}>
                               <Edit className="w-4 h-4 mr-2" />
                               Bewerken
                             </DropdownMenuItem>
                             {appointment.customer_email && (
-                              <DropdownMenuItem onClick={() => handleOpenReminders(appointment)}>
+                              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleOpenReminders(appointment); }}>
                                 <Bell className="w-4 h-4 mr-2" />
                                 Afspraakherinnering
                               </DropdownMenuItem>
@@ -311,7 +312,7 @@ export const AfsprakenPage = () => {
                             <DropdownMenuSeparator />
                             {appointment.status !== "voltooid" && (
                               <DropdownMenuItem
-                                onClick={() => handleUpdateStatus(appointment, "voltooid")}
+                                onClick={(e) => { e.stopPropagation(); handleUpdateStatus(appointment, "voltooid"); }}
                               >
                                 <CheckCircle className="w-4 h-4 mr-2" />
                                 Voltooien
@@ -319,7 +320,7 @@ export const AfsprakenPage = () => {
                             )}
                             {appointment.status !== "geannuleerd" && (
                               <DropdownMenuItem
-                                onClick={() => handleUpdateStatus(appointment, "geannuleerd")}
+                                onClick={(e) => { e.stopPropagation(); handleUpdateStatus(appointment, "geannuleerd"); }}
                               >
                                 <XCircle className="w-4 h-4 mr-2" />
                                 Annuleren
@@ -327,7 +328,7 @@ export const AfsprakenPage = () => {
                             )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              onClick={() => handleDeleteClick(appointment)}
+                              onClick={(e) => { e.stopPropagation(); handleDeleteClick(appointment); }}
                               className="text-destructive focus:text-destructive"
                             >
                               <Trash2 className="w-4 h-4 mr-2" />

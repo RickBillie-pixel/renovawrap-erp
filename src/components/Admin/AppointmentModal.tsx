@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ContactSearchSelect } from "./ContactSearchSelect";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Check, Clock, Send } from "lucide-react";
 
 export interface Appointment {
   id: string;
@@ -23,6 +23,7 @@ export interface Appointment {
   customer_phone: string | null;
   address: string | null;
   contact_id: string | null;
+  follow_up_sent?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -52,6 +53,8 @@ export const AppointmentModal = ({
   defaultDate,
 }: AppointmentModalProps) => {
   const [isSaving, setIsSaving] = useState(false);
+  const [sendingReview, setSendingReview] = useState(false);
+  const [followUpSent, setFollowUpSent] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -94,6 +97,7 @@ export const AppointmentModal = ({
       } else {
         setSelectedContact(null);
       }
+      setFollowUpSent(appointment.follow_up_sent || false);
     } else {
       // Reset form for new appointment
       setFormData({
@@ -131,6 +135,36 @@ export const AppointmentModal = ({
         customer_phone: "",
         address: "",
       }));
+    }
+  };
+
+  const handleSendReviewRequest = async () => {
+    if (!appointment?.id) return;
+
+    setSendingReview(true);
+    try {
+      const { error } = await supabase.functions.invoke("notify-follow-up-service", {
+        body: { appointment_id: appointment.id }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Review verzoek verstuurd",
+        description: "De klant heeft een review verzoek ontvangen.",
+      });
+      
+      setFollowUpSent(true);
+      onSave(); // Refresh parent list
+    } catch (error: any) {
+      console.error("Error sending review request:", error);
+      toast({
+        title: "Fout bij versturen",
+        description: error.message || "Er is een fout opgetreden",
+        variant: "destructive",
+      });
+    } finally {
+      setSendingReview(false);
     }
   };
 
@@ -216,11 +250,11 @@ export const AppointmentModal = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {appointment ? "Afspraak Bewerken" : "Nieuwe Afspraak"}
+            {appointment ? "Afspraak Details" : "Nieuwe Afspraak"}
           </DialogTitle>
           <DialogDescription>
             {appointment 
-              ? "Wijzig de afspraakgegevens hieronder" 
+              ? "Bekijk en bewerk de afspraakgegevens hieronder" 
               : "Vul de afspraakgegevens in. Velden met * zijn verplicht."}
           </DialogDescription>
         </DialogHeader>
@@ -382,6 +416,53 @@ export const AppointmentModal = ({
               </div>
             </div>
           </div>
+
+          {/* Service Review Reminder Section */}
+          {formData.status === "voltooid" && appointment && (
+            <div className="pt-4 border-t border-border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-primary mb-1">Review verzoek</h3>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    {followUpSent ? (
+                      <>
+                        <Check className="w-4 h-4 text-green-500" />
+                        <span>Review verzoek is verzonden</span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="w-4 h-4" />
+                        <span>Review verzoek wordt automatisch verstuurd na 7 dagen</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleSendReviewRequest}
+                  disabled={followUpSent || sendingReview || !formData.customer_email}
+                  className={followUpSent ? "text-green-600 border-green-200 bg-green-50" : ""}
+                >
+                  {sendingReview ? (
+                    <RefreshCw className="w-3 h-3 animate-spin mr-2" />
+                  ) : followUpSent ? (
+                    <Check className="w-3 h-3 mr-2" />
+                  ) : (
+                    <Send className="w-3 h-3 mr-2" />
+                  )}
+                  {followUpSent ? 'Verstuurd' : 'Verstuur nu'}
+                </Button>
+              </div>
+              {!formData.customer_email && (
+                <p className="text-xs text-destructive mt-2">
+                  * Voeg een emailadres toe om een review verzoek te kunnen sturen.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
