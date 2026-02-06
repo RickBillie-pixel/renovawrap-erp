@@ -125,6 +125,13 @@ const Dashboard = () => {
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
+                <div className="p-2 text-center text-xs text-muted-foreground/30">
+                  <a href="https://rootandlogic.com" target="_blank" rel="noopener noreferrer" className="hover:text-muted-foreground transition-colors">
+                    Root & Logic
+                  </a>
+                </div>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleLogout} className="text-destructive hover:text-destructive">
                   <LogOut className="w-4 h-4" />
                   <span>Uitloggen</span>

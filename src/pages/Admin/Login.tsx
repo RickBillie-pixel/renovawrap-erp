@@ -127,6 +127,16 @@ const Login = () => {
             </Button>
           </form>
         </div>
+        <div className="mt-8 text-center">
+          <a 
+            href="https://rootandlogic.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-xs text-muted-foreground/30 hover:text-muted-foreground transition-colors"
+          >
+            Powered by Root & Logic
+          </a>
+        </div>
       </motion.div>
     </div>
   );
