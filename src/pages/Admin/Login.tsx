@@ -43,7 +43,7 @@ const Login = () => {
           title: "Ingelogd!",
           description: "Welkom bij het admin dashboard",
         });
-        navigate("/admin");
+        navigate("/");
       }
     } catch (error: any) {
       console.error("Login error:", error);

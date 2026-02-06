@@ -20,11 +20,11 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
         if (session) {
           setIsAuthenticated(true);
         } else {
-          navigate("/admin/login");
+          navigate("/login");
         }
       } catch (error) {
         console.error("Auth check error:", error);
-        navigate("/admin/login");
+        navigate("/login");
       } finally {
         setIsLoading(false);
       }
@@ -37,7 +37,7 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
       if (session) {
         setIsAuthenticated(true);
       } else {
-        navigate("/admin/login");
+        navigate("/login");
       }
     });
 
