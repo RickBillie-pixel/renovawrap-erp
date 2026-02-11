@@ -53,7 +53,7 @@ npx supabase secrets set SMTP_PORT=587
 npx supabase secrets set SMTP_USER=jouw-email@gmail.com
 npx supabase secrets set SMTP_PASS=jouw-app-password
 npx supabase secrets set SMTP_FROM=jouw-email@gmail.com
-npx supabase secrets set NOTIFICATION_EMAIL=admin@foxwrap.nl
+npx supabase secrets set NOTIFICATION_EMAIL=admin@renovawrap.nl
 ```
 
 ## Admin Account Aanmaken

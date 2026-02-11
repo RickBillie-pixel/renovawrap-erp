@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Lock, Mail } from "lucide-react";
+import renovaLogo from "@/assets/renova-logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -66,9 +67,11 @@ const Login = () => {
       >
         <div className="bg-card border border-border rounded-2xl p-8 shadow-elegant">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-4 shadow-elegant">
-              <Lock className="w-8 h-8 text-primary-foreground" />
-            </div>
+            <img
+              src={renovaLogo}
+              alt="RenovaWrap"
+              className="h-14 mx-auto mb-4 w-auto object-contain"
+            />
             <h1 className="font-display text-3xl font-bold mb-2 text-foreground">
               Admin Login
             </h1>
@@ -86,7 +89,7 @@ const Login = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@foxwrap.nl"
+                placeholder="admin@renovawrap.nl"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

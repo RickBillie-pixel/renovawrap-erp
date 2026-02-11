@@ -23,9 +23,8 @@ export const Footer = () => {
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
               <div className="font-display text-2xl font-bold tracking-tight">
-                <span className="text-foreground">Fox</span>
-                <span className="text-gradient-gold">Wrap</span>
-                <span className="text-muted-foreground text-sm">.nl</span>
+                <span className="text-foreground">Renova</span>
+                <span className="text-primary">Wrap</span>
               </div>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
@@ -101,8 +100,8 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground text-sm">
                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                <a href="mailto:info@foxwrap.nl" className="hover:text-primary transition-colors">
-                  info@foxwrap.nl
+                <a href="mailto:info@renovawrap.nl" className="hover:text-primary transition-colors">
+                  info@renovawrap.nl
                 </a>
               </li>
             </ul>
@@ -112,7 +111,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm text-center md:text-left">
-            © {new Date().getFullYear()} FoxWrap.nl. Alle rechten voorbehouden.
+            © {new Date().getFullYear()} RenovaWrap. Alle rechten voorbehouden.
           </p>
           <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm justify-center md:justify-end">
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">

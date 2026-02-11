@@ -20,7 +20,7 @@ export const SEO = ({
   canonical,
   ogTitle,
   ogDescription,
-  ogImage = "/logo_FW.png",
+  ogImage = "/favicon.png",
   ogType = "website",
   twitterCard = "summary_large_image",
   noindex = false,
@@ -52,13 +52,13 @@ export const SEO = ({
     updateMetaTag("og:description", ogDescription || description, "property");
     updateMetaTag("og:type", ogType, "property");
     updateMetaTag("og:locale", "nl_NL", "property");
-    updateMetaTag("og:image", ogImage || "/logo_FW.png", "property");
+    updateMetaTag("og:image", ogImage || "/favicon.png", "property");
 
     // Twitter Card tags
     updateMetaTag("twitter:card", twitterCard);
     updateMetaTag("twitter:title", ogTitle || title);
     updateMetaTag("twitter:description", ogDescription || description);
-    updateMetaTag("twitter:image", ogImage || "/logo_FW.png");
+    updateMetaTag("twitter:image", ogImage || "/favicon.png");
 
     // Canonical URL
     if (canonical) {

@@ -27,7 +27,7 @@ async function sendEmailViaSMTP(
   smtpUser: string,
   smtpPass: string,
   fromEmail: string,
-  fromName: string = "FoxWrap Admin"
+  fromName: string = "RenovaWrap Admin"
 ): Promise<void> {
   const client = new SmtpClient();
 
@@ -96,14 +96,14 @@ Details:
 ${JSON.stringify(notificationData.details, null, 2)}
 
 ---
-Dit is een automatische notificatie van het FoxWrap admin systeem.`;
+Dit is een automatische notificatie van het RenovaWrap admin systeem.`;
 
     // Get SMTP configuration from environment variables
     const smtpHost = Deno.env.get("SMTP_HOST") || "smtp.gmail.com";
     const smtpPort = parseInt(Deno.env.get("SMTP_PORT") || "587");
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPass = Deno.env.get("SMTP_PASS");
-    const smtpFrom = Deno.env.get("SMTP_FROM") || smtpUser || "noreply@foxwrap.nl";
+    const smtpFrom = Deno.env.get("SMTP_FROM") || smtpUser || "noreply@renovawrap.nl";
 
     if (!smtpUser || !smtpPass) {
       console.warn("SMTP credentials not set, logging email instead");

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,66 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale/nl";
+
+/** Maakt van een objectkey een leesbaar label (bijv. "selected_option" → "Selected option") */
+function formatWizardKey(key: string): string {
+  return key
+    .replace(/_/g, " ")
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^\w/, (c) => c.toUpperCase())
+    .trim();
+}
+
+/** Waarde uit wizard_data netjes weergeven (geen raw JSON) */
+function formatWizardValue(value: unknown): ReactNode {
+  if (value === null || value === undefined) return "—";
+  if (typeof value === "boolean") return value ? "Ja" : "Nee";
+  if (typeof value === "object" && !Array.isArray(value)) {
+    const entries = Object.entries(value as Record<string, unknown>);
+    if (entries.length === 0) return "—";
+    return (
+      <ul className="list-disc list-inside space-y-1 mt-1 text-sm">
+        {entries.map(([k, v]) => (
+          <li key={k}>
+            <span className="text-muted-foreground">{formatWizardKey(k)}:</span>{" "}
+            {formatWizardValue(v)}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "—";
+    return (
+      <ul className="list-disc list-inside space-y-0.5 text-sm">
+        {value.map((item, i) => (
+          <li key={i}>{formatWizardValue(item)}</li>
+        ))}
+      </ul>
+    );
+  }
+  return String(value);
+}
+
+/** Wizard data als overzichtelijke velden i.p.v. JSON */
+function WizardDataDisplay({ data }: { data: Record<string, unknown> }) {
+  const entries = Object.entries(data).filter(
+    ([_, v]) => v !== undefined && v !== null && (typeof v !== "string" || v !== "")
+  );
+  if (entries.length === 0) return <p className="text-sm text-muted-foreground">Geen gegevens</p>;
+  return (
+    <div className="grid gap-3">
+      {entries.map(([key, value]) => (
+        <div key={key} className="border-b border-border/50 pb-2 last:border-0 last:pb-0">
+          <div className="text-xs font-medium text-muted-foreground mb-0.5">
+            {formatWizardKey(key)}
+          </div>
+          <div className="text-sm text-foreground">{formatWizardValue(value)}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 interface ConfiguratorLead {
   id: string;
@@ -60,7 +120,45 @@ interface ContactLead {
   source: "contact_form";
 }
 
-type Lead = ConfiguratorLead | AdSubmissionLead | ContactLead;
+interface KeuzehulpLead {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  service_slug: string;
+  contact_name: string | null;
+  contact_email: string;
+  contact_phone: string | null;
+  contact_address: string | null;
+  wizard_data: Record<string, unknown>;
+  status: string;
+  notes: string | null;
+  configurator_submission_id: string | null;
+  foto_urls: string[] | null;
+  source: "keuzehulp";
+}
+
+type Lead = ConfiguratorLead | AdSubmissionLead | ContactLead | KeuzehulpLead;
+
+function getLeadDisplayName(lead: Lead): string {
+  if (lead.source === "keuzehulp") return lead.contact_name || lead.contact_email || "—";
+  return lead.name;
+}
+function getLeadDisplayEmail(lead: Lead): string {
+  if (lead.source === "keuzehulp") return lead.contact_email;
+  return lead.email;
+}
+function getLeadTableName(lead: Lead): string {
+  switch (lead.source) {
+    case "configurator": return "submissions";
+    case "contact_form": return "contact_requests";
+    case "ad_submission": return "ad_submissions";
+    case "keuzehulp": return "keuzehulp_submissions";
+    default: return "contact_requests";
+  }
+}
+function getLeadNotesField(lead: Lead): "admin_notes" | "notes" {
+  return lead.source === "keuzehulp" ? "notes" : "admin_notes";
+}
 
 export const LeadsPage = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -132,7 +230,21 @@ export const LeadsPage = () => {
         source: "ad_submission" as const,
       }));
 
-      const allLeads = [...configuratorLeads, ...contactLeads, ...adLeads].sort(
+      let keuzehulpSubmissions: KeuzehulpLead[] = [];
+      const { data: keuzehulpData, error: keuzehulpError } = await supabase
+        .from("keuzehulp_submissions")
+        .select("id, created_at, updated_at, service_slug, contact_name, contact_email, contact_phone, contact_address, wizard_data, status, notes, configurator_submission_id, foto_urls")
+        .order("created_at", { ascending: false });
+      if (!keuzehulpError && keuzehulpData) {
+        keuzehulpSubmissions = keuzehulpData.map((row) => ({
+          ...row,
+          wizard_data: row.wizard_data ?? {},
+          foto_urls: row.foto_urls ?? null,
+          source: "keuzehulp" as const,
+        }));
+      }
+
+      const allLeads = [...configuratorLeads, ...contactLeads, ...adLeads, ...keuzehulpSubmissions].sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
@@ -196,11 +308,11 @@ export const LeadsPage = () => {
     }
   };
 
-  const updateLeadNotes = async (leadId: string, tableName: string) => {
+  const updateLeadNotes = async (leadId: string, tableName: string, notesField: "admin_notes" | "notes") => {
     try {
       const { error } = await supabase
         .from(tableName)
-        .update({ admin_notes: notes })
+        .update({ [notesField]: notes })
         .eq("id", leadId);
 
       if (error) throw error;
@@ -252,7 +364,7 @@ export const LeadsPage = () => {
     setLeadToDelete(null);
 
     try {
-      const tableName = leadToDeleteBackup.source === "configurator" ? "submissions" : "contact_requests";
+      const tableName = getLeadTableName(leadToDeleteBackup);
 
       const { error } = await supabase
         .from(tableName)
@@ -285,7 +397,8 @@ export const LeadsPage = () => {
 
   const openLeadDetail = (lead: Lead) => {
     setSelectedLead(lead);
-    setNotes(lead.admin_notes || "");
+    const notesValue = lead.source === "keuzehulp" ? lead.notes : lead.admin_notes;
+    setNotes(notesValue ?? "");
     setIsDetailOpen(true);
   };
 
@@ -294,11 +407,11 @@ export const LeadsPage = () => {
     try {
       // Prepare customer data from lead
       const customerData: any = {
-        name: lead.name,
-        email: lead.email,
+        name: getLeadDisplayName(lead),
+        email: getLeadDisplayEmail(lead),
         lead_source: lead.source,
         lead_id: lead.id,
-        admin_notes: lead.admin_notes || "",
+        admin_notes: lead.source === "keuzehulp" ? (lead.notes || "") : (lead.admin_notes || ""),
         status: "active",
       };
 
@@ -313,6 +426,10 @@ export const LeadsPage = () => {
         customerData.project_type = lead.type;
         customerData.message = lead.message;
         customerData.photo_urls = lead.photo_urls || [];
+      } else if (lead.source === "keuzehulp") {
+        customerData.phone = lead.contact_phone ?? "";
+        customerData.address = lead.contact_address ?? "";
+        customerData.admin_notes = (customerData.admin_notes || "") + ` [Keuzehulp: ${lead.service_slug}]`;
       }
 
       // Insert customer
@@ -325,15 +442,16 @@ export const LeadsPage = () => {
       if (customerError) throw customerError;
 
       // Update lead status to completed
-      const tableName = lead.source === "configurator" ? "submissions" : "contact_requests";
+      const tableName = getLeadTableName(lead);
+      const completedStatus = lead.source === "keuzehulp" ? "accepted" : "completed";
       await supabase
         .from(tableName)
-        .update({ status: "completed" })
+        .update({ status: completedStatus })
         .eq("id", lead.id);
 
       toast({
         title: "Lead omgezet naar klant",
-        description: `${lead.name} is succesvol omgezet naar klant.`,
+        description: `${getLeadDisplayName(lead)} is succesvol omgezet naar klant.`,
       });
 
       // Refresh leads
@@ -351,7 +469,7 @@ export const LeadsPage = () => {
   };
 
   const handleSendEmail = (lead: Lead) => {
-    window.location.href = `mailto:${lead.email}`;
+    window.location.href = `mailto:${getLeadDisplayEmail(lead)}`;
   };
 
   const getStatusColor = (status: string) => {
@@ -359,9 +477,15 @@ export const LeadsPage = () => {
       case "new":
         return "bg-blue-500/10 text-blue-600 border-blue-500/20";
       case "in_progress":
+      case "contacted":
         return "bg-yellow-500/10 text-yellow-600 border-yellow-500/20";
+      case "offer_sent":
+        return "bg-cyan-500/10 text-cyan-600 border-cyan-500/20";
       case "completed":
+      case "accepted":
         return "bg-green-500/10 text-green-600 border-green-500/20";
+      case "rejected":
+        return "bg-red-500/10 text-red-600 border-red-500/20";
       case "archived":
         return "bg-gray-500/10 text-gray-600 border-gray-500/20";
       default:
@@ -371,16 +495,15 @@ export const LeadsPage = () => {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "new":
-        return "Nieuw";
-      case "in_progress":
-        return "In Behandeling";
-      case "completed":
-        return "Afgerond";
-      case "archived":
-        return "Gearchiveerd";
-      default:
-        return status;
+      case "new": return "Nieuw";
+      case "in_progress": return "In Behandeling";
+      case "completed": return "Afgerond";
+      case "contacted": return "Gecontacteerd";
+      case "offer_sent": return "Offerte verzonden";
+      case "accepted": return "Geaccepteerd";
+      case "rejected": return "Afgewezen";
+      case "archived": return "Gearchiveerd";
+      default: return status;
     }
   };
 
@@ -471,6 +594,7 @@ export const LeadsPage = () => {
               <SelectItem value="configurator">Configurator</SelectItem>
               <SelectItem value="contact_form">Contact Formulier</SelectItem>
               <SelectItem value="ad_submission">Ad Aanvragen</SelectItem>
+              <SelectItem value="keuzehulp">Keuzehulp</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -482,6 +606,10 @@ export const LeadsPage = () => {
               <SelectItem value="new">Nieuw</SelectItem>
               <SelectItem value="in_progress">In Behandeling</SelectItem>
               <SelectItem value="completed">Afgerond</SelectItem>
+              <SelectItem value="contacted">Gecontacteerd</SelectItem>
+              <SelectItem value="offer_sent">Offerte verzonden</SelectItem>
+              <SelectItem value="accepted">Geaccepteerd</SelectItem>
+              <SelectItem value="rejected">Afgewezen</SelectItem>
               <SelectItem value="archived">Gearchiveerd</SelectItem>
             </SelectContent>
           </Select>
@@ -543,27 +671,34 @@ export const LeadsPage = () => {
                       <td className="p-4 text-sm text-muted-foreground">
                         {format(new Date(lead.created_at), "dd MMM yyyy HH:mm", { locale: nl })}
                       </td>
-                      <td className="p-4 text-sm font-medium text-foreground">{lead.name}</td>
-                      <td className="p-4 text-sm text-muted-foreground">{lead.email}</td>
+                      <td className="p-4 text-sm font-medium text-foreground">{getLeadDisplayName(lead)}</td>
+                      <td className="p-4 text-sm text-muted-foreground">{getLeadDisplayEmail(lead)}</td>
                       <td className="p-4">
                         <span
-                          className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${lead.source === "configurator"
-                            ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
-                            : "bg-orange-500/10 text-orange-600 border border-orange-500/20"
-                            }`}
+                          className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                            lead.source === "configurator"
+                              ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
+                              : lead.source === "contact_form"
+                                ? "bg-orange-500/10 text-orange-600 border border-orange-500/20"
+                                : lead.source === "ad_submission"
+                                  ? "bg-teal-500/10 text-teal-600 border border-teal-500/20"
+                                  : "bg-amber-500/10 text-amber-600 border border-amber-500/20"
+                          }`}
                         >
-                          {lead.source === "configurator" ? "Configurator" : "Contact"}
+                          {lead.source === "configurator"
+                            ? "Configurator"
+                            : lead.source === "contact_form"
+                              ? "Contact"
+                              : lead.source === "ad_submission"
+                                ? "Ad Aanvragen"
+                                : "Keuzehulp"}
                         </span>
                       </td>
                       <td className="p-4">
                         <Select
                           value={lead.status}
                           onValueChange={(value) =>
-                            updateLeadStatus(
-                              lead.id,
-                              value,
-                              lead.source === "configurator" ? "submissions" : "contact_requests"
-                            )
+                            updateLeadStatus(lead.id, value, getLeadTableName(lead))
                           }
                           disabled={updatingStatus === lead.id || deletingLeadId === lead.id || isDeleting}
                         >
@@ -571,10 +706,23 @@ export const LeadsPage = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="new">Nieuw</SelectItem>
-                            <SelectItem value="in_progress">In Behandeling</SelectItem>
-                            <SelectItem value="completed">Afgerond</SelectItem>
-                            <SelectItem value="archived">Gearchiveerd</SelectItem>
+                            {lead.source === "keuzehulp" ? (
+                              <>
+                                <SelectItem value="new">Nieuw</SelectItem>
+                                <SelectItem value="contacted">Gecontacteerd</SelectItem>
+                                <SelectItem value="offer_sent">Offerte verzonden</SelectItem>
+                                <SelectItem value="accepted">Geaccepteerd</SelectItem>
+                                <SelectItem value="rejected">Afgewezen</SelectItem>
+                                <SelectItem value="archived">Gearchiveerd</SelectItem>
+                              </>
+                            ) : (
+                              <>
+                                <SelectItem value="new">Nieuw</SelectItem>
+                                <SelectItem value="in_progress">In Behandeling</SelectItem>
+                                <SelectItem value="completed">Afgerond</SelectItem>
+                                <SelectItem value="archived">Gearchiveerd</SelectItem>
+                              </>
+                            )}
                           </SelectContent>
                         </Select>
                       </td>
@@ -651,15 +799,24 @@ export const LeadsPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs text-muted-foreground">Naam</Label>
-                  <p className="font-medium text-foreground">{selectedLead.name}</p>
+                  <p className="font-medium text-foreground">{getLeadDisplayName(selectedLead)}</p>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Email</Label>
                   <p className="font-medium text-foreground flex items-center gap-2">
                     <Mail className="w-3 h-3" />
-                    {selectedLead.email}
+                    {getLeadDisplayEmail(selectedLead)}
                   </p>
                 </div>
+                {selectedLead.source === "keuzehulp" && selectedLead.contact_phone && (
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Telefoon</Label>
+                    <p className="font-medium text-foreground flex items-center gap-2">
+                      <Phone className="w-3 h-3" />
+                      {selectedLead.contact_phone}
+                    </p>
+                  </div>
+                )}
                 {selectedLead.source === "contact_form" && "phone" in selectedLead && selectedLead.phone && (
                   <div>
                     <Label className="text-xs text-muted-foreground">Telefoon</Label>
@@ -677,6 +834,72 @@ export const LeadsPage = () => {
                   </p>
                 </div>
               </div>
+
+              {/* Keuzehulp: wizard data en overige velden netjes weergegeven */}
+              {selectedLead.source === "keuzehulp" && (
+                <div className="rounded-lg border border-border bg-secondary/30 p-4 space-y-4">
+                  <Label className="text-sm font-medium text-foreground">Keuzehulp</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Service</Label>
+                      <p className="font-medium text-foreground">{selectedLead.service_slug}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Status</Label>
+                      <p className="font-medium text-foreground">{getStatusLabel(selectedLead.status)}</p>
+                    </div>
+                    {selectedLead.contact_address && (
+                      <div className="col-span-2">
+                        <Label className="text-xs text-muted-foreground">Adres</Label>
+                        <p className="font-medium text-foreground flex items-center gap-2">
+                          <MapPin className="w-3 h-3" />
+                          {selectedLead.contact_address}
+                        </p>
+                      </div>
+                    )}
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Laatst bijgewerkt</Label>
+                      <p className="font-medium text-foreground">
+                        {format(new Date(selectedLead.updated_at), "dd MMM yyyy HH:mm", { locale: nl })}
+                      </p>
+                    </div>
+                    {selectedLead.configurator_submission_id && (
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Configurator submission</Label>
+                        <p className="font-mono text-xs text-foreground truncate" title={selectedLead.configurator_submission_id}>
+                          {selectedLead.configurator_submission_id}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  {selectedLead.wizard_data && Object.keys(selectedLead.wizard_data).length > 0 && (
+                    <div>
+                      <Label className="text-xs text-muted-foreground mb-2 block">Stappen / antwoorden uit de wizard</Label>
+                      <div className="bg-background rounded-lg p-3 border border-border">
+                        <WizardDataDisplay data={selectedLead.wizard_data} />
+                      </div>
+                    </div>
+                  )}
+                  {selectedLead.foto_urls && selectedLead.foto_urls.length > 0 && (
+                    <div>
+                      <Label className="text-xs text-muted-foreground mb-2 block flex items-center gap-2">
+                        <ImageIcon className="w-3 h-3" />
+                        Foto's ({selectedLead.foto_urls.length})
+                      </Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        {selectedLead.foto_urls.map((url, idx) => (
+                          <img
+                            key={idx}
+                            src={url}
+                            alt={`Foto ${idx + 1}`}
+                            className="rounded-lg border border-border w-full h-auto object-cover"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Configurator Specific */}
               {selectedLead.source === "configurator" && (
@@ -785,7 +1008,8 @@ export const LeadsPage = () => {
                   onClick={() =>
                     updateLeadNotes(
                       selectedLead.id,
-                      selectedLead.source === "configurator" ? "submissions" : "contact_requests"
+                      getLeadTableName(selectedLead),
+                      getLeadNotesField(selectedLead)
                     )
                   }
                 >
@@ -807,8 +1031,8 @@ export const LeadsPage = () => {
                 Weet je zeker dat je deze lead wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
                 {leadToDelete && (
                   <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
-                    <div className="mb-1"><strong>Naam:</strong> {leadToDelete.name}</div>
-                    <div className="mb-1"><strong>Email:</strong> {leadToDelete.email}</div>
+                    <div className="mb-1"><strong>Naam:</strong> {getLeadDisplayName(leadToDelete)}</div>
+                    <div className="mb-1"><strong>Email:</strong> {getLeadDisplayEmail(leadToDelete)}</div>
                     <div><strong>Datum:</strong> {format(new Date(leadToDelete.created_at), "dd MMM yyyy HH:mm", { locale: nl })}</div>
                   </div>
                 )}

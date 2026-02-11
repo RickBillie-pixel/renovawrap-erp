@@ -16,14 +16,15 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { LogOut, Users, Sparkles, Calendar, CalendarDays, Briefcase } from "lucide-react";
+import { LogOut, Users, Sparkles, Calendar, CalendarDays, Briefcase, ImageIcon } from "lucide-react";
 import { LeadsPage } from "./pages/LeadsPage";
 import { ConfiguratorPage } from "./pages/ConfiguratorPage";
 import { KlantenPage } from "./pages/KlantenPage";
 import { AfsprakenPage } from "./pages/AfsprakenPage";
 import { AgendaPage } from "./pages/AgendaPage";
+import { ProjectsPage } from "./pages/ProjectsPage";
 
-type Page = "leads" | "configurator" | "klanten" | "agenda" | "afspraken";
+type Page = "leads" | "configurator" | "klanten" | "agenda" | "afspraken" | "projecten";
 
 interface MenuItem {
   id: Page;
@@ -52,6 +53,12 @@ const menuGroups: MenuGroup[] = [
     ],
   },
   {
+    label: "Portfolio",
+    items: [
+      { id: "projecten", label: "Projecten", icon: ImageIcon },
+    ],
+  },
+  {
     label: "Tools",
     items: [
       { id: "configurator", label: "AI Configurator", icon: Sparkles },
@@ -77,6 +84,8 @@ const Dashboard = () => {
         return <AgendaPage />;
       case "afspraken":
         return <AfsprakenPage />;
+      case "projecten":
+        return <ProjectsPage />;
       default:
         return <LeadsPage />;
     }

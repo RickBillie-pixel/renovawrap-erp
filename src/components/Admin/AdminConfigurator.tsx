@@ -321,7 +321,7 @@ export const AdminConfigurator = () => {
   const handleDownload = (url: string) => {
     if (url) {
       const link = document.createElement("a");
-      link.download = `foxwrap-admin-${Date.now()}.jpg`;
+      link.download = `renovawrap-admin-${Date.now()}.jpg`;
       link.href = url;
       link.target = "_blank";
       link.click();

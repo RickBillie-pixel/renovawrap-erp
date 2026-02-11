@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import foxwrapLogo from "@/assets/Ontwerp zonder titel (4).png";
+import renovaLogo from "@/assets/renova-logo.png";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -68,19 +68,13 @@ export const Navbar = () => {
               className="flex items-center gap-4 md:gap-5"
             >
               <img
-                src={foxwrapLogo}
-                alt="FoxWrap"
-                className={`h-12 sm:h-14 md:h-20 w-auto object-contain transition-all duration-300 ${isHomePage && !isScrolled
+                src={renovaLogo}
+                alt="RenovaWrap"
+                className={`h-10 sm:h-12 md:h-16 w-auto object-contain transition-all duration-300 ${isHomePage && !isScrolled
                     ? 'brightness-0 invert drop-shadow-lg'
                     : 'drop-shadow-sm'
                   }`}
               />
-              <span className={`font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide transition-colors duration-300 ${isHomePage && !isScrolled
-                  ? "text-white drop-shadow-lg"
-                  : "text-foreground"
-                }`}>
-                FoxWraps
-              </span>
             </motion.div>
           </Link>
 
