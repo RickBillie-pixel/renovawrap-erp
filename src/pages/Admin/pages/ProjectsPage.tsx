@@ -137,6 +137,34 @@ export const ProjectsPage = () => {
       });
       return;
     }
+    if (!formData.after_image_url.trim()) {
+      toast({
+        title: "Resultaat URL verplicht",
+        description: "Vul een resultaat-URL (na-afbeelding) in of upload een afbeelding",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!formData.category?.trim()) {
+      toast({
+        title: "Categorie verplicht",
+        description: "Selecteer een categorie",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const featuredCount = projects.filter((p) => p.is_featured).length;
+    const currentWasFeatured = editingProject?.is_featured ?? false;
+    const newFeaturedCount = featuredCount - (currentWasFeatured ? 1 : 0) + (formData.is_featured ? 1 : 0);
+    if (formData.is_featured && newFeaturedCount > 3) {
+      toast({
+        title: "Maximaal 3 uitgelichte projecten",
+        description: "Er kunnen maximaal 3 projecten uitgelicht worden. Zet bij een ander project 'Uitgelicht' uit.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -426,7 +454,7 @@ export const ProjectsPage = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="category">Categorie</Label>
+                <Label htmlFor="category">Categorie *</Label>
                 <Select
                   value={formData.category}
                   onValueChange={(value) => setFormData({ ...formData, category: value })}
@@ -449,12 +477,16 @@ export const ProjectsPage = () => {
               <div className="space-y-0.5">
                 <Label htmlFor="is_featured">Uitgelicht</Label>
                 <p className="text-sm text-muted-foreground">
-                  Zet aan om dit project als uitgelicht op het portfolio te tonen, uit om te verbergen.
+                  Maximaal 3 projecten kunnen uitgelicht worden. Zet aan om dit project op het portfolio uit te lichten.
                 </p>
               </div>
               <Switch
                 id="is_featured"
                 checked={formData.is_featured}
+                disabled={
+                  !formData.is_featured &&
+                  projects.filter((p) => p.is_featured).length - (editingProject?.is_featured ? 1 : 0) >= 3
+                }
                 onCheckedChange={(checked) =>
                   setFormData({ ...formData, is_featured: checked === true })
                 }
@@ -496,7 +528,7 @@ export const ProjectsPage = () => {
                 )}
               </div>
               <div>
-                <Label>Na afbeelding (URL of upload)</Label>
+                <Label>Resultaat URL (na-afbeelding) *</Label>
                 <Input
                   value={formData.after_image_url}
                   onChange={(e) =>
