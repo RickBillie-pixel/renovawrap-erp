@@ -8,6 +8,24 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Lock, Mail } from "lucide-react";
 import renovaLogo from "@/assets/renova-logo.png";
+import heroImage from "@/assets/wrapped-kitchen.png";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.25 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 60 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +35,7 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast({
         title: "Vul alle velden in",
@@ -35,9 +53,7 @@ const Login = () => {
         password,
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (data.user) {
         toast({
@@ -46,11 +62,11 @@ const Login = () => {
         });
         navigate("/");
       }
-    } catch (error: any) {
-      console.error("Login error:", error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Controleer uw inloggegevens";
       toast({
         title: "Inloggen mislukt",
-        description: error.message || "Controleer uw inloggegevens",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -59,18 +75,33 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/30 p-4">
+    <section className="relative min-h-screen overflow-hidden flex items-center justify-center p-4">
+      {/* Zelfde hero-achtergrond als renovawrap.nl */}
+      <div className="absolute inset-0">
+        <img
+          src={heroImage}
+          alt=""
+          className="w-full h-full object-cover"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-foreground/50 pointer-events-none" />
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 w-full max-w-md"
       >
-        <div className="bg-card border border-border rounded-2xl p-8 shadow-elegant">
+        <motion.div
+          variants={itemVariants}
+          className="glass-strong rounded-2xl p-8 shadow-elegant border border-border/50"
+        >
           <div className="text-center mb-8">
             <img
               src={renovaLogo}
               alt="RenovaWrap"
-              className="h-14 mx-auto mb-4 w-auto object-contain"
+              className="h-14 mx-auto mb-4 w-auto object-contain drop-shadow-sm"
             />
             <h1 className="font-display text-3xl font-bold mb-2 text-foreground">
               Admin Login
@@ -82,7 +113,7 @@ const Login = () => {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
+              <Label htmlFor="email" className="flex items-center gap-2 text-foreground">
                 <Mail className="w-4 h-4" />
                 Email
               </Label>
@@ -98,7 +129,7 @@ const Login = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
+              <Label htmlFor="password" className="flex items-center gap-2 text-foreground">
                 <Lock className="w-4 h-4" />
                 Wachtwoord
               </Label>
@@ -129,19 +160,23 @@ const Login = () => {
               )}
             </Button>
           </form>
-        </div>
-        <div className="mt-8 text-center">
-          <a 
-            href="https://rootandlogic.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="text-xs text-muted-foreground/30 hover:text-muted-foreground transition-colors"
+        </motion.div>
+
+        <motion.div
+          variants={itemVariants}
+          className="mt-8 text-center"
+        >
+          <a
+            href="https://rootandlogic.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-white/50 hover:text-white/80 transition-colors duration-300"
           >
             Powered by Root & Logic
           </a>
-        </div>
+        </motion.div>
       </motion.div>
-    </div>
+    </section>
   );
 };
 
