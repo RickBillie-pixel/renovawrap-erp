@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale/nl";
-import { ChevronRight, Bell, Mail, MoreVertical, X, RefreshCw, Send, Trash2, Ban } from "lucide-react";
+import { ChevronRight, Bell, Mail, MoreVertical, X, RefreshCw, Send, Trash2, Ban, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -342,8 +342,10 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
+    <div className="space-y-4">
+      {/* Desktop View */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full">
         <thead className="bg-secondary/50 border-b border-border">
           <tr>
             <th className="w-10 p-4"></th>
@@ -550,7 +552,182 @@ export const RemindersTable = ({ onRefresh }: RemindersTableProps) => {
             );
           })}
         </tbody>
-      </table>
+        </table>
+      </div>
+
+      {/* Mobile View */}
+      <div className="md:hidden space-y-4">
+        {appointments.map((appointment) => {
+          const isExpanded = expandedRows.has(appointment.id);
+          const plannedCount = appointment.reminders.filter((r) => r.status === "gepland").length;
+          const isSending = sendingReminderId === appointment.id;
+
+          return (
+            <motion.div
+              key={appointment.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-card border border-border rounded-xl overflow-hidden shadow-sm"
+            >
+              <div 
+                className="p-4 cursor-pointer hover:bg-secondary/10 transition-colors"
+                onClick={() => toggleRow(appointment.id)}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex-1 min-w-0 pr-2">
+                    <h3 className="font-semibold text-foreground truncate">{appointment.title}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {format(new Date(appointment.date), "d MMM yyyy", { locale: nl })}
+                      {appointment.time && ` om ${appointment.time.slice(0, 5)}`}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    className={cn(
+                      "w-5 h-5 text-muted-foreground transition-transform flex-shrink-0 mt-1 text-primary",
+                      isExpanded && "rotate-90"
+                    )}
+                  />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-y-2 gap-x-4">
+                  {appointment.customer_name && (
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5" />
+                      {appointment.customer_name}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary/10 text-primary rounded text-[10px] font-medium border border-primary/20">
+                      <Bell className="w-3 h-3" />
+                      {appointment.reminders.length}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {getRemindersSummary(appointment.reminders)}
+                    </span>
+                  </div>
+                </div>
+
+                {plannedCount > 0 && (
+                  <div className="mt-3 flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-8 text-[11px] bg-primary/5 border-primary/20 text-primary px-3"
+                      onClick={() => handleSendAllPlanned(appointment.id, appointment.reminders)}
+                      disabled={isSending}
+                    >
+                      {isSending ? (
+                        <RefreshCw className="w-3.5 h-3.5 mr-2 animate-spin" />
+                      ) : (
+                        <Send className="w-3.5 h-3.5 mr-2" />
+                      )}
+                      Verstuur alle ({plannedCount})
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 border-destructive/20"
+                      onClick={() => handleCancelAllReminders(appointment.id)}
+                      disabled={isSending}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="border-t border-border bg-secondary/10"
+                  >
+                    <div className="p-3 space-y-3">
+                      {appointment.reminders.map((reminder) => {
+                        const isReminderSending = sendingReminderId === reminder.id;
+                        return (
+                          <div 
+                            key={reminder.id} 
+                            className="bg-card border border-border/50 rounded-lg p-3 shadow-sm"
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="text-sm font-medium text-foreground">
+                                  {format(new Date(reminder.reminder_date), "d MMMM yyyy", { locale: nl })}
+                                </p>
+                                <p className="text-xs text-muted-foreground font-medium">Verzendtijd: 09:00</p>
+                              </div>
+                              <span
+                                className={cn(
+                                  "px-2 py-0.5 rounded text-[10px] font-medium border",
+                                  getStatusBadge(reminder.status)
+                                )}
+                              >
+                                {getStatusLabel(reminder.status)}
+                              </span>
+                            </div>
+
+                            {reminder.sent_at && (
+                              <p className="text-[10px] text-muted-foreground mt-1 mb-2">
+                                Verzonden op: {format(new Date(reminder.sent_at), "d MMM yyyy HH:mm", { locale: nl })}
+                              </p>
+                            )}
+
+                            <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-border/30">
+                              {reminder.status === "gepland" && (
+                                <>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleSendNow(reminder.id)}
+                                    disabled={isReminderSending}
+                                    className="h-8 text-[11px] flex-1 min-w-[100px]"
+                                  >
+                                    {isReminderSending ? (
+                                      <RefreshCw className="w-3 h-3 mr-1.5 animate-spin" />
+                                    ) : (
+                                      <Send className="w-3 h-3 mr-1.5" />
+                                    )}
+                                    Verstuur Nu
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSelectedReminderId(reminder.id);
+                                      setCancelDialogOpen(true);
+                                    }}
+                                    className="h-8 px-2"
+                                  >
+                                    <Ban className="w-3.5 h-3.5 text-amber-500" />
+                                  </Button>
+                                </>
+                              )}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedReminderId(reminder.id);
+                                  setDeleteDialogOpen(true);
+                                }}
+                                className="h-8 px-2 ml-auto text-destructive border-destructive/20 hover:bg-destructive/5"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
+      </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

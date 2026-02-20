@@ -160,7 +160,7 @@ const Dashboard = () => {
               </div>
             </div>
           </header>
-          <div className="flex-1 overflow-auto p-6">
+          <div className="flex-1 overflow-x-hidden p-4 md:p-6">
             {renderPage()}
           </div>
         </SidebarInset>

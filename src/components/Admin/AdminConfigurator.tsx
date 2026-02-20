@@ -538,7 +538,7 @@ export const AdminConfigurator = () => {
             </div>
             
             <div className="max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-              <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                 {filteredColors.map((color) => (
                   <button
                     key={color.id}
@@ -788,6 +788,9 @@ export const AdminConfigurator = () => {
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Creatie Details</DialogTitle>
+            <DialogDescription>
+              Bekijk de gegenereerde afbeelding en de bijbehorende details.
+            </DialogDescription>
           </DialogHeader>
           {selectedCreation && (
             <div className="space-y-4">

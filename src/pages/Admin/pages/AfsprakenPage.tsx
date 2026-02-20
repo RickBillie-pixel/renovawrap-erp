@@ -193,12 +193,12 @@ export const AfsprakenPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Afspraken</h2>
           <p className="text-muted-foreground">Beheer afspraken en herinneringen</p>
         </div>
-        <Button onClick={handleNewAppointment}>
+        <Button onClick={handleNewAppointment} className="w-full md:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Nieuwe Afspraak
         </Button>
@@ -243,13 +243,15 @@ export const AfsprakenPage = () => {
             </Button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead className="bg-secondary/50 border-b border-border">
                 <tr>
                   <th className="text-left p-4 text-sm font-medium text-foreground">Datum</th>
                   <th className="text-left p-4 text-sm font-medium text-foreground">Titel</th>
-                  <th className="text-left p-4 text-sm font-medium text-foreground hidden md:table-cell">
+                  <th className="text-left p-4 text-sm font-medium text-foreground">
                     Klant
                   </th>
                   <th className="text-left p-4 text-sm font-medium text-foreground">Status</th>
@@ -278,7 +280,7 @@ export const AfsprakenPage = () => {
                         )}
                       </td>
                       <td className="p-4 font-medium text-foreground">{appointment.title}</td>
-                      <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
+                      <td className="p-4 text-sm text-muted-foreground">
                         {appointment.customer_name || "-"}
                       </td>
                       <td className="p-4">
@@ -343,6 +345,89 @@ export const AfsprakenPage = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4 p-4">
+            <AnimatePresence mode="popLayout">
+              {appointments.map((appointment) => (
+                <motion.div
+                  key={appointment.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  className="bg-secondary/20 border border-border rounded-xl p-4 shadow-sm"
+                  onClick={() => handleEditAppointment(appointment)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-semibold text-foreground">{appointment.title}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {format(new Date(appointment.date), "d MMM. yyyy", { locale: nl })}
+                        {appointment.time && ` om ${appointment.time.slice(0, 5)}`}
+                      </p>
+                    </div>
+                    <span
+                      className={cn(
+                        "inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border",
+                        getStatusBadge(appointment.status)
+                      )}
+                    >
+                      {getStatusLabel(appointment.status)}
+                    </span>
+                  </div>
+
+                  {appointment.customer_name && (
+                    <p className="text-sm text-muted-foreground mb-3">Klant: {appointment.customer_name}</p>
+                  )}
+
+                  <div className="flex justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+                          <MoreVertical className="w-4 h-4 mr-2" />
+                          Acties
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEditAppointment(appointment); }}>
+                          <Edit className="w-4 h-4 mr-2" />
+                          Bewerken
+                        </DropdownMenuItem>
+                        {appointment.customer_email && (
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleOpenReminders(appointment); }}>
+                            <Bell className="w-4 h-4 mr-2" />
+                            Herinnering
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        {appointment.status !== "voltooid" && (
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleUpdateStatus(appointment, "voltooid"); }}>
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Voltooien
+                          </DropdownMenuItem>
+                        )}
+                        {appointment.status !== "geannuleerd" && (
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleUpdateStatus(appointment, "geannuleerd"); }}>
+                            <XCircle className="w-4 h-4 mr-2" />
+                            Annuleren
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={(e) => { e.stopPropagation(); handleDeleteClick(appointment); }}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Verwijderen
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+          </>
         )}
       </div>
 
@@ -373,27 +458,25 @@ export const AfsprakenPage = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Afspraak Verwijderen</AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div className="text-sm text-muted-foreground">
-                Weet je zeker dat je deze afspraak wilt verwijderen? Dit verwijdert ook alle
-                bijbehorende herinneringen.
-                {appointmentToDelete && (
-                  <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
-                    <div className="mb-1">
-                      <strong>Titel:</strong> {appointmentToDelete.title}
-                    </div>
-                    <div className="mb-1">
-                      <strong>Datum:</strong>{" "}
-                      {format(new Date(appointmentToDelete.date), "d MMMM yyyy", { locale: nl })}
-                    </div>
-                    {appointmentToDelete.customer_name && (
-                      <div>
-                        <strong>Klant:</strong> {appointmentToDelete.customer_name}
-                      </div>
-                    )}
+            <AlertDialogDescription>
+              Weet je zeker dat je deze afspraak wilt verwijderen? Dit verwijdert ook alle
+              bijbehorende herinneringen.
+              {appointmentToDelete && (
+                <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
+                  <div className="mb-1">
+                    <strong>Titel:</strong> {appointmentToDelete.title}
                   </div>
-                )}
-              </div>
+                  <div className="mb-1">
+                    <strong>Datum:</strong>{" "}
+                    {format(new Date(appointmentToDelete.date), "d MMMM yyyy", { locale: nl })}
+                  </div>
+                  {appointmentToDelete.customer_name && (
+                    <div>
+                      <strong>Klant:</strong> {appointmentToDelete.customer_name}
+                    </div>
+                  )}
+                </div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

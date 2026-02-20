@@ -27,6 +27,7 @@ import {
   Trash2,
   Upload,
   Star,
+  Eye,
 } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale/nl";
@@ -79,6 +80,8 @@ export const ProjectsPage = () => {
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [uploadingField, setUploadingField] = useState<"before" | "after" | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const fetchProjects = async () => {
     setIsLoading(true);
@@ -126,6 +129,11 @@ export const ProjectsPage = () => {
       Oplossing: project.Oplossing ?? "",
     });
     setModalOpen(true);
+  };
+
+  const openDetail = (project: Project) => {
+    setSelectedProject(project);
+    setIsDetailOpen(true);
   };
 
   const handleSave = async () => {
@@ -295,19 +303,20 @@ export const ProjectsPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 w-full max-w-full overflow-x-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Projecten</h2>
           <p className="text-muted-foreground">Beheer portfolio: voor/na afbeeldingen, categorie en uitdaging/oplossing</p>
         </div>
-        <Button onClick={openCreate}>
+        <Button onClick={openCreate} className="w-full md:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Nieuw project
         </Button>
       </div>
 
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center">
             <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
@@ -393,6 +402,10 @@ export const ProjectsPage = () => {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
+                          <Button variant="outline" size="sm" onClick={() => openDetail(project)}>
+                            <Eye className="w-4 h-4 mr-2" />
+                            Details
+                          </Button>
                           <Button variant="outline" size="sm" onClick={() => openEdit(project)}>
                             <Edit className="w-4 h-4 mr-2" />
                             Bewerken
@@ -416,7 +429,91 @@ export const ProjectsPage = () => {
         )}
       </div>
 
-      <Button variant="outline" size="sm" onClick={fetchProjects} disabled={isLoading}>
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {isLoading ? (
+          <div className="p-8 text-center bg-card border border-border rounded-xl">
+            <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Projecten laden...</p>
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="p-8 text-center bg-card border border-border rounded-xl">
+            <ImageIcon className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+            <p className="text-muted-foreground">Nog geen projecten</p>
+            <Button variant="outline" className="mt-4" onClick={openCreate}>
+              <Plus className="w-4 h-4 mr-2" />
+              Eerste project toevoegen
+            </Button>
+          </div>
+        ) : (
+          <AnimatePresence mode="popLayout">
+            {projects.map((project) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                className="bg-card border border-border rounded-xl p-4 shadow-sm"
+              >
+                {/* Before/After thumbnails */}
+                <div className="flex gap-3 mb-3">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border border-border overflow-hidden bg-muted flex-shrink-0">
+                    {project.before_image_url ? (
+                      <img src={project.before_image_url} alt="Voor" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-[10px] sm:text-xs">Voor</div>
+                    )}
+                  </div>
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border border-border overflow-hidden bg-muted flex-shrink-0">
+                    {project.after_image_url ? (
+                      <img src={project.after_image_url} alt="Na" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-[10px] sm:text-xs">Na</div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground truncate">{project.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {project.date
+                        ? format(new Date(project.date), "d MMM yyyy", { locale: nl })
+                        : "Geen datum"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{project.category ?? "-"}</p>
+                    {project.is_featured && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                        <span className="text-xs text-amber-600">Uitgelicht</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" size="sm" className="w-full" onClick={() => openDetail(project)}>
+                    <Eye className="w-4 h-4 mr-2" />
+                    Details
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full" onClick={() => openEdit(project)}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Bewerken
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full col-span-2 text-destructive hover:text-destructive hover:bg-destructive/10 mt-1"
+                    onClick={() => handleDeleteClick(project)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Verwijderen
+                  </Button>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        )}
+      </div>
+
+      <Button variant="outline" size="sm" onClick={fetchProjects} disabled={isLoading} className="w-full md:w-auto">
         <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
         Vernieuwen
       </Button>
@@ -432,7 +529,7 @@ export const ProjectsPage = () => {
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="col-span-2">
                 <Label htmlFor="name">Naam *</Label>
                 <Input
@@ -493,7 +590,7 @@ export const ProjectsPage = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Voor afbeelding (URL of upload)</Label>
                 <Input
@@ -585,7 +682,7 @@ export const ProjectsPage = () => {
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t border-border">
+            <div className="flex flex-col-reverse md:flex-row justify-end gap-2 pt-4 border-t border-border">
               <Button variant="outline" onClick={() => setModalOpen(false)}>
                 Annuleren
               </Button>
@@ -604,20 +701,118 @@ export const ProjectsPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Project Detail Dialog */}
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto p-0">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle>{selectedProject?.name || "Project Details"}</DialogTitle>
+            <DialogDescription>
+              {selectedProject?.category || "Project overzicht"}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedProject && (
+            <div className="flex flex-col">
+              <div className="px-6 py-2">
+                <div className="flex flex-col space-y-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">
+                      {selectedProject.category}
+                    </span>
+                    {selectedProject.is_featured && (
+                      <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                        <Star className="w-3 h-3 fill-amber-500" />
+                        Uitgelicht
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-2xl font-bold tracking-tight">{selectedProject.name}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedProject.date ? format(new Date(selectedProject.date), "d MMMM yyyy", { locale: nl }) : "Geen datum"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="px-6 py-4 space-y-8">
+                {/* Image Comparison/Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Voor de metamorfose</Label>
+                    <div className="aspect-square rounded-xl overflow-hidden border border-border bg-muted shadow-inner">
+                      {selectedProject.before_image_url ? (
+                        <img src={selectedProject.before_image_url} alt="Voor" className="w-full h-full object-cover transition-transform hover:scale-105 duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground italic">Geen foto</div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-widest text-primary">Na de metamorfose</Label>
+                    <div className="aspect-square rounded-xl overflow-hidden border-2 border-primary/20 bg-muted shadow-md overflow-hidden">
+                      {selectedProject.after_image_url ? (
+                        <img src={selectedProject.after_image_url} alt="Na" className="w-full h-full object-cover transition-transform hover:scale-105 duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground italic">Geen foto</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {selectedProject.Uitdaging && (
+                    <div className="bg-secondary/20 p-4 rounded-xl space-y-2">
+                      <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                        De Uitdaging
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {selectedProject.Uitdaging}
+                      </p>
+                    </div>
+                  )}
+                  {selectedProject.Oplossing && (
+                    <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 space-y-2">
+                      <h4 className="font-bold text-sm text-primary flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        Onze Oplossing
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {selectedProject.Oplossing}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-border flex justify-between gap-3 bg-secondary/10">
+                <Button variant="outline" className="flex-1" onClick={() => setIsDetailOpen(false)}>
+                  Sluiten
+                </Button>
+                <Button className="flex-1" onClick={() => {
+                  setIsDetailOpen(false);
+                  openEdit(selectedProject);
+                }}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Aanpassen
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Project verwijderen</AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div className="text-sm text-muted-foreground">
-                Weet je zeker dat je dit project wilt verwijderen? Deze actie kan niet ongedaan
-                worden gemaakt.
-                {projectToDelete && (
-                  <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
-                    <strong>Naam:</strong> {projectToDelete.name}
-                  </div>
-                )}
-              </div>
+            <AlertDialogDescription>
+              Weet je zeker dat je dit project wilt verwijderen? Deze actie kan niet ongedaan
+              worden gemaakt.
+              {projectToDelete && (
+                <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
+                  <strong>Naam:</strong> {projectToDelete.name}
+                </div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

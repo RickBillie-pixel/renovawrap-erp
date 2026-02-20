@@ -296,7 +296,7 @@ export const AppointmentModal = ({
           </div>
 
           {/* Date and Time */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="date">Datum *</Label>
               <Input
@@ -373,7 +373,7 @@ export const AppointmentModal = ({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="customer_email">Email</Label>
                   <Input
@@ -420,7 +420,7 @@ export const AppointmentModal = ({
           {/* Service Review Reminder Section */}
           {formData.status === "voltooid" && appointment && (
             <div className="pt-4 border-t border-border">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-medium text-primary mb-1">Review verzoek</h3>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">

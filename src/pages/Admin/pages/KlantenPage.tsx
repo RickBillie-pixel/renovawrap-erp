@@ -315,7 +315,7 @@ export const KlantenPage = () => {
   return (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="hidden md:grid grid-cols-2 md:grid-cols-4 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -355,9 +355,9 @@ export const KlantenPage = () => {
 
       {/* Filters */}
       <div className="bg-card border border-border rounded-xl p-4">
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-col md:flex-row md:flex-wrap md:items-center gap-4">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full md:w-[180px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -367,137 +367,261 @@ export const KlantenPage = () => {
               <SelectItem value="archived">Gearchiveerd</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm" onClick={fetchCustomers} disabled={isLoading}>
+          <Button variant="outline" size="sm" onClick={fetchCustomers} disabled={isLoading} className="w-full md:w-auto">
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
             Vernieuwen
           </Button>
         </div>
       </div>
 
-      {/* Customers Table */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        {isLoading ? (
-          <div className="p-8 text-center">
-            <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">Klanten laden...</p>
-          </div>
-        ) : filteredCustomers.length === 0 ? (
-          <div className="p-8 text-center">
-            <p className="text-muted-foreground">Geen klanten gevonden</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-secondary/50 border-b border-border">
-                <tr>
-                  <th className="text-left p-4 text-sm font-medium text-foreground">Datum</th>
-                  <th className="text-left p-4 text-sm font-medium text-foreground">Naam</th>
-                  <th className="text-left p-4 text-sm font-medium text-foreground">Email</th>
-                  <th className="text-left p-4 text-sm font-medium text-foreground">Telefoon</th>
-                  <th className="text-left p-4 text-sm font-medium text-foreground">Adres</th>
-                  <th className="text-left p-4 text-sm font-medium text-foreground">Status</th>
-                  <th className="text-left p-4 text-sm font-medium text-foreground">Actie</th>
-                </tr>
-              </thead>
-              <tbody>
-                <AnimatePresence mode="popLayout">
-                  {filteredCustomers.map((customer) => (
-                    <motion.tr
-                      key={customer.id}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{
-                        opacity: deletingCustomerId === customer.id ? 0 : 1,
-                        x: deletingCustomerId === customer.id ? -20 : 0,
-                        scale: deletingCustomerId === customer.id ? 0.98 : 1,
-                      }}
-                      exit={{
-                        opacity: 0,
-                        x: -100,
-                        scale: 0.95,
-                        transition: { duration: 0.25, ease: "easeInOut" }
-                      }}
-                      transition={{
-                        duration: 0.25,
-                        ease: "easeInOut"
-                      }}
-                      className={`border-b border-border hover:bg-secondary/30 transition-colors ${
-                        deletingCustomerId === customer.id ? "pointer-events-none" : ""
-                      }`}
-                    >
-                      <td className="p-4 text-sm text-muted-foreground">
+      {/* Customers List */}
+      <div className="space-y-4">
+        {/* Desktop Table View */}
+        <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
+          {isLoading ? (
+            <div className="p-8 text-center">
+              <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Klanten laden...</p>
+            </div>
+          ) : filteredCustomers.length === 0 ? (
+            <div className="p-8 text-center">
+              <p className="text-muted-foreground">Geen klanten gevonden</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-secondary/50 border-b border-border">
+                  <tr>
+                    <th className="text-left p-4 text-sm font-medium text-foreground">Datum</th>
+                    <th className="text-left p-4 text-sm font-medium text-foreground">Naam</th>
+                    <th className="text-left p-4 text-sm font-medium text-foreground">Email</th>
+                    <th className="text-left p-4 text-sm font-medium text-foreground">Telefoon</th>
+                    <th className="text-left p-4 text-sm font-medium text-foreground">Adres</th>
+                    <th className="text-left p-4 text-sm font-medium text-foreground">Status</th>
+                    <th className="text-left p-4 text-sm font-medium text-foreground">Actie</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <AnimatePresence mode="popLayout">
+                    {filteredCustomers.map((customer) => (
+                      <motion.tr
+                        key={customer.id}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{
+                          opacity: deletingCustomerId === customer.id ? 0 : 1,
+                          x: deletingCustomerId === customer.id ? -20 : 0,
+                          scale: deletingCustomerId === customer.id ? 0.98 : 1,
+                        }}
+                        exit={{
+                          opacity: 0,
+                          x: -100,
+                          scale: 0.95,
+                          transition: { duration: 0.25, ease: "easeInOut" }
+                        }}
+                        transition={{
+                          duration: 0.25,
+                          ease: "easeInOut"
+                        }}
+                        className={`border-b border-border hover:bg-secondary/30 transition-colors ${
+                          deletingCustomerId === customer.id ? "pointer-events-none" : ""
+                        }`}
+                      >
+                        <td className="p-4 text-sm text-muted-foreground">
+                          {format(new Date(customer.created_at), "dd MMM yyyy", { locale: nl })}
+                        </td>
+                        <td className="p-4 text-sm font-medium text-foreground">{customer.name}</td>
+                        <td className="p-4 text-sm text-muted-foreground">{customer.email}</td>
+                        <td className="p-4 text-sm text-muted-foreground">{customer.phone || "-"}</td>
+                        <td className="p-4 text-sm text-muted-foreground">{customer.address || "-"}</td>
+                        <td className="p-4">
+                          <Select
+                            value={customer.status}
+                            onValueChange={async (value) => {
+                              try {
+                                await supabase
+                                  .from("customers")
+                                  .update({ status: value })
+                                  .eq("id", customer.id);
+                                await fetchCustomers();
+                                toast({
+                                  title: "Status bijgewerkt",
+                                  description: "De status is succesvol bijgewerkt",
+                                });
+                              } catch (error: any) {
+                                toast({
+                                  title: "Fout",
+                                  description: error.message,
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                            disabled={deletingCustomerId === customer.id || isDeleting}
+                          >
+                            <SelectTrigger className={`w-[140px] h-8 text-xs ${getStatusColor(customer.status)}`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Actief</SelectItem>
+                              <SelectItem value="completed">Afgerond</SelectItem>
+                              <SelectItem value="archived">Gearchiveerd</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openCustomerDetail(customer)}
+                              disabled={deletingCustomerId === customer.id || isDeleting}
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              Details
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteClick(customer)}
+                              disabled={deletingCustomerId === customer.id || isDeleting}
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                            >
+                              {deletingCustomerId === customer.id ? (
+                                <RefreshCw className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden space-y-4">
+          {isLoading ? (
+            <div className="p-8 text-center bg-card border border-border rounded-xl">
+              <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Klanten laden...</p>
+            </div>
+          ) : filteredCustomers.length === 0 ? (
+            <div className="p-8 text-center bg-card border border-border rounded-xl">
+              <p className="text-muted-foreground">Geen klanten gevonden</p>
+            </div>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {filteredCustomers.map((customer) => (
+                <motion.div
+                  key={customer.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  className="bg-card border border-border rounded-xl p-4 shadow-sm"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-muted-foreground mb-1">
                         {format(new Date(customer.created_at), "dd MMM yyyy", { locale: nl })}
-                      </td>
-                      <td className="p-4 text-sm font-medium text-foreground">{customer.name}</td>
-                      <td className="p-4 text-sm text-muted-foreground">{customer.email}</td>
-                      <td className="p-4 text-sm text-muted-foreground">{customer.phone || "-"}</td>
-                      <td className="p-4 text-sm text-muted-foreground">{customer.address || "-"}</td>
-                      <td className="p-4">
-                        <Select
-                          value={customer.status}
-                          onValueChange={async (value) => {
-                            try {
-                              await supabase
-                                .from("customers")
-                                .update({ status: value })
-                                .eq("id", customer.id);
-                              await fetchCustomers();
-                              toast({
-                                title: "Status bijgewerkt",
-                                description: "De status is succesvol bijgewerkt",
-                              });
-                            } catch (error: any) {
-                              toast({
-                                title: "Fout",
-                                description: error.message,
-                                variant: "destructive",
-                              });
-                            }
-                          }}
-                          disabled={deletingCustomerId === customer.id || isDeleting}
-                        >
-                          <SelectTrigger className={`w-[140px] h-8 text-xs ${getStatusColor(customer.status)}`}>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="active">Actief</SelectItem>
-                            <SelectItem value="completed">Afgerond</SelectItem>
-                            <SelectItem value="archived">Gearchiveerd</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openCustomerDetail(customer)}
-                            disabled={deletingCustomerId === customer.id || isDeleting}
-                          >
-                            <Eye className="w-4 h-4 mr-2" />
-                            Details
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteClick(customer)}
-                            disabled={deletingCustomerId === customer.id || isDeleting}
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
-                          >
-                            {deletingCustomerId === customer.id ? (
-                              <RefreshCw className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="w-4 h-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
-        )}
+                      </span>
+                      <h3 className="font-semibold text-lg">{customer.name}</h3>
+                    </div>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${getStatusColor(customer.status)}`}
+                    >
+                      {getStatusLabel(customer.status)}
+                    </span>
+                  </div>
+
+                  <div className="mb-4 space-y-1">
+                    <div className="text-sm text-foreground break-all">
+                      <span className="text-muted-foreground mr-2">Email:</span>
+                      {customer.email}
+                    </div>
+                    {customer.phone && (
+                      <div className="text-sm text-foreground">
+                        <span className="text-muted-foreground mr-2">Tel:</span>
+                        {customer.phone}
+                      </div>
+                    )}
+                    {customer.address && (
+                      <div className="text-sm text-foreground">
+                        <span className="text-muted-foreground mr-2">Adres:</span>
+                        {customer.address}
+                      </div>
+                    )}
+                    <div className="text-sm flex items-center justify-between pt-2">
+                      <span className="text-muted-foreground">Status:</span>
+                      <Select
+                        value={customer.status}
+                        onValueChange={async (value) => {
+                          try {
+                            await supabase
+                              .from("customers")
+                              .update({ status: value })
+                              .eq("id", customer.id);
+                            await fetchCustomers();
+                            toast({
+                              title: "Status bijgewerkt",
+                              description: "De status is succesvol bijgewerkt",
+                            });
+                          } catch (error: any) {
+                            toast({
+                              title: "Fout",
+                              description: error.message,
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                        disabled={deletingCustomerId === customer.id || isDeleting}
+                      >
+                        <SelectTrigger className={`w-[140px] h-8 text-xs ${getStatusColor(customer.status)}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Actief</SelectItem>
+                          <SelectItem value="completed">Afgerond</SelectItem>
+                          <SelectItem value="archived">Gearchiveerd</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => openCustomerDetail(customer)}
+                      disabled={deletingCustomerId === customer.id || isDeleting}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Details
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => handleDeleteClick(customer)}
+                      disabled={deletingCustomerId === customer.id || isDeleting}
+                    >
+                      {deletingCustomerId === customer.id ? (
+                        <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                      ) : (
+                        <Trash2 className="w-4 h-4 mr-2" />
+                      )}
+                      Verwijderen
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
+        </div>
       </div>
 
       {/* Customer Detail Dialog */}
@@ -513,7 +637,7 @@ export const KlantenPage = () => {
           {selectedCustomer && (
             <div className="space-y-6">
               {/* Basic Info */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="name">Naam *</Label>
                   <Input
@@ -603,7 +727,7 @@ export const KlantenPage = () => {
                       </Button>
                     </div>
                   ))}
-                  <div className="flex gap-2">
+                  <div className="flex flex-col md:flex-row gap-2">
                     <Input
                       type="date"
                       value={newAppointment.date}
@@ -614,7 +738,7 @@ export const KlantenPage = () => {
                       type="time"
                       value={newAppointment.time}
                       onChange={(e) => setNewAppointment({ ...newAppointment, time: e.target.value })}
-                      className="w-32"
+                      className="w-full md:w-32"
                     />
                     <Input
                       placeholder="Notities"
@@ -632,7 +756,7 @@ export const KlantenPage = () => {
               {/* Photos */}
               <div>
                 <Label>Foto's</Label>
-                <div className="mt-2 grid grid-cols-3 gap-4">
+                <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-4">
                   {photoUrls.map((url, idx) => (
                     <div key={idx} className="relative group">
                       <img
@@ -673,7 +797,7 @@ export const KlantenPage = () => {
               )}
 
               {/* Action Buttons */}
-              <div className="flex justify-end gap-2 pt-4 border-t border-border">
+              <div className="flex flex-col-reverse md:flex-row justify-end gap-2 pt-4 border-t border-border">
                 <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
                   Annuleren
                 </Button>
@@ -701,16 +825,14 @@ export const KlantenPage = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Klant Verwijderen</AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div className="text-sm text-muted-foreground">
-                Weet je zeker dat je deze klant wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
-                {customerToDelete && (
-                  <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
-                    <div className="mb-1"><strong>Naam:</strong> {customerToDelete.name}</div>
-                    <div className="mb-1"><strong>Email:</strong> {customerToDelete.email}</div>
-                  </div>
-                )}
-              </div>
+            <AlertDialogDescription>
+              Weet je zeker dat je deze klant wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+              {customerToDelete && (
+                <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
+                  <div className="mb-1"><strong>Naam:</strong> {customerToDelete.name}</div>
+                  <div className="mb-1"><strong>Email:</strong> {customerToDelete.email}</div>
+                </div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -519,7 +519,7 @@ export const LeadsPage = () => {
   return (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+      <div className="hidden md:grid grid-cols-2 md:grid-cols-6 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -580,48 +580,52 @@ export const LeadsPage = () => {
 
       {/* Filters */}
       <div className="bg-card border border-border rounded-xl p-4">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="flex items-center gap-2 mb-2 md:mb-0">
             <Filter className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium text-foreground">Filters:</span>
           </div>
-          <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Bron" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Alle Bronnen</SelectItem>
-              <SelectItem value="configurator">Configurator</SelectItem>
-              <SelectItem value="contact_form">Contact Formulier</SelectItem>
-              <SelectItem value="ad_submission">Ad Aanvragen</SelectItem>
-              <SelectItem value="keuzehulp">Keuzehulp</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Alle Statussen</SelectItem>
-              <SelectItem value="new">Nieuw</SelectItem>
-              <SelectItem value="in_progress">In Behandeling</SelectItem>
-              <SelectItem value="completed">Afgerond</SelectItem>
-              <SelectItem value="contacted">Gecontacteerd</SelectItem>
-              <SelectItem value="offer_sent">Offerte verzonden</SelectItem>
-              <SelectItem value="accepted">Geaccepteerd</SelectItem>
-              <SelectItem value="rejected">Afgewezen</SelectItem>
-              <SelectItem value="archived">Gearchiveerd</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" size="sm" onClick={fetchLeads} disabled={isLoading}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
-            Vernieuwen
-          </Button>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full md:w-auto">
+            <Select value={sourceFilter} onValueChange={setSourceFilter}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Bron" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alle Bronnen</SelectItem>
+                <SelectItem value="configurator">Configurator</SelectItem>
+                <SelectItem value="contact_form">Contact Formulier</SelectItem>
+                <SelectItem value="ad_submission">Ad Aanvragen</SelectItem>
+                <SelectItem value="keuzehulp">Keuzehulp</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alle Statussen</SelectItem>
+                <SelectItem value="new">Nieuw</SelectItem>
+                <SelectItem value="in_progress">In Behandeling</SelectItem>
+                <SelectItem value="completed">Afgerond</SelectItem>
+                <SelectItem value="contacted">Gecontacteerd</SelectItem>
+                <SelectItem value="offer_sent">Offerte verzonden</SelectItem>
+                <SelectItem value="accepted">Geaccepteerd</SelectItem>
+                <SelectItem value="rejected">Afgewezen</SelectItem>
+                <SelectItem value="archived">Gearchiveerd</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" className="w-full md:w-auto" onClick={fetchLeads} disabled={isLoading}>
+              <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+              Vernieuwen
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Leads Table */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
+      {/* Leads List */}
+      <div className="space-y-4">
+        {/* Desktop Table View */}
+        <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center">
             <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
@@ -783,6 +787,149 @@ export const LeadsPage = () => {
         )}
       </div>
 
+        {/* Mobile Card View */}
+        <div className="md:hidden space-y-4">
+          {isLoading ? (
+             <div className="p-8 text-center bg-card border border-border rounded-xl">
+              <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Leads laden...</p>
+            </div>
+          ) : filteredLeads.length === 0 ? (
+             <div className="p-8 text-center bg-card border border-border rounded-xl">
+              <p className="text-muted-foreground">Geen leads gevonden</p>
+            </div>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {filteredLeads.map((lead) => (
+                <motion.div
+                  key={lead.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  className="bg-card border border-border rounded-xl p-4 shadow-sm"
+                >
+                   <div className="flex justify-between items-start mb-3">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground mb-1">
+                          {format(new Date(lead.created_at), "dd MMM HH:mm", { locale: nl })}
+                        </span>
+                         <h3 className="font-semibold text-lg">{getLeadDisplayName(lead)}</h3>
+                      </div>
+                       <span
+                            className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                              lead.source === "configurator"
+                                ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
+                                : lead.source === "contact_form"
+                                  ? "bg-orange-500/10 text-orange-600 border border-orange-500/20"
+                                  : lead.source === "ad_submission"
+                                    ? "bg-teal-500/10 text-teal-600 border border-teal-500/20"
+                                    : "bg-amber-500/10 text-amber-600 border border-amber-500/20"
+                            }`}
+                          >
+                            {lead.source === "configurator"
+                              ? "Config."
+                              : lead.source === "contact_form"
+                                ? "Contact"
+                                : lead.source === "ad_submission"
+                                  ? "Ad San."
+                                  : "Keuzeh."}
+                       </span>
+                   </div>
+
+                   <div className="mb-4 space-y-2">
+                      <div className="text-sm text-foreground break-all">
+                        <span className="text-muted-foreground mr-2">Email:</span>
+                        {getLeadDisplayEmail(lead)}
+                      </div>
+                      <div className="text-sm flex items-center justify-between">
+                         <span className="text-muted-foreground">Status:</span>
+                         <Select
+                            value={lead.status}
+                            onValueChange={(value) =>
+                              updateLeadStatus(lead.id, value, getLeadTableName(lead))
+                            }
+                            disabled={updatingStatus === lead.id || deletingLeadId === lead.id || isDeleting}
+                          >
+                            <SelectTrigger className={`w-[140px] h-8 text-xs ${getStatusColor(lead.status)}`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                           <SelectContent>
+                              {lead.source === "keuzehulp" ? (
+                                <>
+                                  <SelectItem value="new">Nieuw</SelectItem>
+                                  <SelectItem value="contacted">Gecontacteerd</SelectItem>
+                                  <SelectItem value="offer_sent">Offerte verzonden</SelectItem>
+                                  <SelectItem value="accepted">Geaccepteerd</SelectItem>
+                                  <SelectItem value="rejected">Afgewezen</SelectItem>
+                                  <SelectItem value="archived">Gearchiveerd</SelectItem>
+                                </>
+                              ) : (
+                                <>
+                                  <SelectItem value="new">Nieuw</SelectItem>
+                                  <SelectItem value="in_progress">In Behandeling</SelectItem>
+                                  <SelectItem value="completed">Afgerond</SelectItem>
+                                  <SelectItem value="archived">Gearchiveerd</SelectItem>
+                                </>
+                              )}
+                            </SelectContent>
+                          </Select>
+                      </div>
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => openLeadDetail(lead)}
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Details
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                          >
+                            <MoreVertical className="w-4 h-4 mr-2" />
+                            Acties
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                           <DropdownMenuItem onClick={() => handleSendEmail(lead)}>
+                              <Send className="w-4 h-4 mr-2" />
+                              Email sturen
+                           </DropdownMenuItem>
+                           <DropdownMenuItem
+                              onClick={() => convertToCustomer(lead)}
+                              disabled={convertingLeadId === lead.id}
+                            >
+                              {convertingLeadId === lead.id ? (
+                                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                              ) : (
+                                <UserPlus className="w-4 h-4 mr-2" />
+                              )}
+                              Klant maken
+                            </DropdownMenuItem>
+                             <DropdownMenuItem
+                                onClick={() => handleDeleteClick(lead)}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Verwijderen
+                              </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                   </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
+        </div>
+      </div>
+
       {/* Lead Detail Dialog */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -796,7 +943,7 @@ export const LeadsPage = () => {
           {selectedLead && (
             <div className="space-y-6">
               {/* Basic Info */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs text-muted-foreground">Naam</Label>
                   <p className="font-medium text-foreground">{getLeadDisplayName(selectedLead)}</p>
@@ -1026,17 +1173,15 @@ export const LeadsPage = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Lead Verwijderen</AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div className="text-sm text-muted-foreground">
-                Weet je zeker dat je deze lead wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
-                {leadToDelete && (
-                  <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
-                    <div className="mb-1"><strong>Naam:</strong> {getLeadDisplayName(leadToDelete)}</div>
-                    <div className="mb-1"><strong>Email:</strong> {getLeadDisplayEmail(leadToDelete)}</div>
-                    <div><strong>Datum:</strong> {format(new Date(leadToDelete.created_at), "dd MMM yyyy HH:mm", { locale: nl })}</div>
-                  </div>
-                )}
-              </div>
+            <AlertDialogDescription>
+              Weet je zeker dat je deze lead wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+              {leadToDelete && (
+                <div className="mt-2 p-2 bg-secondary/50 rounded text-sm text-foreground">
+                  <div className="mb-1"><strong>Naam:</strong> {getLeadDisplayName(leadToDelete)}</div>
+                  <div className="mb-1"><strong>Email:</strong> {getLeadDisplayEmail(leadToDelete)}</div>
+                  <div><strong>Datum:</strong> {format(new Date(leadToDelete.created_at), "dd MMM yyyy HH:mm", { locale: nl })}</div>
+                </div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

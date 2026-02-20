@@ -161,7 +161,7 @@ export const AgendaPage = () => {
           {Array.from({ length: startDay }).map((_, i) => (
             <div
               key={`empty-${i}`}
-              className="min-h-[120px] p-2 border-b border-r border-border bg-secondary/10"
+              className="min-h-[60px] md:min-h-[120px] p-2 border-b border-r border-border bg-secondary/10"
             />
           ))}
 
@@ -176,7 +176,7 @@ export const AgendaPage = () => {
                 key={day.toISOString()}
                 onClick={() => handleDayClick(day)}
                 className={cn(
-                  "min-h-[120px] p-2 border-b border-r border-border cursor-pointer transition-colors",
+                  "min-h-[60px] md:min-h-[120px] p-1 md:p-2 border-b border-r border-border cursor-pointer transition-colors",
                   "hover:bg-secondary/30",
                   !isSameMonth(day, currentMonth) && "bg-secondary/10 text-muted-foreground/50",
                   isCurrentDay && "bg-primary/5",
@@ -230,7 +230,7 @@ export const AgendaPage = () => {
             return Array.from({ length: remainingCells }).map((_, i) => (
               <div
                 key={`empty-end-${i}`}
-                className="min-h-[120px] p-2 border-b border-r border-border bg-secondary/10"
+                className="min-h-[60px] md:min-h-[120px] p-2 border-b border-r border-border bg-secondary/10"
               />
             ));
           })()}
