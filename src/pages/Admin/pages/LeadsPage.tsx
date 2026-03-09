@@ -83,6 +83,7 @@ interface ConfiguratorLead {
   created_at: string;
   name: string;
   email: string;
+  phone?: string | null;
   address?: string;
   service_details: any;
   color_details: any;
@@ -417,6 +418,7 @@ export const LeadsPage = () => {
 
       // Add source-specific data
       if (lead.source === "configurator") {
+        customerData.phone = lead.phone;
         customerData.address = lead.address;
         customerData.service_details = lead.service_details;
         customerData.color_details = lead.color_details;
@@ -964,7 +966,7 @@ export const LeadsPage = () => {
                     </p>
                   </div>
                 )}
-                {selectedLead.source === "contact_form" && "phone" in selectedLead && selectedLead.phone && (
+                {(selectedLead.source === "contact_form" || selectedLead.source === "configurator") && "phone" in selectedLead && selectedLead.phone && (
                   <div>
                     <Label className="text-xs text-muted-foreground">Telefoon</Label>
                     <p className="font-medium text-foreground flex items-center gap-2">

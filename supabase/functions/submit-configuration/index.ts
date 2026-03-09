@@ -10,6 +10,7 @@ const corsHeaders = {
 interface SubmissionData {
   name: string;
   email: string;
+  phone: string; // <-- Toegevoegd
   address?: string;
   service_details: any;
   color_details: any;
@@ -33,10 +34,10 @@ serve(async (req) => {
     // Parse request body
     const submissionData: SubmissionData = await req.json();
 
-    // Validate required fields
-    if (!submissionData.name || !submissionData.email || !submissionData.image_url) {
+    // Validate required fields (nu ook met phone)
+    if (!submissionData.name || !submissionData.email || !submissionData.phone || !submissionData.image_url) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields: name, email, image_url" }),
+        JSON.stringify({ error: "Missing required fields: name, email, phone, image_url" }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -50,6 +51,7 @@ serve(async (req) => {
       .insert({
         name: submissionData.name,
         email: submissionData.email,
+        phone: submissionData.phone, // <-- Toegevoegd aan database insert
         address: submissionData.address || null,
         service_details: submissionData.service_details || null,
         color_details: submissionData.color_details || null,
@@ -101,6 +103,7 @@ serve(async (req) => {
       created_at: submission.created_at,
       name: submissionData.name,
       email: submissionData.email,
+      phone: submissionData.phone, // <-- Toegevoegd aan webhook
       address: submissionData.address,
       service_details: submissionData.service_details,
       color_details: submissionData.color_details,
@@ -126,6 +129,43 @@ serve(async (req) => {
       // Don't fail the request if webhook fails, just log it
     }
 
+    // Send notification to admin
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+      const notifyUrl = `${supabaseUrl}/functions/v1/notify-admin`;
+
+      const notificationPayload = {
+        source: "configurator",
+        lead_id: submission.id,
+        name: submissionData.name,
+        email: submissionData.email,
+        phone: submissionData.phone, // <-- Toegevoegd aan admin notificatie
+        created_at: submission.created_at,
+        details: {
+          address: submissionData.address,
+          service_details: submissionData.service_details,
+          color_details: submissionData.color_details,
+          image_url: submissionData.image_url,
+        },
+      };
+
+      const notifyResponse = await fetch(notifyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY") ?? ""}`,
+        },
+        body: JSON.stringify(notificationPayload),
+      });
+
+      if (!notifyResponse.ok) {
+        console.error("Notification error:", await notifyResponse.text());
+        // Don't fail the request if notification fails, just log it
+      }
+    } catch (notifyError) {
+      console.error("Notification request failed:", notifyError);
+      // Don't fail the request if notification fails, just log it
+    }
 
     return new Response(
       JSON.stringify({
@@ -149,4 +189,3 @@ serve(async (req) => {
     );
   }
 });
-
