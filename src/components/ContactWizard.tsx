@@ -137,35 +137,6 @@ export const ContactWizard = () => {
         throw error;
       }
 
-      // Trigger notification
-      try {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-        
-        await fetch(`${supabaseUrl}/functions/v1/notify-admin`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${anonKey}`,
-          },
-          body: JSON.stringify({
-            source: "contact_form",
-            lead_id: submissionId,
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            created_at: submissionDate,
-            details: {
-              type: formData.type,
-              message: formData.message,
-              photo_urls: photoUrls,
-            },
-          }),
-        });
-      } catch (notifyError) {
-        console.error("Notification error:", notifyError);
-        // Don't fail the request if notification fails
-      }
 
       setIsSubmitting(false);
       setIsSubmitted(true);

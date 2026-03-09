@@ -130,44 +130,6 @@ serve(async (req) => {
       console.error("Webhook request failed:", webhookError);
     }
 
-    // Send notification email to info@renovawrap.nl
-    try {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-      const notifyUrl = `${supabaseUrl}/functions/v1/notify-admin`;
-
-      const selectedService = submissionData.service_details;
-      const selectedColor = submissionData.color_details;
-
-      const notificationPayload = {
-        source: "configurator",
-        lead_id: adminConfig.id,
-        name: "Admin Configurator",
-        email: "admin@renovawrap.nl",
-        created_at: adminConfig.created_at,
-        details: {
-          service: selectedService?.label || selectedService?.value || "Onbekend",
-          color: selectedColor?.name || "Onbekend",
-          color_code: selectedColor?.code || "",
-          image_url: submissionData.image_url,
-          is_admin_request: true,
-        },
-      };
-
-      const notifyResponse = await fetch(notifyUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""}`,
-        },
-        body: JSON.stringify(notificationPayload),
-      });
-
-      if (!notifyResponse.ok) {
-        console.error("Notification error:", await notifyResponse.text());
-      }
-    } catch (notifyError) {
-      console.error("Notification request failed:", notifyError);
-    }
 
     // Return success
     return new Response(
